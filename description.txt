@@ -8,6 +8,8 @@ Our Goals:
 - Reward preparation, planning, and skillful play
 - Create satisfying tension between risk and reward
 - Deepen engagement with Terraria's rich world
+- Give purpose to biome-specific base crafting items
+- Make any biome "start viable"
 
 Current Features:
 - Persistent Player Position: Your character stays where you left them
@@ -16,5 +18,8 @@ Coming Soon:
 - Digging-based difficulty scaling
 - Enhanced enemy behaviors
 - Strategic travel systems
+
+Stretch Goal:
+- Best speedrun times should increase from 50 minutes to 5+ hours, because one can't blast away and skip/ignore enemies, progression, etc.
 
 For players who want their victories to feel truly earned.

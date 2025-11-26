@@ -63,6 +63,13 @@ namespace TerrariaSurvivalMod
             if (IsPositionSafeForPlayer(savedExitPosition))
             {
                 Player.position = savedExitPosition;
+                
+                // Reset velocity to prevent continued falling/movement
+                Player.velocity = Vector2.Zero;
+                
+                // Give brief immunity to prevent instant damage on spawn
+                Player.immune = true;
+                Player.immuneTime = 60; // 1 second immunity
             }
             // else: fall back to spawn point (default behavior)
 

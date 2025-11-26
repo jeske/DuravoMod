@@ -1,0 +1,10 @@
+Mods: {
+	TerrariaSurvivalMod: {
+		Buffs: {
+			ShinyBuff: {
+				DisplayName: Shiny
+				Description: Nearby ore radiates off your gleaming armor set
+			}
+		}
+	}
+}
