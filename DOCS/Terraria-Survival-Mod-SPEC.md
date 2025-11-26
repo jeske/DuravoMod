@@ -1,12 +1,16 @@
 # Terraria Survival Overhaul Mod
 
-A tModLoader mod to remove exploits that trivialize exploration and combat.
+A tModLoader mod to slow the game pace and expand the depth by removing exploits that make interacting with enemies optional.
 
 ---
 
 ## Core Philosophy
 
 Terraria presents platformer-combat aesthetics but gives players tools that make engagement optional. This mod surgically removes the worst offenders while preserving legitimate building and crafting QoL.
+
+Currently a "Moon Lord" speedrun can be done in 50-70 minutes by an expert. WHen we are done, the minimum viable time for this should be closer to 10-20 hours, with a typical ru
+
+NOTE: Reddit thread at: https://www.reddit.com/r/Terraria/comments/1p6n7jd/interest_in_survival_overhaul_mod/
 
 ---
 

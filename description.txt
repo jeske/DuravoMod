@@ -1,0 +1,20 @@
+Terraria Survival Overhaul enhances the survival RPG experience, by 
+increasing the need for bases, making biome specific bases serve a 
+functional purpose, encouraging combat, enhancing gear progression, and
+making gameplay more authentic (by removing exploits).
+
+Our Goals:
+- Make every expedition an adventure with real commitment
+- Reward preparation, planning, and skillful play
+- Create satisfying tension between risk and reward
+- Deepen engagement with Terraria's rich world
+
+Current Features:
+- Persistent Player Position: Your character stays where you left them
+
+Coming Soon:
+- Digging-based difficulty scaling
+- Enhanced enemy behaviors
+- Strategic travel systems
+
+For players who want their victories to feel truly earned.

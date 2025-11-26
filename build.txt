@@ -1,0 +1,3 @@
+displayName = Terraria Survival Overhaul
+author = TerrariaSurvivalMod Team
+version = 0.1.0
