@@ -49,27 +49,66 @@ namespace TerrariaSurvivalMod.Players
         /// <summary>Active sparkles being rendered with manual fade control</summary>
         private static readonly System.Collections.Generic.List<ActiveSparkle> activeSparkles = new System.Collections.Generic.List<ActiveSparkle>();
         
+        /// <summary>Tracks last specular intensity per sparkle point for threshold crossing detection</summary>
+        private static readonly System.Collections.Generic.Dictionary<int, SparklePointState> sparklePointStates = new System.Collections.Generic.Dictionary<int, SparklePointState>();
+        
         /// <summary>Tracks an active sparkle with spawn time for fade calculation</summary>
         private struct ActiveSparkle
         {
             public Vector2 WorldPosition;
-            public double SpawnTimeSeconds;
+            public double QueuedTimeEpoch;         // Epoch seconds when sparkle was triggered
+            public double PreActivateDelaySeconds; // Random delay before becoming visible (0-3s)
             public Color SparkleColor;
             public float InitialScale;
+            
+            /// <summary>Epoch time when sparkle becomes visible (queued + delay)</summary>
+            public double BecomeVisibleTimeEpoch => QueuedTimeEpoch + PreActivateDelaySeconds;
+        }
+        
+        /// <summary>Tracks state for each sparkle point (for threshold crossing detection)</summary>
+        private struct SparklePointState
+        {
+            public float LastSpecularIntensity;
+            public double LastSpawnTimeEpoch; // Epoch seconds
+        }
+        
+        /// <summary>Get current time as epoch seconds (since 1970, never wraps)</summary>
+        private static double GetEpochTimeSeconds()
+        {
+            return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000.0;
         }
         
         /// <summary>Duration in seconds for sparkle fade-out</summary>
         private const double SparkleFadeDurationSeconds = 1.0;
+        
+        /// <summary>Fixed cooldown in seconds after sparkle finishes before it can trigger again</summary>
+        private const double SparkleSpawnCooldownSeconds = 5.0;
+        
+        /// <summary>Maximum random pre-activation delay (staggers when sparkles appear)</summary>
+        private const double SparklePreActivateMaxDelaySeconds = 3.0;
+        
+        /// <summary>Intensity threshold for spawning sparkles (lowered for testing)</summary>
+        private const float SparkleIntensityThreshold = 0.01f;
 
         // === ORE DETECTION CONSTANTS ===
         /// <summary>Range in tiles for mini-spelunker ore glow effect</summary>
-        private const int OreDetectionRangeTiles = 4;
+        private const int OreDetectionRangeTiles = 8;
         
-        /// <summary>TESTING FLAG: Set to true to always enable ore glow regardless of armor</summary>
-        private const bool AlwaysEnableOreGlow = true;
+        /// <summary>DEBUG FLAG: Set to true to force Shiny effect active regardless of armor</summary>
+        private const bool DebugForceShinyActive = true;
         
-        /// <summary>TESTING FLAG: Set to true to also highlight stone (for easier testing)</summary>
-        private const bool AlsoHighlightStone = true;
+        /// <summary>DEBUG FLAG: Set to true to also highlight stone (for easier testing)</summary>
+        private const bool DebugHighlightStone = true;
+        
+        /// <summary>DEBUG FLAG: Set to true to show persistent dim red sparkles at ALL sparkle point locations</summary>
+        /// <remarks>This helps differentiate between "sparkle exists but not visible" vs "no sparkle at all"</remarks>
+        private const bool DebugShowSparkleLocations = true;
+        
+        /// <summary>DEBUG FLAG: Set to true to bypass the specular threshold check (always trigger sparkles)</summary>
+        private const bool DebugBypassTriggerCondition = true;
+        
+        /// <summary>Tracks all known sparkle point positions for debug rendering</summary>
+        private static readonly System.Collections.Generic.HashSet<Vector2> debugSparklePositions = new System.Collections.Generic.HashSet<Vector2>();
 
         // === BUFF STATE ===
         /// <summary>Set by ShinyBuff.Update() when the buff is active</summary>
@@ -130,8 +169,8 @@ namespace TerrariaSurvivalMod.Players
             }
             
             // Apply Shiny buff when wearing full ore armor set
-            // AlwaysEnableOreGlow flag for testing - when false, requires hasFullOreArmorSet
-            if (AlwaysEnableOreGlow || hasFullOreArmorSet)
+            // DebugForceShinyActive flag for testing - when false, requires hasFullOreArmorSet
+            if (DebugForceShinyActive || hasFullOreArmorSet)
             {
                 // Add the Shiny buff (infinite duration since we re-add each frame)
                 Player.AddBuff(ModContent.BuffType<Buffs.ShinyBuff>(), 2); // 2 ticks, refreshed every frame
@@ -143,8 +182,8 @@ namespace TerrariaSurvivalMod.Players
         /// </summary>
         public override void PostUpdateBuffs()
         {
-            // TESTING: Apply directly when AlwaysEnableOreGlow is true, regardless of buff
-            if (AlwaysEnableOreGlow || HasShinyBuff)
+            // Apply sparkle effect when debug flag is on OR when player has the Shiny buff
+            if (DebugForceShinyActive || HasShinyBuff)
             {
                 SpawnNewSparkles();
                 UpdateAndCleanupSparkles();
@@ -162,6 +201,9 @@ namespace TerrariaSurvivalMod.Players
             int playerTileX = (int)(Player.Center.X / 16f);
             int playerTileY = (int)(Player.Center.Y / 16f);
 
+            // DEBUG: Track how many tiles we find
+            int tilesFound = 0;
+
             // Scan tiles within range
             for (int scanTileX = playerTileX - OreDetectionRangeTiles; scanTileX <= playerTileX + OreDetectionRangeTiles; scanTileX++)
             {
@@ -175,13 +217,20 @@ namespace TerrariaSurvivalMod.Players
                     
                     // Check if tile exists and is a spelunker-type tile (ores, gems, etc)
                     bool isSpelunkerTile = Main.tileSpelunker[scannedTile.TileType];
-                    bool isStoneForTesting = AlsoHighlightStone && scannedTile.TileType == TileID.Stone;
+                    bool isStoneForTesting = DebugHighlightStone && scannedTile.TileType == TileID.Stone;
                     
                     if (scannedTile.HasTile && (isSpelunkerTile || isStoneForTesting))
                     {
+                        tilesFound++;
                         TrySpawnSparkleForTile(scanTileX, scanTileY, playerEyePosition, scannedTile.TileType);
                     }
                 }
+            }
+            
+            // DEBUG: Log every 2 seconds
+            if (Main.GameUpdateCount % 120 == 0)
+            {
+                Main.NewText($"[SPARKLE DEBUG] Tiles found: {tilesFound}, Debug positions: {debugSparklePositions.Count}, Active sparkles: {activeSparkles.Count}", 255, 255, 0);
             }
         }
         
@@ -190,16 +239,18 @@ namespace TerrariaSurvivalMod.Players
         /// </summary>
         private static void UpdateAndCleanupSparkles()
         {
-            double currentTimeSeconds = DateTime.Now.TimeOfDay.TotalSeconds;
+            double currentTimeEpoch = GetEpochTimeSeconds();
             
             for (int i = activeSparkles.Count - 1; i >= 0; i--)
             {
-                double ageSeconds = currentTimeSeconds - activeSparkles[i].SpawnTimeSeconds;
+                ActiveSparkle sparkle = activeSparkles[i];
+                double visibleTimeEpoch = sparkle.BecomeVisibleTimeEpoch;
+                double ageAfterVisible = currentTimeEpoch - visibleTimeEpoch;
                 
-                // Handle midnight wraparound
-                if (ageSeconds < 0) ageSeconds += 86400.0;
-                
-                if (ageSeconds > SparkleFadeDurationSeconds)
+                // Epoch time never wraps - no wraparound handling needed!
+                // If sparkle hasn't become visible yet, keep it (negative age is fine)
+                // Only remove if it has become visible AND fully faded
+                if (ageAfterVisible > SparkleFadeDurationSeconds)
                 {
                     activeSparkles.RemoveAt(i);
                 }
@@ -207,29 +258,29 @@ namespace TerrariaSurvivalMod.Players
         }
         
         /// <summary>
-        /// Try to spawn a sparkle for a specific tile (time-throttled).
+        /// Try to spawn a sparkle for a specific tile.
+        /// Only spawns when specular intensity crosses from below to above threshold (simulates "catching the light").
         /// </summary>
         private void TrySpawnSparkleForTile(int tileX, int tileY, Vector2 playerEyePosition, int tileType)
         {
             int tileCoordinateHash = HashTileCoordinates(tileX, tileY);
             int dustType = GetDustTypeForTile(tileType);
             Vector2 primarySurfaceNormal = GetDeterministicPrimarySurfaceNormal(tileCoordinateHash);
+            double currentTimeEpoch = GetEpochTimeSeconds();
             
             for (int sparkleIndex = 0; sparkleIndex < 2; sparkleIndex++)
             {
+                // Generate unique key for this sparkle point
+                int sparklePointKey = tileCoordinateHash + sparkleIndex * 31337;
+                
                 Vector2 sparkleOffsetWithinTile = GetDeterministicSparkleOffset(tileCoordinateHash, sparkleIndex);
                 Vector2 sparkleWorldPosition = new Vector2(tileX * 16, tileY * 16) + sparkleOffsetWithinTile;
                 
-                // Time-based spawn throttling: each sparkle spawns every 2 seconds
-                const double SpawnIntervalSeconds = 2.0;
-                double sparkleTimeOffsetSeconds = ((tileCoordinateHash + sparkleIndex * 12345) & 0xFFFF) / 65536.0 * SpawnIntervalSeconds;
-                double currentTimeSeconds = DateTime.Now.TimeOfDay.TotalSeconds;
-                double effectiveTimeForThisSparkle = currentTimeSeconds + sparkleTimeOffsetSeconds;
-                double timeIntoCurrentInterval = effectiveTimeForThisSparkle % SpawnIntervalSeconds;
-                
-                // Only spawn if we're within a 100ms window at the start of the interval (wider for testing)
-                if (timeIntoCurrentInterval > 0.1)
-                    continue;
+                // DEBUG: Track all sparkle positions
+                if (DebugShowSparkleLocations)
+                {
+                    debugSparklePositions.Add(sparkleWorldPosition);
+                }
                 
                 // Get surface normal for specular calculation
                 Vector2 sparkleSurfaceNormal = sparkleIndex == 0
@@ -246,18 +297,52 @@ namespace TerrariaSurvivalMod.Players
                 float specularIntensity = Math.Max(0f, dotProduct);
                 specularIntensity = (float)Math.Pow(specularIntensity, 4f) * 0.3f;
                 
-                // Only spawn if intensity exceeds threshold (lowered for testing)
-                if (specularIntensity > 0.05f)
+                // Get previous state for this sparkle point (default: 0 intensity, never spawned)
+                SparklePointState previousState = new SparklePointState { LastSpecularIntensity = 0f, LastSpawnTimeEpoch = 0.0 };
+                sparklePointStates.TryGetValue(sparklePointKey, out previousState);
+                
+                // Check if intensity just crossed from below to above threshold
+                // DEBUG: If DebugBypassTriggerCondition is true, always trigger (ignore specular)
+                bool justCrossedThreshold = DebugBypassTriggerCondition ||
+                                           (previousState.LastSpecularIntensity < SparkleIntensityThreshold
+                                            && specularIntensity >= SparkleIntensityThreshold);
+                
+                // Calculate pre-activation delay using seeded random
+                Random preActivateRandom = new Random(sparklePointKey);
+                double preActivateDelaySeconds = preActivateRandom.NextDouble() * SparklePreActivateMaxDelaySeconds;
+                
+                // Fixed cooldown - starts after sparkle becomes visible and fades
+                // Epoch time never wraps - simple subtraction works
+                double timeSinceLastVisible = currentTimeEpoch - previousState.LastSpawnTimeEpoch;
+                // Must wait for fade duration + cooldown after last visible time
+                bool cooldownExpired = timeSinceLastVisible >= (SparkleFadeDurationSeconds + SparkleSpawnCooldownSeconds);
+                
+                // Update state (always track current intensity)
+                // Track the time when sparkle becomes VISIBLE (after pre-activate delay)
+                double becomeVisibleTimeEpoch = currentTimeEpoch + preActivateDelaySeconds;
+                sparklePointStates[sparklePointKey] = new SparklePointState
                 {
-                    Color sparkleColor = GetColorForOre(dustType) * (specularIntensity * 3f + 0.5f);
-                    float sparkleScale = 0.5f + specularIntensity * 0.5f; // Larger base scale
+                    LastSpecularIntensity = specularIntensity,
+                    LastSpawnTimeEpoch = (justCrossedThreshold && cooldownExpired)
+                        ? becomeVisibleTimeEpoch  // Track when it will become visible for cooldown
+                        : previousState.LastSpawnTimeEpoch
+                };
+                
+                // Only spawn if threshold just crossed AND cooldown expired
+                if (justCrossedThreshold && cooldownExpired)
+                {
+                    // Fixed color and scale - NOT affected by specular intensity
+                    // Specular only determines WHETHER to trigger, not appearance
+                    Color sparkleColor = GetColorForOre(dustType);
+                    const float FixedSparkleScale = 1.0f; // Will be multiplied by 0.3f in draw
                     
                     activeSparkles.Add(new ActiveSparkle
                     {
                         WorldPosition = sparkleWorldPosition,
-                        SpawnTimeSeconds = currentTimeSeconds,
+                        QueuedTimeEpoch = currentTimeEpoch,
+                        PreActivateDelaySeconds = preActivateDelaySeconds,
                         SparkleColor = sparkleColor,
-                        InitialScale = sparkleScale
+                        InitialScale = FixedSparkleScale
                     });
                 }
             }
@@ -269,23 +354,55 @@ namespace TerrariaSurvivalMod.Players
         /// </summary>
         public static void DrawSparkles(SpriteBatch spriteBatch)
         {
-            if (activeSparkles.Count == 0) return;
-            
-            double currentTimeSeconds = DateTime.Now.TimeOfDay.TotalSeconds;
+            double currentTimeEpoch = GetEpochTimeSeconds();
             
             // Use vanilla star texture (small white star shape)
             Texture2D sparkleTexture = TextureAssets.Star[0].Value;
             Vector2 textureOrigin = new Vector2(sparkleTexture.Width / 2f, sparkleTexture.Height / 2f);
             
+            // DEBUG: Draw persistent dim red sparkles at ALL known sparkle locations
+            if (DebugShowSparkleLocations)
+            {
+                foreach (Vector2 debugPos in debugSparklePositions)
+                {
+                    Vector2 debugScreenPos = debugPos - Main.screenPosition;
+                    
+                    // Only draw if on screen
+                    if (debugScreenPos.X > -50 && debugScreenPos.X < Main.screenWidth + 50 &&
+                        debugScreenPos.Y > -50 && debugScreenPos.Y < Main.screenHeight + 50)
+                    {
+                        spriteBatch.Draw(
+                            sparkleTexture,
+                            debugScreenPos,
+                            null,
+                            new Color(255, 50, 50, 200), // BRIGHT red, more visible
+                            0f,
+                            textureOrigin,
+                            0.25f, // Larger scale for visibility
+                            SpriteEffects.None,
+                            0f
+                        );
+                    }
+                }
+            }
+            
+            // Draw actual sparkles with fade
+            if (activeSparkles.Count == 0) return;
+            
             foreach (ActiveSparkle sparkle in activeSparkles)
             {
-                double ageSeconds = currentTimeSeconds - sparkle.SpawnTimeSeconds;
-                if (ageSeconds < 0) ageSeconds += 86400.0; // Midnight wraparound
+                double visibleTimeEpoch = sparkle.BecomeVisibleTimeEpoch;
+                double ageAfterVisible = currentTimeEpoch - visibleTimeEpoch;
                 
-                if (ageSeconds > SparkleFadeDurationSeconds) continue;
+                // Epoch time never wraps - no wraparound handling needed!
+                // Skip if sparkle hasn't become visible yet (still in pre-activate delay)
+                if (ageAfterVisible < 0) continue;
                 
-                // Calculate fade: 1.0 at spawn, 0.0 at end
-                float fadeProgress = (float)(ageSeconds / SparkleFadeDurationSeconds);
+                // Skip if fully faded
+                if (ageAfterVisible > SparkleFadeDurationSeconds) continue;
+                
+                // Calculate fade: 1.0 when visible, 0.0 at end
+                float fadeProgress = (float)(ageAfterVisible / SparkleFadeDurationSeconds);
                 float fadeMultiplier = 1f - fadeProgress;
                 
                 // Apply fade to color and scale
@@ -308,6 +425,14 @@ namespace TerrariaSurvivalMod.Players
                     0f
                 );
             }
+        }
+        
+        /// <summary>
+        /// Clear debug sparkle positions (call when player moves far or changes world)
+        /// </summary>
+        public static void ClearDebugSparklePositions()
+        {
+            debugSparklePositions.Clear();
         }
         
         /// <summary>
@@ -413,13 +538,17 @@ namespace TerrariaSurvivalMod.Players
         /// <summary>
         /// Get a deterministic primary surface normal for sparkle 0.
         /// The second sparkle will use a perpendicular vector.
-        /// Normal is a unit vector pointing in a fixed direction for this tile.
+        /// Normal is a unit vector pointing in a random but fixed direction for this tile.
         /// </summary>
         private static Vector2 GetDeterministicPrimarySurfaceNormal(int tileHash)
         {
-            int seed = tileHash * 54321;
+            // Use proper seeded random for uniform 0-1 distribution
+            Random seededRandom = new Random(tileHash);
+            float randomFloat = (float)seededRandom.NextDouble();
+            
             // Generate angle in radians (0 to 2π)
-            float normalAngle = (seed & 0x3FF) / 163f; // ~0 to 6.28
+            float normalAngle = MathHelper.TwoPi * randomFloat;
+            
             return new Vector2(
                 (float)Math.Cos(normalAngle),
                 (float)Math.Sin(normalAngle)
@@ -515,10 +644,10 @@ namespace TerrariaSurvivalMod.Players
             if (Main.rand.NextBool(3)) // ~20 particles per second
             {
                 float angle = Main.rand.NextFloat() * MathHelper.TwoPi;
-                float radius = 30f;
+                float dustRadius = 15f; // Match the visual shield circle radius
                 Vector2 dustPosition = Player.Center + new Vector2(
-                    (float)Math.Cos(angle) * radius,
-                    (float)Math.Sin(angle) * radius
+                    (float)Math.Cos(angle) * dustRadius,
+                    (float)Math.Sin(angle) * dustRadius
                 );
 
                 Dust shieldDust = Dust.NewDustPerfect(
@@ -563,8 +692,9 @@ namespace TerrariaSurvivalMod.Players
             // Use vanilla white pixel texture for simple circle (prototype)
             Texture2D pixelTexture = TextureAssets.MagicPixel.Value;
 
-            Vector2 playerScreenPos = player.Center - Main.screenPosition;
-            float circleRadius = 40f;
+            // Apply zoom to screen position for proper scaling
+            Vector2 playerScreenPos = (player.Center - Main.screenPosition) * Main.GameViewMatrix.Zoom;
+            float circleRadius = 20f; // Half size from original 40f
             int segments = 32;
 
             // Color based on shield tier (cyan for regular, gold for gold/platinum)
@@ -609,8 +739,9 @@ namespace TerrariaSurvivalMod.Players
         /// </summary>
         private static void DrawShieldHPIndicator(PlayerDrawSet drawInfo, Player player, int shieldHP)
         {
-            Vector2 playerScreenPos = player.Center - Main.screenPosition;
-            Vector2 indicatorPos = playerScreenPos + new Vector2(30f, -30f); // Top-right of player
+            // Apply zoom to screen position for proper scaling
+            Vector2 playerScreenPos = (player.Center - Main.screenPosition) * Main.GameViewMatrix.Zoom;
+            Vector2 indicatorPos = playerScreenPos + new Vector2(25f, -25f); // Top-right of player (adjusted for smaller circle)
 
             // Draw shield HP as text
             string shieldText = $"🛡{shieldHP}";

@@ -1,1 +1,20 @@
+Mods: {
+	TerrariaSurvivalMod: {
+		Buffs: {
+			ShinyBuff: {
+				DisplayName: Shiny
+				Description: Nearby ores and gems sparkle
+			}
+		}
 
+		ArmorBonus: {
+			# Chestplate-only bonuses (any piece works, not set bonus)
+			ChestplateShieldTinCopper: "[c/00BFFF:Chestplate Bonus:] Emergency Shield when hit (5s, 60s cooldown)"
+			ChestplateCritIronLead: "[c/00BFFF:Chestplate Bonus:] +10% critical strike chance"
+			ChestplateSpeedSilverTungsten: "[c/00BFFF:Chestplate Bonus:] +15% movement speed"
+			ChestplateShieldGoldPlatinum: "[c/FFD700:Chestplate Bonus:] Emergency Shield when hit (10s, 120s cooldown, purges debuffs)"
+			# Full set bonus (all 3 pieces from same tier)
+			FullSetShinyBuff: "[c/ADFF2F:Full Set Bonus:] Shiny - nearby ores and gems sparkle"
+		}
+	}
+}

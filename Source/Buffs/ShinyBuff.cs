@@ -10,8 +10,8 @@ namespace TerrariaSurvivalMod.Buffs
     /// </summary>
     public class ShinyBuff : ModBuff
     {
-        // Use vanilla Spelunker buff icon (we can create a custom icon later)
-        public override string Texture => "Terraria/Images/Buff_" + BuffID.Spelunker;
+        // Use vanilla Buff_72 icon (shiny sparkle effect)
+        public override string Texture => "Terraria/Images/Buff_72";
 
         public override void SetStaticDefaults()
         {
