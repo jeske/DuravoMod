@@ -1,0 +1,19 @@
+# Environment configuration (machine-specific paths)
+.env
+
+# Build outputs
+bin/
+obj/
+*.tmod
+
+# IDE
+.vs/
+*.user
+*.suo
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# tModLoader generated files
+*.csproj
