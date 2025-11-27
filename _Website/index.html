@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duravo Mod - Terraria Survival Overhaul</title>
+    <style>
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-section: #111111;
+            --accent: #e94560;
+            --accent-light: #ff6b6b;
+            --text: #f5f5f7;
+            --text-muted: #86868b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            line-height: 1.5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        /* Header */
+        header {
+            text-align: center;
+            padding: 5rem 0 3rem;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.75rem;
+            background: linear-gradient(135deg, var(--accent-light), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .tagline {
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+        
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.75rem;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            border-radius: 980px;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--accent-light);
+            transform: scale(1.02);
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: var(--text);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+        }
+        
+        /* Snippets Section */
+        .snippets {
+            padding: 3rem 0 4rem;
+        }
+        
+        .snippets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .snippet {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        
+        .snippet strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+        
+        .snippet em {
+            color: var(--accent-light);
+            font-style: normal;
+        }
+        
+        /* Feature Showcase - Apple Style */
+        .feature-showcase {
+            padding: 2rem 0;
+        }
+        
+        .feature {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            padding: 6rem 0;
+        }
+        
+        .feature:nth-child(even) .feature-content {
+            order: 2;
+        }
+        
+        .feature:nth-child(even) .feature-image {
+            order: 1;
+        }
+        
+        .feature-content h3 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+        
+        .feature-content p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+        
+        .feature-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .feature-image img,
+        .feature-image svg {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        
+        .placeholder-image {
+            width: 100%;
+            aspect-ratio: 16/10;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        /* Goals Section */
+        .goals {
+            background: var(--bg-section);
+            padding: 6rem 0;
+            text-align: center;
+        }
+        
+        .goals h2 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 3rem;
+        }
+        
+        .goals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .goal-item {
+            padding: 1.5rem;
+        }
+        
+        .goal-item h4 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .goal-item p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 4rem 0;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+        
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .tagline {
+                font-size: 1.25rem;
+            }
+            
+            .feature {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 4rem 0;
+            }
+            
+            .feature:nth-child(even) .feature-content,
+            .feature:nth-child(even) .feature-image {
+                order: unset;
+            }
+            
+            .feature-content h3 {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Duravo Mod</h1>
+            <p class="tagline">For players who want their victories to feel truly earned</p>
+            
+            <div class="button-group">
+                <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=YOUR_WORKSHOP_ID" class="btn btn-primary">
+                    Steam Workshop
+                </a>
+                <a href="https://github.com/YOUR_USERNAME/DuravoMod" class="btn btn-secondary">
+                    GitHub
+                </a>
+            </div>
+        </header>
+    </div>
+    
+    <div class="container">
+        <section class="snippets">
+            <div class="snippets-grid">
+                <p class="snippet">Improved quality of life, such as <strong>smart minion pathfinding</strong> and <strong>persistent location</strong> when you exit and enter the game.</p>
+                <p class="snippet">Armor rework with an <em>ore finding visual</em>, and choices between <em>shields</em>, <em>speed boosts</em>, and <em>damage</em>.</p>
+                <p class="snippet"><strong>Biome-specific housing items</strong> made essential instead of just cosmetic.</p>
+                <p class="snippet">Travel reimagined: <strong>pylons are the only fast travel</strong>, making your journey through the world feel connected.</p>
+                <p class="snippet">Smarter enemies that can <em>navigate terrain</em> and <em>adapt to obstacles</em> instead of getting stuck.</p>
+                <p class="snippet">Exploration feels <strong>more rewarding</strong> with meaningful progression tied to the world around you.</p>
+            </div>
+        </section>
+    </div>
+    
+    <div class="container feature-showcase">
+        <!-- Feature 1: Smart Minion Pathfinding -->
+        <article class="feature">
+            <div class="feature-content">
+                <h3>Smart Minion Pathfinding</h3>
+                <p>Your minions now intelligently navigate around terrain. When blocked by obstacles, they find paths around them instead of getting stuck. When truly isolated, they phase back to you to prevent cheese strategies.</p>
+            </div>
+            <div class="feature-image">
+                <img src="images/screenshots/MinionPathingExample1_withPath.svg" alt="Minion pathfinding showing A* path around obstacles">
+            </div>
+        </article>
+        
+        <!-- Feature 2: Persistent Position -->
+        <article class="feature">
+            <div class="feature-content">
+                <h3>Persistent Position</h3>
+                <p>Your character stays exactly where you left them when you log out. No more spawning at the world origin. The only fast travel is pylons — making your journey through Terraria feel truly connected.</p>
+            </div>
+            <div class="feature-image">
+                <div class="placeholder-image">
+                    Screenshot: Player logging back in at exact position in underground jungle, with spawn immunity shield visible
+                </div>
+            </div>
+        </article>
+        
+        <!-- Feature 3: Armor Rebalance -->
+        <article class="feature">
+            <div class="feature-content">
+                <h3>Emergency Shield System</h3>
+                <p>Early armor now provides reactive shields that absorb incoming damage. Copper/Tin gives a flat 30 HP shield, while Gold/Platinum provides 15% of your max HP and purges debuffs. Visual feedback helps new players learn combat timing.</p>
+            </div>
+            <div class="feature-image">
+                <div class="placeholder-image">
+                    Screenshot: Player being hit with cyan shield particles absorbing damage, showing "(blocked)" combat text
+                </div>
+            </div>
+        </article>
+        
+        <!-- Feature 4: Shiny Set Bonus -->
+        <article class="feature">
+            <div class="feature-content">
+                <h3>Shiny Set Bonus</h3>
+                <p>Complete armor sets now grant "Shiny" — nearby ores and gems sparkle with particle effects, making them easier to spot while mining. Breaking your set for better pieces no longer means losing critical combat bonuses.</p>
+            </div>
+            <div class="feature-image">
+                <div class="placeholder-image">
+                    Screenshot: Underground scene with sparkling ore veins highlighted by the Shiny buff particles
+                </div>
+            </div>
+        </article>
+    </div>
+    
+    <section class="goals">
+        <div class="container">
+            <h2>Design Philosophy</h2>
+            <div class="goals-grid">
+                <div class="goal-item">
+                    <h4>Deeper Engagement</h4>
+                    <p>Connect with Terraria's rich world through meaningful exploration</p>
+                </div>
+                <div class="goal-item">
+                    <h4>Start Anywhere</h4>
+                    <p>More biomes become viable starting locations</p>
+                </div>
+                <div class="goal-item">
+                    <h4>Risk vs Reward</h4>
+                    <p>Satisfying tension that makes victories feel earned</p>
+                </div>
+                <div class="goal-item">
+                    <h4>Armor Progression</h4>
+                    <p>Every upgrade matters, every piece has purpose</p>
+                </div>
+                <div class="goal-item">
+                    <h4>Slower Zoom-Zoom</h4>
+                    <p>Increase investment to reach late-game mobility</p>
+                </div>
+                <div class="goal-item">
+                    <h4>Biome Crafting</h4>
+                    <p>Give purpose to biome-specific base items</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <p>Duravo Mod by KuroParkCity — <a href="LICENSE.txt">MIT License</a></p>
+            <p>Requires tModLoader for Terraria</p>
+        </div>
+    </footer>
+</body>
+</html>
