@@ -14,126 +14,34 @@ NOTE: Reddit thread at: https://www.reddit.com/r/Terraria/comments/1p6n7jd/inter
 
 ---
 
+## Implementation Order
 
+**Foundational or Easy (do first):**
 
+[x] Persistent Player Position - without this nothing else matters
+[x] Minion Tethering - no AFK murder rooms
+[ ] Enemy Smart Jump Height
 
-## Travel Rework (Priority: HIGH)
+**Core anti-cheese**
 
-### Problem
+[ ] LOS/Path Only Interactions - remove cheese looting, etc
+[ ] Aggro Burrowing - enemies dig to reach you
+[ ] Depth-Scaled Difficulty - makes the world dangerous
 
-Mirror and Recall Potions provide instant escape from anywhere. Combined with spawn-on-logout, there's zero commitment to exploration. Every expedition is risk-free.
+**Biome Survival Lean-in**
 
-### Solution
+[ ] Biome Crafting Rework - require biome specific buildings/machines, bootstrap in every biome
+[ ] Travel Rework - delete recall, delete mirror, consider craftable pylons
 
-Delete recall items. Replace with earned portal infrastructure.
+**Cleanup:**
 
-### Changes
+[ ] Enemy Rebalancing - make surface survivable without cheese
 
-**Removed from game:**
+**Maybe:**
 
-* Magic Mirror
-* Ice Mirror
-* Cell Phone (recall function)
-* Recall Potions
-* Remove from loot tables, crafting, NPC shops
-
-**Softcore exception:**
-Softcore players get a UI "Return Home" button. They can suicide for free anyway, so recall is just convenience. Let them have it - they chose easy mode.
-
-## Enemy Rebalancing (Priority: HIGH)
-
-### Problem
-
-Expert mode enemies are balanced around the assumption that players will cheese. When cheese is removed, Expert damage may be too punishing for legitimate play - especially on the surface.
-
-Current Expert mode + no cheese =  **impossible** , not  **challenging** .
-
-### Observation
-
-When enemies hit hard and cheese exists → players cheese more
-When enemies hit hard and cheese is removed → players die immediately
-
-The mod removes cheese. Enemy damage must be rebalanced to match.
-
-### Approach
-
-**Surface should be accessible.** New players need to learn the game. First few nights shouldn't be instant death.
-
-**Depth scaling handles difficulty.** We already have depth-scaled damage. Surface can be easier because depth makes it harder naturally.
-
-### Proposed Changes
-
-| Layer           | Vanilla Expert | With Mod             |
-| --------------- | -------------- | -------------------- |
-| Surface (day)   | ~1.0x          | 0.6x                 |
-| Surface (night) | ~1.0x          | 0.8x                 |
-| Underground     | ~1.0x          | 1.0x (unchanged)     |
-| Cavern          | ~1.0x          | 1.0x + depth scaling |
-| Hell            | ~1.0x          | 1.0x + depth scaling |
-
-The depth scaling system (Feature: Depth-Scaled Difficulty) adds multipliers as you go deeper. Surface gets a REDUCTION to compensate for cheese removal.
-
-### Why This Works
-
-**Vanilla Expert balance assumption:**
-
-* Player can wall off
-* Player can tunnel safely
-* Player can recall instantly
-* Player can AFK with minions
-* Therefore: enemies must hit HARD to matter at all
-
-**Mod balance assumption:**
-
-* Player must fight
-* Player is exposed
-* Player can't escape easily
-* Therefore: enemies can hit MODERATELY and still matter
-
-### Implementation
-
-```csharp
-public override void ModifyHitPlayer(NPC npc, Player target, ref Player.HurtModifiers modifiers) {
-    float depth = target.position.Y / (Main.maxTilesY * 16f);
-    float surfaceThreshold = (float)Main.worldSurface / Main.maxTilesY;
-  
-    if (depth < surfaceThreshold) {
-        // Surface - reduce damage
-        bool isDay = Main.dayTime;
-        float surfaceMultiplier = isDay ? 0.6f : 0.8f;
-        modifiers.FinalDamage *= surfaceMultiplier;
-    } else {
-        // Underground and below - apply depth scaling
-        float depthBelowSurface = (depth - surfaceThreshold) / (1f - surfaceThreshold);
-        float depthMultiplier = 1f + (depthBelowSurface * 1.5f);
-        modifiers.FinalDamage *= depthMultiplier;
-    }
-}
-```
-
-### Tuning Notes
-
-These numbers are starting points. Playtesting required.
-
-Key questions:
-
-* Can a new player survive first night with copper armor?
-* Is Underground the right difficulty for "you should have some gear now"?
-* Does Hell feel appropriately deadly?
-
-### Interaction with Difficulty Modes
-
-| Mode    | Surface Mult | Depth Scaling |
-| ------- | ------------ | ------------- |
-| Classic | 0.7x         | 1.0x - 2.0x   |
-| Expert  | 0.6x         | 1.0x - 2.5x   |
-| Master  | 0.5x         | 1.0x - 3.0x   |
-
-Master gets the BIGGEST surface reduction because Master enemies hit absurdly hard. But also the steepest depth scaling.
+[ ] Combat Building Lockout (maybe)? - can't wall off mid-fight (lowest priority, may not need)
 
 ---
-
-
 
 ## Open Questions
 
@@ -148,30 +56,6 @@ Master gets the BIGGEST surface reduction because Master enemies hit absurdly ha
 9. **Audio mixing** : How many simultaneous digging sounds before it's cacophony?
 10. **Modded enemies** : Default behavior for unrecognized enemy types? (Probably: can dig everything except native biome blocks)
 11. **Softcore recall button** : Where in UI? Always visible or only when safe?
-
----
-
-## Implementation Order
-
-**Foundational (do first):**
-
-* Persistent Player Position - without this nothing else matters
-* LOS Interactions - affects all other features
-
-**Core anti-cheese (do together):**
-
-* Depth-Scaled Difficulty - makes the world dangerous
-* Aggro Burrowing - enemies dig to reach you
-* Enemy Rebalancing - make surface survivable without cheese
-
-**Travel overhaul:**
-
-* Travel Rework - delete recall, add portal stones
-
-**Cleanup:**
-
-* Minion Tethering - no AFK murder rooms
-* Combat Block Lock - can't wall off mid-fight (lowest priority, may not need)
 
 ---
 

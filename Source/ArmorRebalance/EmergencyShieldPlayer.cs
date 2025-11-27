@@ -19,8 +19,8 @@ namespace TerrariaSurvivalMod.ArmorRebalance
         // ║                        TUNABLE CONSTANTS                           ║
         // ╚════════════════════════════════════════════════════════════════════╝
 
-        /// <summary>DEBUG: Set to true for verbose shield activation logging</summary>
-        private const bool DebugShieldActivation = false;
+        /// <summary>DEBUG: Reads from mod config - enables verbose shield activation logging</summary>
+        private static bool DebugShieldActivation => ModContent.GetInstance<TerrariaSurvivalModConfig>()?.Debug?.DebugArmorShields ?? false;
 
         /// <summary>Cooldown in seconds for Copper/Tin tier shield</summary>
         private const int CopperTinShieldCooldownSeconds = 60;

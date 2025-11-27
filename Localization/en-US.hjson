@@ -26,17 +26,22 @@ Mods: {
 
 			DebugSettings: {
 				DisplayName: Debug Settings
-
-				EnableDebugMessages: {
-					Label: Debug Messages
-					Tooltip: Show detailed debug messages in chat (immunity status, damage blocking, etc.)
+	
+				DebugPlayerPersistence: {
+					Label: Debug Player Persistence
+					Tooltip: Show debug messages for player position save/restore and spawn immunity (damage blocking, immunity countdown, etc.)
 				}
-
+	
 				DebugMinionPathfinding: {
 					Label: Debug Minion Pathfinding
 					Tooltip: Show debug information about minion pathfinding decisions (blocked detection, A* path, phasing, etc.)
 				}
-
+	
+				DebugArmorShields: {
+					Label: Debug Armor Shields
+					Tooltip: Show debug messages for emergency shield activation, damage absorption, cooldowns, and shield breaks.
+				}
+	
 				Tooltip: ""
 			}
 		}

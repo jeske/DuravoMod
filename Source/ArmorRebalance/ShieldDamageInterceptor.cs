@@ -10,8 +10,8 @@ namespace TerrariaSurvivalMod.ArmorRebalance
     /// </summary>
     public class ShieldDamageNPCInterceptor : GlobalNPC
     {
-        /// <summary>DEBUG: Set to true for verbose shield activation logging</summary>
-        private const bool DebugShieldActivation = false;
+        /// <summary>DEBUG: Reads from mod config - enables verbose shield activation logging</summary>
+        private static bool DebugShieldActivation => ModContent.GetInstance<TerrariaSurvivalModConfig>()?.Debug?.DebugArmorShields ?? false;
 
         /// <summary>
         /// Called when an NPC is about to hit a player. This is where we intercept and reduce damage.
@@ -39,8 +39,8 @@ namespace TerrariaSurvivalMod.ArmorRebalance
     /// </summary>
     public class ShieldDamageProjectileInterceptor : GlobalProjectile
     {
-        /// <summary>DEBUG: Set to true for verbose shield activation logging</summary>
-        private const bool DebugShieldActivation = false;
+        /// <summary>DEBUG: Reads from mod config - enables verbose shield activation logging</summary>
+        private static bool DebugShieldActivation => ModContent.GetInstance<TerrariaSurvivalModConfig>()?.Debug?.DebugArmorShields ?? false;
 
         /// <summary>
         /// Called when a hostile projectile is about to hit a player. This is where we intercept projectile damage.

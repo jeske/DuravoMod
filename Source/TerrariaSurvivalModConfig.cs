@@ -36,9 +36,12 @@ namespace TerrariaSurvivalMod
     public class DebugSettings
     {
         [DefaultValue(false)]
-        public bool EnableDebugMessages { get; set; }
+        public bool DebugPlayerPersistence { get; set; }
 
         [DefaultValue(false)]
         public bool DebugMinionPathfinding { get; set; }
+
+        [DefaultValue(false)]
+        public bool DebugArmorShields { get; set; }
     }
 }
