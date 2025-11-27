@@ -1,4 +1,10 @@
-## Travel Rework (Priority: HIGH)
+> **Status: 📋 INCOMPLETE SPEC - BRAINSTORMING**
+>
+> Design phase. No implementation yet. This document only covers removals - needs Portal Stone system design.
+
+---
+
+## Travel Rework
 
 ### Problem
 

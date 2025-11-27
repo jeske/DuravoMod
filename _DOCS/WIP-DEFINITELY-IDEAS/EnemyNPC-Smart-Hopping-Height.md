@@ -1,4 +1,12 @@
-## Smart Hopping (Priority: HIGH)
+> **Status: 🔶 WORK IN PROGRESS**
+>
+> Implementation started: [`Source/EnemySmartHopping/SmartHopperNPC.cs`](../../Source/EnemySmartHopping/SmartHopperNPC.cs)
+>
+> Needs testing and tuning.
+
+---
+
+## Smart Hopping
 
 ### Problem
 

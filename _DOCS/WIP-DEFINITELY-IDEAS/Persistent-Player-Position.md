@@ -1,4 +1,10 @@
-## Persistent Player Position (Priority: HIGH)
+> **Status: ✅ IMPLEMENTED**
+>
+> Implementation: [`Source/PersistentPosition/PersistentPositionPlayer.cs`](../../Source/PersistentPosition/PersistentPositionPlayer.cs)
+
+---
+
+## Persistent Player Position
 
 ### Problem
 

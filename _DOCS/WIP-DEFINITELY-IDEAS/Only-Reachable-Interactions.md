@@ -1,4 +1,10 @@
-## Only "Reachable" Interactions (Priority: HIGH)
+> **Status: 📋 INCOMPLETE SPEC - BRAINSTORMING**
+>
+> Design phase. No implementation yet.
+
+---
+
+## Only "Reachable" Interactions
 
 ### Problem
 

@@ -1,4 +1,14 @@
-## Minion Tethering and Pathfinding (Priority: HIGH)
+> **Status: ✅ IMPLEMENTED**
+>
+> Implementation: [`Source/TetheredMinions/`](../../Source/TetheredMinions/)
+> - `TetheredMinionProjectile.cs` - Main tethering logic
+> - `TilePathfinder.cs` - A* pathfinding for player following
+> - `MinionStateExtractor.cs` - Minion state utilities
+> - `MinionLeashData.cs` - Leash data structures
+
+---
+
+## Minion Tethering and Pathfinding
 
 ### Problem
 

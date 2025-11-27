@@ -1,3 +1,22 @@
+> **Status: 🔶 PARTIAL IMPLEMENTATION**
+>
+> Implementation: [`Source/ArmorRebalance/`](../../Source/ArmorRebalance/)
+>
+> **Completed:**
+> - [x] Defense redistribution into pieces (no more set bonus defense)
+> - [x] Emergency Shield (Copper/Tin, Gold/Platinum chestplates)
+> - [x] Shiny set bonus (ore/gem sparkle effect)
+> - [x] Shield visual layer
+> - [x] Fragile debuff system
+>
+> **Not Yet Implemented:**
+> - [ ] Iron/Lead +10% crit chance on chestplate
+> - [ ] Silver/Tungsten +15% move speed on chestplate
+> - [ ] Early flails (Lead Mace, Iron Mace)
+> - [ ] Enemy rebalancing tuning
+
+---
+
 # Item & Enemy Rebalance
 
 ## Philosophy

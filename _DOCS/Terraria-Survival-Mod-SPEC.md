@@ -8,7 +8,7 @@ A tModLoader mod to slow the game pace and expand the depth by removing exploits
 
 Terraria presents platformer-combat aesthetics but gives players tools that make engagement optional. This mod surgically removes the worst offenders while preserving legitimate building and crafting QoL.
 
-Currently a "Moon Lord" speedrun can be done in 50-70 minutes by an expert. WHen we are done, the minimum viable time for this should be closer to 10-20 hours, with a typical ru
+Currently a "Moon Lord" speedrun can be done in 50-70 minutes by an expert. When we are done, the minimum viable time for this should be closer to 10-20 hours, with a typical run taking 30-40 hours.
 
 NOTE: Reddit thread at: https://www.reddit.com/r/Terraria/comments/1p6n7jd/interest_in_survival_overhaul_mod/
 
@@ -16,30 +16,36 @@ NOTE: Reddit thread at: https://www.reddit.com/r/Terraria/comments/1p6n7jd/inter
 
 ## Implementation Order
 
-**Foundational or Easy (do first):**
+**Foundational (do first):**
 
-[x] Persistent Player Position - without this nothing else matters
-[x] Minion Tethering - no AFK murder rooms
-[ ] Enemy Smart Jump Height
+- [x] Persistent Player Position - without this nothing else matters
+- [x] Minion Tethering - no AFK murder rooms, A* pathfinding for player following
+- [x] Armor Redesign (partial):
+  - [x] Defense redistribution (set bonus defense baked into pieces)
+  - [x] Emergency Shield (Copper/Tin low-tier, Gold/Platinum high-tier)
+  - [x] Shiny set bonus (ore/gem sparkle effect)
+  - [ ] Iron/Lead +10% crit chance
+  - [ ] Silver/Tungsten +15% move speed
+- [ ] Enemy Smart Jump Height (WIP - code exists, needs testing)
 
-**Core anti-cheese**
+**Core Anti-Cheese:**
 
-[ ] LOS/Path Only Interactions - remove cheese looting, etc
-[ ] Aggro Burrowing - enemies dig to reach you
-[ ] Depth-Scaled Difficulty - makes the world dangerous
+- [ ] LOS/Path Only Interactions - remove cheese looting, etc
+- [ ] Aggro Burrowing - enemies dig to reach you
+- [ ] Depth-Scaled Difficulty - makes the world dangerous
 
-**Biome Survival Lean-in**
+**Biome Survival Lean-in:**
 
-[ ] Biome Crafting Rework - require biome specific buildings/machines, bootstrap in every biome
-[ ] Travel Rework - delete recall, delete mirror, consider craftable pylons
+- [ ] Biome Crafting Rework - require biome specific buildings/machines, bootstrap in every biome
+- [ ] Travel Rework - delete recall, delete mirror, consider craftable pylons
 
 **Cleanup:**
 
-[ ] Enemy Rebalancing - make surface survivable without cheese
+- [ ] Enemy Rebalancing - make surface survivable without cheese
 
 **Maybe:**
 
-[ ] Combat Building Lockout (maybe)? - can't wall off mid-fight (lowest priority, may not need)
+- [ ] Combat Building Lockout? - can't wall off mid-fight (lowest priority, may not need)
 
 ---
 

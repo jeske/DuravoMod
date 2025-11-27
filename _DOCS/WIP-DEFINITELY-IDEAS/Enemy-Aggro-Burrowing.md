@@ -1,4 +1,10 @@
-## Aggro Burrowing (Priority: HIGH)
+> **Status: 📋 INCOMPLETE SPEC - BRAINSTORMING**
+>
+> Design phase. No implementation yet.
+
+---
+
+## Aggro Burrowing
 
 ### Problem
 

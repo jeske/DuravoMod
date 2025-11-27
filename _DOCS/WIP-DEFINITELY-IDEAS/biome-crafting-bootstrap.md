@@ -1,3 +1,9 @@
+> **Status: 📋 INCOMPLETE SPEC - BRAINSTORMING**
+>
+> Design phase. No implementation yet.
+
+---
+
 # Biome Bootstrap & Emergency Beds
 
 ## Core Concept

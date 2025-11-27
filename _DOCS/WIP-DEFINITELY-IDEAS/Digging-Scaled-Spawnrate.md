@@ -1,4 +1,10 @@
-## Digging-Scaled Spawn Rate (aka Difficulty) (Priority: HIGH)
+> **Status: 📋 INCOMPLETE SPEC - BRAINSTORMING**
+>
+> Design phase. No implementation yet.
+
+---
+
+## Digging-Scaled Spawn Rate (aka Difficulty)
 
 ### Problem
 

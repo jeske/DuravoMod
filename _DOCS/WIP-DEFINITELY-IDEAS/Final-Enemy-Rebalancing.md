@@ -1,6 +1,12 @@
 
 
-## Enemy Rebalancing (Priority: HIGH)
+> **Status: 📋 INCOMPLETE SPEC - BRAINSTORMING**
+>
+> Design phase. No implementation yet.
+
+---
+
+## Enemy Rebalancing
 
 ### Problem
 
