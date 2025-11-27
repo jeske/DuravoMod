@@ -1,5 +1,7 @@
 # Terraria Survival Overhaul
 
+by David W. Jeske
+
 A [tModLoader](https://store.steampowered.com/app/1281930/tModLoader/) mod for [Terraria](https://store.steampowered.com/app/105600/Terraria/) that enhances the effort-and-reward survival RPG experience. Vanilla Terraria gives players many tools that make engagement optional. This mod surgically encourages enemy interaction, while improving engagement with building and crafting systems through QoL and reworking.
 
 For players who want their victories to feel truly earned.
