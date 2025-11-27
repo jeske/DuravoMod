@@ -15,8 +15,11 @@ namespace TerrariaSurvivalMod.TetheredMinions
         // ║                        TUNABLE CONSTANTS                           ║
         // ╚════════════════════════════════════════════════════════════════════╝
 
+        /// <summary>DEBUG: Set to true for verbose pathfinding logging</summary>
+        private const bool DebugPathfinding = true;
+
         /// <summary>Default maximum search radius in tiles (bounded by minion tether distance)</summary>
-        public const int DefaultMaxSearchRadiusTiles = 35;
+        public const int DefaultMaxSearchRadiusTiles = 100;
 
         /// <summary>Maximum nodes to explore before giving up (prevents runaway on complex maps)</summary>
         private const int MaxNodesExplored = 1500;
@@ -44,13 +47,19 @@ namespace TerrariaSurvivalMod.TetheredMinions
 
         private struct PathNode : IComparable<PathNode>
         {
-            public Point TilePosition;
-            public float GCost;  // Cost from start
             public float FCost;  // GCost + heuristic to goal
-
+            public float GCost;  // Cost from start            
+            public Point TilePosition;
             public int CompareTo(PathNode other)
             {
-                return FCost.CompareTo(other.FCost);
+                int cmp = FCost.CompareTo(other.FCost);
+                if (cmp != 0) return cmp;
+
+                // Tiebreaker by position to ensure unique ordering in SortedSet
+                cmp = TilePosition.X.CompareTo(other.TilePosition.X);
+                if (cmp != 0) return cmp;
+
+                return TilePosition.Y.CompareTo(other.TilePosition.Y);
             }
         }
 
@@ -125,7 +134,7 @@ namespace TerrariaSurvivalMod.TetheredMinions
             int clearanceHeight = CalculateTileClearance(entityHeightPixels);
 
             List<Point>? tilePath = FindPathBetweenTiles(startTile, goalTile, clearanceWidth, clearanceHeight, maxPathLengthTiles);
-            
+
             if (tilePath == null) {
                 return null;
             }
@@ -170,10 +179,11 @@ namespace TerrariaSurvivalMod.TetheredMinions
             _currentClearanceWidthTiles = Math.Max(1, clearanceWidthTiles);
             _currentClearanceHeightTiles = Math.Max(1, clearanceHeightTiles);
 
-            // Quick check: if start or goal is blocked, no path
-            if (!IsTilePassable(startTile.X, startTile.Y) || !IsTilePassable(goalTile.X, goalTile.Y)) {
-                return null;
-            }
+            // NOTE: We do NOT check if start OR goal tiles are passable!
+            // - Start: The entity is ALREADY standing there, so by definition it must be valid.
+            // - Goal: The player/target is standing there, so by definition it must be reachable.
+            // Checking either would fail when entity is right next to a wall due to clearance overlap.
+            // The A* search will naturally find a valid path if one exists.
 
             // Quick check: same tile
             if (startTile == goalTile) {
@@ -183,25 +193,17 @@ namespace TerrariaSurvivalMod.TetheredMinions
             // Quick check: if distance > max radius, definitely no path within bounds
             float tileDistance = Vector2.Distance(startTile.ToVector2(), goalTile.ToVector2());
             if (tileDistance > maxSearchRadiusTiles) {
+                if (DebugPathfinding) {
+                    Terraria.Main.NewText($"[A*] FAILED: Distance {tileDistance:F1} tiles > max {maxSearchRadiusTiles} tiles", Microsoft.Xna.Framework.Color.Red);
+                }
                 return null;
             }
 
-            // A* search
-            var openSet = new SortedSet<PathNode>(Comparer<PathNode>.Create((a, b) => {
-                int cmp = a.FCost.CompareTo(b.FCost);
-                if (cmp == 0) {
-                    // Tiebreaker to prevent SortedSet from treating equal FCost as duplicates
-                    cmp = a.TilePosition.X.CompareTo(b.TilePosition.X);
-                    if (cmp == 0) {
-                        cmp = a.TilePosition.Y.CompareTo(b.TilePosition.Y);
-                    }
-                }
-                return cmp;
-            }));
+            // A* search - SortedSet uses PathNode.CompareTo for ordering
+            var openSet = new SortedSet<PathNode>();
 
             var gCosts = new Dictionary<Point, float>();
             var cameFrom = new Dictionary<Point, Point>(); // Track path for reconstruction
-            var explored = new HashSet<Point>();
 
             // Initialize with start node
             float startHeuristic = Heuristic(startTile, goalTile);
@@ -211,6 +213,10 @@ namespace TerrariaSurvivalMod.TetheredMinions
                 FCost = startHeuristic
             });
             gCosts[startTile] = 0f;
+
+            if (DebugPathfinding) {
+                Terraria.Main.NewText($"[A*] START: ({startTile.X},{startTile.Y}) → GOAL: ({goalTile.X},{goalTile.Y}), clearance {_currentClearanceWidthTiles}x{_currentClearanceHeightTiles}", Microsoft.Xna.Framework.Color.Cyan);
+            }
 
             int nodesExplored = 0;
 
@@ -227,11 +233,11 @@ namespace TerrariaSurvivalMod.TetheredMinions
                     return ReconstructPath(cameFrom, startTile, goalTile);
                 }
 
-                // Skip if already explored
-                if (explored.Contains(currentTile)) {
+                // Skip if we already found a better path to this tile
+                // (This node might be a stale duplicate with higher cost)
+                if (gCosts.TryGetValue(currentTile, out float storedGCost) && currentNode.GCost > storedGCost) {
                     continue;
                 }
-                explored.Add(currentTile);
                 nodesExplored++;
 
                 // Explore cardinal neighbors (4-directional - no diagonals since corners can't be cut)
@@ -239,19 +245,20 @@ namespace TerrariaSurvivalMod.TetheredMinions
                     Point offset = CardinalOffsets[i];
                     Point neighborTile = new Point(currentTile.X + offset.X, currentTile.Y + offset.Y);
 
-                    // Skip if out of bounds or already explored
-                    if (explored.Contains(neighborTile)) {
-                        continue;
-                    }
-
                     // Skip if too far from goal (bounding box optimization)
                     if (Math.Abs(neighborTile.X - goalTile.X) > maxSearchRadiusTiles ||
                         Math.Abs(neighborTile.Y - goalTile.Y) > maxSearchRadiusTiles) {
                         continue;
                     }
 
-                    // Skip if not passable
+                    // Skip if not passable (with debug for first few nodes)
                     if (!IsTilePassable(neighborTile.X, neighborTile.Y)) {
+                        // Debug: Show exactly which sub-tile blocked (only for first 3 explored nodes)
+                        if (DebugPathfinding && nodesExplored <= 3) {
+                            string dir = offset.Y < 0 ? "Up" : offset.Y > 0 ? "Down" : offset.X < 0 ? "Left" : "Right";
+                            string blockingTile = FindBlockingSubTile(neighborTile.X, neighborTile.Y);
+                            Terraria.Main.NewText($"[A*] {dir}({neighborTile.X},{neighborTile.Y}) blocked by {blockingTile}", Microsoft.Xna.Framework.Color.Orange);
+                        }
                         continue;
                     }
 
@@ -276,6 +283,16 @@ namespace TerrariaSurvivalMod.TetheredMinions
             }
 
             // If we get here, no path was found
+            if (DebugPathfinding) {
+                if (openSet.Count == 0) {
+                    // All possible paths were blocked by clearance checks
+                    Terraria.Main.NewText($"[A*] FAILED: All paths blocked (explored {nodesExplored} tiles, openSet empty)", Microsoft.Xna.Framework.Color.Red);
+                }
+                else {
+                    // Hit the node exploration limit
+                    Terraria.Main.NewText($"[A*] FAILED: Hit node limit ({nodesExplored}/{MaxNodesExplored} explored)", Microsoft.Xna.Framework.Color.Red);
+                }
+            }
             return null;
         }
 
@@ -349,6 +366,23 @@ namespace TerrariaSurvivalMod.TetheredMinions
             }
 
             return true;  // Actuated solid = passable
+        }
+
+        /// <summary>
+        /// Debug helper: Find which sub-tile in the clearance area is blocking.
+        /// </summary>
+        private static string FindBlockingSubTile(int tileX, int tileY)
+        {
+            for (int xOffset = 0; xOffset < _currentClearanceWidthTiles; xOffset++) {
+                for (int yOffset = 0; yOffset < _currentClearanceHeightTiles; yOffset++) {
+                    int checkX = tileX + xOffset;
+                    int checkY = tileY + yOffset;
+                    if (!IsSingleTilePassable(checkX, checkY)) {
+                        return $"({checkX},{checkY}) at offset +{xOffset},+{yOffset}";
+                    }
+                }
+            }
+            return "unknown";
         }
 
         /// <summary>
