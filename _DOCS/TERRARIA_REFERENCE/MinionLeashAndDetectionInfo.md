@@ -15,29 +15,29 @@ Leash distances are **NOT** exposed in `ProjectileID.Sets` arrays. Unlike yoyos 
 
 ## Complete Minion Table
 
-| Minion | Staff | ProjectileID(s) | Enemy Detection | Return (Leash) | aiStyle | Notes |
+| Minion | Staff | ProjectileID(s) | Detection | Return (Leash) | aiStyle | Notes |
 |--------|-------|-----------------|-----------|----------------|---------|-------|
-| **Baby Finch** | Finch Staff | 759 `BabyBird` | 50 tiles | 50 tiles | — | Rests on player's head when idle |
-| **Baby Slime** | Slime Staff | 266 `BabySlime` | — | — | — | Ground minion, jumps |
-| **Flinx** | Flinx Staff | — (1.4.1+) | — | — | — | Can swim in liquids |
-| **Abigail** | Abigail's Flower | — (1.4.4+) | — | — | — | Scales with playtime, special mechanic |
-| **Hornet** | Hornet Staff | 373 `Hornet` | 125 tiles (187.5†) | **62.5 tiles** | 62 | †Player-targeted enemies |
-| **Flying Imp** | Imp Staff | 375 `FlyingImp` | 125 tiles (187.5†) | **62.5 tiles** | 62 | Shoots 376 `ImpFireball` |
-| **Vampire Frog** | Vampire Frog Staff | 758 `VampireFrog` | 50 tiles | — | — | Can swim in liquids |
+| **Baby Finch** | Finch Staff | 759 `BabyBird` | 50 tiles | 50 tiles | 158 | Rests on player's head when idle |
+| **Baby Slime** | Slime Staff | 266 `BabySlime` | 50 + 2.5×pos | **62.5 + 2.5×pos** | 26 | Ground minion, same AI as Pygmy |
+| **Flinx** | Flinx Staff | 895-896 | 50 tiles | ~500px (twirls back) | 124 | Bounces on contact; **cannot phase**; twirls to player when too far; 1.4.1+ |
+| **Abigail** | Abigail's Flower | 979 `Abigail` | 125 tiles (187.5†) | **62.5 tiles** | 62 | 1.4.3+; phases through blocks during attack; scales with summons |
+| **Hornet** | Hornet Staff | 373 `Hornet` | 125 tiles (187.5†) | **31.25 tiles** | 62 | 500px base / 1000px targeted |
+| **Flying Imp** | Imp Staff | 375 `FlyingImp` | 125 tiles (187.5†) | **31.25 tiles** | 62 | 500px base; Shoots 376 `ImpFireball` |
+| **Vampire Frog** | Vampire Frog Staff | 758 `VampireFrog` | 50 tiles | — (parrot) | 67 | Same AI as Pirate; can swim |
 | **Spider** | Spider Staff | 390 `VenomSpider`, 391 `JumperSpider`, 392 `DangerousSpider` | 50 + 2.5×pos | **87.5 + 2.5×pos** | 26 | `minionPos` scaling; wall-climbing |
 | **Enchanted Dagger** | Blade Staff | 864 `Smolstar` | 50 tiles | **56.25 tiles** | — | Only 75% whip tag damage |
 | **Twins** | Optic Staff | 387 `Retanimini`, 388 `Spazmamini` | 125 tiles | **75 tiles** ⚠️ | 66 | **TIGHTEST flying leash** - interrupts attacks frequently |
-| **Pirate** | Pirate Staff | 393 `OneEyedPirate`, 394 `SoulscourgePirate`, 395 `PirateCaptain` | 50 tiles | — (parrot) | 67 | Parrot carries back when too far |
+| **Pirate** | Pirate Staff | 393 `OneEyedPirate`, 394 `SoulscourgePirate`, 395 `PirateCaptain` | 50 tiles | **31.25 tiles** (parrot) | 67 | Parrot carries back at 500px |
 | **Pygmy** | Pygmy Staff | 191-194 `Pygmy`, `Pygmy2`, `Pygmy3`, `Pygmy4` | 50 + 2.5×pos | **62.5 + 2.5×pos** | 26 | Shoots 195 `PygmySpear`; `minionPos` scaling |
-| **Raven** | Raven Staff | 317 `Raven` | 56.25 tiles | **87.5 tiles** | — | Charges through enemies |
-| **Sanguine Bat** | Sanguine Staff | 755 `BatOfLight` | — | — | — | Flies through blocks |
+| **Raven** | Raven Staff | 317 `Raven` | 56.25 tiles | **87.5 tiles** | 54 | Bounces at 0.6x velocity on collision |
+| **Sanguine Bat** | Sanguine Staff | 755 `BatOfLight` | — | — (phases) | 156 | `tileCollide = false`; always phases |
 | **Desert Tiger** | Desert Tiger Staff | 831-835 `StormTiger*` | 100×50 rect | — | — | Pounce-based, not traditional leash |
-| **Sharknado** | Tempest Staff | 407 `Tempest` | 125 tiles (187.5†) | **125 tiles** | — | Shoots 408 `MiniSharkron`; flies through blocks |
-| **Deadly Sphere** | Deadly Sphere Staff | 533 `DeadlySphere` | 50 tiles | **93.75 tiles** | — | Dash attack pattern |
-| **UFO** | Xeno Staff | 423 `UFOMinion` | 125 tiles (187.5†) | **125 tiles** | — | Teleports 18.75-50 tiles to target; instant-hit laser |
-| **Stardust Cell** | Stardust Cell Staff | 613 `StardustCellMinion` | 125 tiles (187.5†) | **84.4 tiles** | 62 | Teleports 28.75-53.75 tiles; shoots 614 `StardustCellMinionShot` |
-| **Stardust Dragon** | Stardust Dragon Staff | 625-628 `StardustDragon1-4` | 62.5 tiles (87.5†) | **125 tiles** | 121 | Head segment (625); teleports when exceeds distance |
-| **Terraprisma** | Terraprisma | 946 `EmpressBlade` | — | — | — | Flies through blocks |
+| **Sharknado** | Tempest Staff | 407 `Tempest` | 125 tiles (187.5†) | **125 tiles** | 62 | `tileCollide` forced false; Shoots 408 `MiniSharkron` |
+| **Deadly Sphere** | Deadly Sphere Staff | 533 `DeadlySphere` | 50 tiles | **93.75 tiles** | 66 | Bounces with velocity reversal on collision |
+| **UFO** | Xeno Staff | 423 `UFOMinion` | 125 tiles (187.5†) | **75 tiles** (1200px targeted) | 62 | Teleports 18.75-50 tiles to target |
+| **Stardust Cell** | Stardust Cell Staff | 613 `StardustCellMinion` | 125 tiles (187.5†) | **84.4 tiles** (1350px targeted) | 62 | Teleports 28.75-53.75 tiles; shoots 614 `StardustCellMinionShot` |
+| **Stardust Dragon** | Stardust Dragon Staff | 625-628 `StardustDragon1-4` | 62.5 tiles (87.5†) | **125 tiles** | 121 | Head segment (625); `tileCollide = false` |
+| **Terraprisma** | Terraprisma | 946 `EmpressBlade` | — | — (phases) | 156 | `tileCollide = false`; always phases |
 
 **Legend:**
 - `pos` = `minionPos` (slot index, starting at 0)
@@ -111,30 +111,41 @@ public static bool[] MinionSacrificable = ProjectileID.Sets.Factory.CreateBoolSe
 
 ## Leash Distance Tiers
 
-### Tight Leash (≤75 tiles) - Frequently Interrupts Combat
-| Minion | Return Distance |
-|--------|----------------|
-| Baby Finch | 50 tiles |
-| Enchanted Dagger | 56.25 tiles |
-| Pygmy (base) | 62.5 tiles |
-| Hornet | 62.5 tiles |
-| Flying Imp | 62.5 tiles |
-| **Twins** | **75 tiles** ← tightest flying minion |
+**Note:** Values in pixels. 1 tile = 16 pixels. These are the distances at which minions trigger return/phasing mode.
 
-### Medium Leash (80-95 tiles) - Occasional Interruption
-| Minion | Return Distance |
-|--------|----------------|
-| Stardust Cell | 84.4 tiles |
-| Raven | 87.5 tiles |
-| Spider (base) | 87.5 tiles |
-| Deadly Sphere | 93.75 tiles |
+### Tight Leash (≤500 pixels / 31.25 tiles) - Frequently Interrupts Combat
+| Minion | Return Distance | Notes |
+|--------|----------------|-------|
+| Hornet | 500px (31.25 tiles) | 1000px with target |
+| Flying Imp | 500px (31.25 tiles) | 1000px with target |
+| Pirate | 500px (31.25 tiles) | Parrot carries back |
+| Pygmy (base) | 1000px (62.5 tiles) | +40px per minionPos |
+| Baby Slime | 1000px (62.5 tiles) | Same as Pygmy |
 
-### Loose Leash (125 tiles) - Rarely Interrupts
-| Minion | Return Distance |
-|--------|----------------|
-| Sharknado | 125 tiles |
-| UFO | 125 tiles |
-| Stardust Dragon | 125 tiles |
+### Medium Leash (1000-1500 pixels / 62.5-93.75 tiles)
+| Minion | Return Distance | Notes |
+|--------|----------------|-------|
+| **Twins** | 1200px (75 tiles) | **Tightest flying minion** |
+| UFO | 1000px / 1200px | 1200px with target |
+| Stardust Cell | 1000px / 1350px | 1350px with target |
+| Raven | 1400px (87.5 tiles) | |
+| Spider (base) | 1400px (87.5 tiles) | +40px per minionPos |
+| Deadly Sphere | 1500px (93.75 tiles) | |
+
+### Loose Leash (2000 pixels / 125 tiles) - Rarely Interrupts
+| Minion | Return Distance | Notes |
+|--------|----------------|-------|
+| Sharknado | 2000px (125 tiles) | Always phases anyway |
+| Stardust Dragon | 2000px (125 tiles) | Always phases anyway |
+
+### Always Phase (No Leash Needed)
+| Minion | Notes |
+|--------|-------|
+| Sharknado | `tileCollide` forced false in AI |
+| Stardust Dragon | `tileCollide = false` in SetDefaults |
+| Sanguine Bat | `tileCollide = false` in SetDefaults |
+| Terraprisma | `tileCollide = false` in SetDefaults |
+| Abigail | aiStyle 62 but phases through blocks during attack |
 
 ---
 
@@ -145,36 +156,88 @@ Since there's no native lookup, you'd need to build one manually:
 ```csharp
 public static class MinionLeashData
 {
-    public static float GetReturnDistance(int projectileType)
+    /// <summary>
+    /// Gets the return/leash distance in PIXELS (not tiles).
+    /// This is when minions trigger return mode and start phasing.
+    /// </summary>
+    public static float GetReturnDistance(int projectileType, bool hasTarget = false)
     {
         return projectileType switch
         {
-            // Tight leash
-            ProjectileID.BabyBird => 50f,         // 759
-            ProjectileID.Smolstar => 56.25f,      // 864 (Blade Staff)
-            ProjectileID.Pygmy or
-            ProjectileID.Pygmy2 or
-            ProjectileID.Pygmy3 or
-            ProjectileID.Pygmy4 => 62.5f,         // 191-194 (base, +2.5×minionPos)
-            ProjectileID.Hornet => 62.5f,         // 373
-            ProjectileID.FlyingImp => 62.5f,      // 375
+            // aiStyle 62 minions - base 500px, extended with target
+            ProjectileID.Hornet => hasTarget ? 1000f : 500f,         // 373
+            ProjectileID.FlyingImp => hasTarget ? 1000f : 500f,      // 375
+            ProjectileID.UFOMinion => hasTarget ? 1200f : 1000f,     // 423
+            ProjectileID.StardustCellMinion => hasTarget ? 1350f : 1000f, // 613
+            ProjectileID.Tempest => 2000f,                           // 407 (always phases anyway)
+            979 => hasTarget ? 1000f : 500f,                         // Abigail (1.4.3+)
+            
+            // aiStyle 66 minions
             ProjectileID.Retanimini or
-            ProjectileID.Spazmamini => 75f,       // 387-388 (TIGHTEST flying)
+            ProjectileID.Spazmamini => 1200f,                        // 387-388 (Twins)
+            ProjectileID.DeadlySphere => 1500f,                      // 533
             
-            // Medium leash
-            ProjectileID.StardustCellMinion => 84.4f,  // 613
-            ProjectileID.Raven => 87.5f,               // 317
-            ProjectileID.VenomSpider or
-            ProjectileID.JumperSpider or
-            ProjectileID.DangerousSpider => 87.5f,    // 390-392 (base, +2.5×minionPos)
-            ProjectileID.DeadlySphere => 93.75f,      // 533
+            // aiStyle 26 minions (ground) - base + minionPos scaling
+            ProjectileID.Pygmy or ProjectileID.Pygmy2 or
+            ProjectileID.Pygmy3 or ProjectileID.Pygmy4 => 1000f,     // 191-194 (base)
+            ProjectileID.BabySlime => 1000f,                         // 266
+            ProjectileID.VenomSpider or ProjectileID.JumperSpider or
+            ProjectileID.DangerousSpider => 1400f,                   // 390-392 (base)
             
-            // Loose leash
-            ProjectileID.Tempest => 125f,         // 407
-            ProjectileID.UFOMinion => 125f,       // 423
-            ProjectileID.StardustDragon1 => 125f, // 625 (head segment)
+            // aiStyle 67 minions (ground with parrot)
+            393 or 394 or 395 => 500f,                               // Pirate variants
+            ProjectileID.VampireFrog => 500f,                        // 758
             
-            _ => 100f  // Conservative default
+            // aiStyle 54
+            ProjectileID.Raven => 1400f,                             // 317
+            
+            // aiStyle 121 (always phases)
+            ProjectileID.StardustDragon1 => 2000f,                   // 625 (head)
+            
+            // aiStyle 158
+            ProjectileID.BabyBird => 800f,                           // 759 (Baby Finch)
+            
+            // Blade Staff
+            ProjectileID.Smolstar => 900f,                           // 864
+            
+            _ => 1600f  // Conservative default (~100 tiles)
+        };
+    }
+    
+    /// <summary>
+    /// Gets minionPos scaling offset in PIXELS.
+    /// Ground minions get additional leash per slot index.
+    /// </summary>
+    public static float GetMinionPosScaling(int projectileType)
+    {
+        return projectileType switch
+        {
+            // aiStyle 26 minions get +40px per minionPos
+            ProjectileID.Pygmy or ProjectileID.Pygmy2 or
+            ProjectileID.Pygmy3 or ProjectileID.Pygmy4 or
+            ProjectileID.BabySlime or
+            ProjectileID.VenomSpider or ProjectileID.JumperSpider or
+            ProjectileID.DangerousSpider => 40f,
+            
+            _ => 0f
+        };
+    }
+    
+    /// <summary>
+    /// Returns true if minion always phases through blocks.
+    /// These never need pathfinding assistance.
+    /// </summary>
+    public static bool AlwaysPhases(int projectileType)
+    {
+        return projectileType switch
+        {
+            ProjectileID.StardustDragon1 or ProjectileID.StardustDragon2 or
+            ProjectileID.StardustDragon3 or ProjectileID.StardustDragon4 => true,  // 625-628
+            ProjectileID.Tempest => true,           // 407 (Sharknado)
+            ProjectileID.BatOfLight => true,        // 755 (Sanguine)
+            ProjectileID.EmpressBlade => true,      // 946 (Terraprisma)
+            979 => true,                            // Abigail (1.4.3+)
+            _ => false
         };
     }
     
@@ -182,31 +245,34 @@ public static class MinionLeashData
     {
         float baseRange = projectileType switch
         {
-            ProjectileID.VenomSpider or
-            ProjectileID.JumperSpider or
-            ProjectileID.DangerousSpider => 50f,
-            ProjectileID.Pygmy or
-            ProjectileID.Pygmy2 or
-            ProjectileID.Pygmy3 or
-            ProjectileID.Pygmy4 => 50f,
-            ProjectileID.BabyBird => 50f,
-            ProjectileID.DeadlySphere => 50f,
-            ProjectileID.Smolstar => 50f,
-            ProjectileID.Raven => 56.25f,
-            ProjectileID.StardustDragon1 => 62.5f,
-            ProjectileID.Hornet or
-            ProjectileID.FlyingImp or
-            ProjectileID.Retanimini or
-            ProjectileID.Spazmamini or
-            ProjectileID.Tempest or
-            ProjectileID.UFOMinion or
-            ProjectileID.StardustCellMinion => 125f,
-            _ => 100f
+            // aiStyle 26 ground minions
+            ProjectileID.VenomSpider or ProjectileID.JumperSpider or
+            ProjectileID.DangerousSpider or
+            ProjectileID.Pygmy or ProjectileID.Pygmy2 or
+            ProjectileID.Pygmy3 or ProjectileID.Pygmy4 or
+            ProjectileID.BabySlime => 800f,              // 50 tiles
+            
+            // Other short range
+            ProjectileID.BabyBird => 800f,               // 50 tiles
+            ProjectileID.DeadlySphere => 800f,           // 50 tiles
+            ProjectileID.Smolstar => 800f,               // 50 tiles
+            ProjectileID.Raven => 900f,                  // 56.25 tiles
+            
+            // aiStyle 62/66 long range
+            ProjectileID.Hornet or ProjectileID.FlyingImp or
+            ProjectileID.Retanimini or ProjectileID.Spazmamini or
+            ProjectileID.Tempest or ProjectileID.UFOMinion or
+            ProjectileID.StardustCellMinion => 2000f,    // 125 tiles
+            
+            // Stardust Dragon
+            ProjectileID.StardustDragon1 => 1000f,       // 62.5 tiles
+            
+            _ => 1600f  // 100 tiles default
         };
         
-        // Many minions get boosted range when player targets with whip
-        if (playerTargeted && baseRange >= 62.5f)
-            return 187.5f;
+        // Many minions get 187.5 tile range when player targets with whip
+        if (playerTargeted && baseRange >= 1000f)
+            return 3000f;  // 187.5 tiles
             
         return baseRange;
     }
