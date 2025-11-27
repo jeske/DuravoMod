@@ -267,7 +267,7 @@ namespace TerrariaSurvivalMod.ArmorRebalance
             }
 
             // Show combat text - use localized string
-            string blockedText = Language.GetTextValue("Mods.TerrariaSurvivalMod.CombatText.ShieldBlocked", absorbedDamage);
+            string blockedText = Language.GetTextValue("Mods.TerrariaSurvivalMod.ArmorRebalance.CombatText.ShieldBlocked", absorbedDamage);
             CombatText.NewText(Player.Hitbox, Color.Cyan, blockedText);
 
             // Check if shield broke

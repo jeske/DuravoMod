@@ -126,13 +126,13 @@ namespace TerrariaSurvivalMod.ArmorRebalance
 
             // Add chestplate-specific bonus first (if applicable)
             if (chestplateBonusKey != null) {
-                string chestplateText = Language.GetTextValue($"Mods.TerrariaSurvivalMod.ArmorBonus.{chestplateBonusKey}");
+                string chestplateText = Language.GetTextValue($"Mods.TerrariaSurvivalMod.ArmorRebalance.Tooltips.{chestplateBonusKey}");
                 tooltips.Add(new TooltipLine(Mod, "ChestplateBonus", chestplateText));
             }
 
             // Add set bonus for any armor piece
             if (isOreArmorPiece) {
-                string setTooltip = Language.GetTextValue("Mods.TerrariaSurvivalMod.ArmorBonus.SetBonusShiny");
+                string setTooltip = Language.GetTextValue("Mods.TerrariaSurvivalMod.ArmorRebalance.Tooltips.SetBonusShiny");
                 tooltips.Add(new TooltipLine(Mod, "FullSetBonus", setTooltip));
             }
         }

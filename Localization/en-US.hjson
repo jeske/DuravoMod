@@ -1,5 +1,8 @@
 Mods: {
 	TerrariaSurvivalMod: {
+		// ═══════════════════════════════════════════════════════════════════
+		// GLOBAL MOD CONFIGURATION
+		// ═══════════════════════════════════════════════════════════════════
 		Configs: {
 			TerrariaSurvivalModConfig: {
 				DisplayName: Terraria Survival Mod Config
@@ -12,28 +15,53 @@ Mods: {
 			}
 		}
 
-		Buffs: {
-			ShinyBuff: {
-				DisplayName: Shiny
-				Description: Nearby ores and gems sparkle
+		// ═══════════════════════════════════════════════════════════════════
+		// ARMOR REBALANCE FEATURE
+		// Defense redistribution, set bonuses, emergency shield, shiny effect
+		// ═══════════════════════════════════════════════════════════════════
+		ArmorRebalance: {
+			Buffs: {
+				ShinyBuff: {
+					DisplayName: Shiny
+					Description: Nearby ores and gems sparkle
+				}
+
+				FragileBuff: {
+					DisplayName: Fragile
+					Description: Unable to acquire emergency shield for a while
+				}
 			}
 
-			FragileBuff: {
-				DisplayName: Fragile
-				Description: Unable to acquire emergency shield for a while
+			CombatText.ShieldBlocked: "{0} (blocked)"
+
+			Tooltips: {
+				# Chestplate-only bonuses
+				ShieldTinCopper: "[c/00BFFF:+30 HP Shield for 5s when hit (60s cooldown)]"
+				CritIronLead: "[c/00BFFF:+10% critical strike chance]"
+				SpeedSilverTungsten: "[c/00BFFF:+15% movement speed]"
+				ShieldGoldPlatinum: "[c/00BFFF:15% HP Shield for 10s when hit (120s cooldown, purges debuffs)]"
+				# Set bonus (all 3 pieces from same tier)
+				SetBonusShiny: "[c/ADFF2F:Set Bonus:] Shiny - nearby ores and gems sparkle"
 			}
 		}
 
-		CombatText.ShieldBlocked: "{0} (blocked)"
+		// ═══════════════════════════════════════════════════════════════════
+		// PERSISTENT POSITION FEATURE
+		// Save/restore player position on logout/login
+		// ═══════════════════════════════════════════════════════════════════
+		PersistentPosition: {
+		}
 
-		ArmorBonus: {
-			# Chestplate-only bonuses
-			ShieldTinCopper: "[c/00BFFF:+30 HP Shield for 5s when hit (60s cooldown)]"
-			CritIronLead: "[c/00BFFF:+10% critical strike chance]"
-			SpeedSilverTungsten: "[c/00BFFF:+15% movement speed]"
-			ShieldGoldPlatinum: "[c/00BFFF:15% HP Shield for 10s when hit (120s cooldown, purges debuffs)]"
-			# Set bonus (all 3 pieces from same tier)
-			SetBonusShiny: "[c/ADFF2F:Set Bonus:] Shiny - nearby ores and gems sparkle"
+		Buffs: {
+			FragileBuff: {
+				DisplayName: Fragile Buff
+				Description: Mods.TerrariaSurvivalMod.Buffs.FragileBuff.Description
+			}
+
+			ShinyBuff: {
+				DisplayName: Shiny Buff
+				Description: Mods.TerrariaSurvivalMod.Buffs.ShinyBuff.Description
+			}
 		}
 	}
 }
