@@ -5,11 +5,35 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
+// ╔════════════════════════════════════════════════════════════════════════════════════════════╗
+// ║                            FUTURE IMPROVEMENTS / TODOs                                      ║
+// ╚════════════════════════════════════════════════════════════════════════════════════════════╝
+//
+// TODO(1): FOLLOW DISTANCE - Consider stopping path-following once we reach the minion's natural
+//          follow distance instead of going all the way to the player. Each aiStyle has different
+//          "close enough" thresholds:
+//          - aiStyle 62 (Hornet, Imp, UFO, Cell): ~70-100 pixels from player
+//          - aiStyle 26/67 (Pygmy, Spider, Pirate): ~50-80 pixels (ground formation position)
+//          - Flying minions hover ~60 pixels above player
+//          See: _DOCS/TERRARIA_REFERENCE/MinionStateExtraction.md for full follow distance table
+//          and MinionFollowDistances.GetIdlePosition() for per-aiStyle target positions.
+//
+// TODO(2): AISTYLE 156 (Sanguine Bat, Terraprisma) - These are ALWAYS-PHASING minions that use
+//          arc/orbital patterns around the player. They have tileCollide=false in SetDefaults
+//          and should NEVER trigger QoL pathfinding. Currently excluded via AlwaysPhases check
+//          in MinionStateExtractor, but TEST to ensure they don't trigger "bouncing to center
+//          of player" if they run into an obstacle during their arc movement. The arc pattern
+//          means they intentionally move AWAY from player sometimes, which could falsely trigger
+//          "blocked" detection if there's an L-path obstacle during arc motion.
+//          Verify: minionState.AlwaysPhases should be TRUE for all aiStyle 156 minions.
+//
+// ═════════════════════════════════════════════════════════════════════════════════════════════
+
 namespace TerrariaSurvivalMod.TetheredMinions
 {
     /// <summary>
     /// GlobalProjectile that handles minion anti-cheese and QoL pathing.
-    /// 
+    ///
     /// Two main features:
     /// 1. CHEESE PREVENTION: When player places a block, if minion is nearby with no LOS
     ///    and no valid A* path, immediately phase the minion back to player.
@@ -290,27 +314,29 @@ namespace TerrariaSurvivalMod.TetheredMinions
             // Step 3: Determine vector to player and which direction to check
             Vector2 vectorToPlayer = ownerPlayer.Center - minion.Center;
 
-            // Get the tile the minion is currently at
-            Point minionTilePosition = minion.Center.ToTileCoordinates();
+            // Get the UPPER-LEFT tile of the minion (for proper edge detection)
+            // Add 2 pixels to avoid tile boundary issues (if position is 352.0, we want tile 22 not 21)
+            Vector2 adjustedPosition = minion.position + new Vector2(2f, 2f);
+            Point minionTopLeftTile = adjustedPosition.ToTileCoordinates();
+            int clearanceWidth = TilePathfinder.CalculateTileClearance(minion.width);
+            int clearanceHeight = TilePathfinder.CalculateTileClearance(minion.height);
 
-            // Determine the primary direction to player (which tile to check)
-            int checkTileX = minionTilePosition.X;
-            int checkTileY = minionTilePosition.Y;
+            // Debug: Check if the minion's own tile is blocked (would indicate bad tile conversion)
+            if (DebugTethering && Main.GameUpdateCount % 120 == 0) {
+                bool ownTileBlocked = IsSolidBlockingTile(minionTopLeftTile.X, minionTopLeftTile.Y);
+                Main.NewText($"[DEBUG] {minion.Name} pos=({minion.position.X:F1},{minion.position.Y:F1})px → tile({minionTopLeftTile.X},{minionTopLeftTile.Y}), ownTileBlocked={ownTileBlocked}, clearance={clearanceWidth}x{clearanceHeight}", Color.Cyan);
+            }
 
-            // Check the dominant direction (X or Y based on which component is larger)
+            // Step 4: Check if there's a clear "L-path" to the player using Bresenham-style walking
+            // Walk the dominant axis first, then the other axis. If blocked anywhere → need A*
+            Point playerTopLeftTile = (ownerPlayer.position + new Vector2(2f, 2f)).ToTileCoordinates();
+            bool lPathBlocked = IsLPathBlocked(minionTopLeftTile, playerTopLeftTile, clearanceWidth, clearanceHeight, out Point blockingTile);
+            bool nextTileIsSolid = lPathBlocked;
+            int checkTileX = blockingTile.X;
+            int checkTileY = blockingTile.Y;
+            
+            // Track which axis is dominant for exit condition later
             bool horizontalDominant = Math.Abs(vectorToPlayer.X) >= Math.Abs(vectorToPlayer.Y);
-
-            if (horizontalDominant) {
-                // Horizontal movement dominant - check tile left or right
-                checkTileX += (vectorToPlayer.X > 0) ? 1 : -1;
-            }
-            else {
-                // Vertical movement dominant - check tile above or below
-                checkTileY += (vectorToPlayer.Y > 0) ? 1 : -1;
-            }
-
-            // Step 4: Check if that tile is solid (blocking)
-            bool nextTileIsSolid = IsSolidBlockingTile(checkTileX, checkTileY);
 
             // Step 4b: Also check "stuck" detection - minion hasn't made progress toward player
             long currentTimeMs = GetEpochTimeMs();
@@ -396,6 +422,101 @@ namespace TerrariaSurvivalMod.TetheredMinions
             return tile.HasTile && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType];
         }
 
+        /// <summary>
+        /// Check if there's a clear "L-path" from start to goal.
+        /// Uses Bresenham-style walking: move on the dominant axis first, then switch to the other.
+        /// Returns true if ANY tile on the L-path is blocked.
+        /// </summary>
+        /// <param name="startTile">Start tile (minion's upper-left)</param>
+        /// <param name="goalTile">Goal tile (player's upper-left)</param>
+        /// <param name="clearanceWidth">Entity clearance width in tiles</param>
+        /// <param name="clearanceHeight">Entity clearance height in tiles</param>
+        /// <param name="blockingTile">Output: the first tile that blocked (for debug/exit condition)</param>
+        /// <returns>True if path is blocked, false if clear</returns>
+        private static bool IsLPathBlocked(Point startTile, Point goalTile, int clearanceWidth, int clearanceHeight, out Point blockingTile)
+        {
+            int dx = goalTile.X - startTile.X;
+            int dy = goalTile.Y - startTile.Y;
+
+            int stepX = dx > 0 ? 1 : -1;
+            int stepY = dy > 0 ? 1 : -1;
+
+            int currentX = startTile.X;
+            int currentY = startTile.Y;
+
+            // Determine which axis is dominant (larger delta)
+            bool xDominant = Math.Abs(dx) >= Math.Abs(dy);
+
+            if (xDominant) {
+                // Walk X axis first (dominant), then Y axis
+                // Check tile BEFORE moving to it (we check the NEXT tile, not current)
+                while (currentX != goalTile.X) {
+                    int nextX = currentX + stepX;
+                    // Check if we can move to nextX (check tile ahead with clearance)
+                    int checkTileX = stepX > 0 ? nextX + clearanceWidth - 1 : nextX;
+                    if (IsTileBlockedWithClearance(checkTileX, currentY, clearanceWidth, clearanceHeight)) {
+                        blockingTile = new Point(checkTileX, currentY);
+                        return true;
+                    }
+                    currentX = nextX;
+                }
+                // Now walk Y axis
+                while (currentY != goalTile.Y) {
+                    int nextY = currentY + stepY;
+                    int checkTileY = stepY > 0 ? nextY + clearanceHeight - 1 : nextY;
+                    if (IsTileBlockedWithClearance(currentX, checkTileY, clearanceWidth, clearanceHeight)) {
+                        blockingTile = new Point(currentX, checkTileY);
+                        return true;
+                    }
+                    currentY = nextY;
+                }
+            }
+            else {
+                // Walk Y axis first (dominant), then X axis
+                while (currentY != goalTile.Y) {
+                    int nextY = currentY + stepY;
+                    int checkTileY = stepY > 0 ? nextY + clearanceHeight - 1 : nextY;
+                    if (IsTileBlockedWithClearance(currentX, checkTileY, clearanceWidth, clearanceHeight)) {
+                        blockingTile = new Point(currentX, checkTileY);
+                        return true;
+                    }
+                    currentY = nextY;
+                }
+                // Now walk X axis
+                while (currentX != goalTile.X) {
+                    int nextX = currentX + stepX;
+                    int checkTileX = stepX > 0 ? nextX + clearanceWidth - 1 : nextX;
+                    if (IsTileBlockedWithClearance(checkTileX, currentY, clearanceWidth, clearanceHeight)) {
+                        blockingTile = new Point(checkTileX, currentY);
+                        return true;
+                    }
+                    currentX = nextX;
+                }
+            }
+
+            // Path is clear!
+            blockingTile = goalTile;
+            return false;
+        }
+
+        /// <summary>
+        /// Check if a tile (considering entity clearance) is blocked.
+        /// For X movement: checks a vertical strip of tiles.
+        /// For Y movement: checks a horizontal strip of tiles.
+        /// </summary>
+        private static bool IsTileBlockedWithClearance(int tileX, int tileY, int clearanceWidth, int clearanceHeight)
+        {
+            // Check all tiles in the clearance area
+            for (int offsetY = 0; offsetY < clearanceHeight; offsetY++) {
+                for (int offsetX = 0; offsetX < clearanceWidth; offsetX++) {
+                    if (IsSolidBlockingTile(tileX + offsetX, tileY + offsetY)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         // ╔════════════════════════════════════════════════════════════════════╗
         // ║                      PATH FOLLOWING                                ║
         // ╚════════════════════════════════════════════════════════════════════╝
@@ -468,15 +589,14 @@ namespace TerrariaSurvivalMod.TetheredMinions
                 distanceToWaypoint = Vector2.Distance(minion.Center, waypointWorldPosition);
             }
             
-            // If we've reached the last waypoint, check exit condition again
+            // If we've reached the last waypoint, we're done! The path endpoint is the player.
             if (currentWaypointIndex >= currentPathWaypoints.Count - 1 &&
                 distanceToWaypoint < WaypointArrivalDistance) {
-                // Path complete but no LOS - switch to phasing
+                // Successfully reached the end of the path - let normal AI take over
                 if (DebugTethering) {
-                    Main.NewText($"[TETHER] {minion.Name} reached end of path, switching to phase", Color.Yellow);
+                    Main.NewText($"[TETHER] {minion.Name} reached end of A* path - success!", Color.Green);
                 }
                 EndPathFollowingState(minion);
-                StartPhasingState(minion, "path complete");
                 return;
             }
 

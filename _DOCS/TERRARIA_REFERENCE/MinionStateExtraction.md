@@ -40,6 +40,131 @@ Based on analysis of the decompiled source from [AdamSavard/Terarria1405](https:
 
 ---
 
+## Follow Distances and Idle Positions
+
+Different aiStyles have different "target positions" when following the player:
+
+### aiStyle 62 (Hornet, Imp, Sharknado, UFO, Cell)
+
+**Idle hover position**: `player.Center + new Vector2(0, -60f)`
+- Sharknado (407): `player.Center + new Vector2(0, -20f)` (40f higher offset)
+- Imp (375): Uses minionPos formation: `player.Center - (10 + minionPos * 40) * direction` horizontally, `-10f` vertically
+
+**"Close enough" thresholds**:
+- `< 70f`: Slow down, nearly there
+- `< 100f`: Exit return mode (ai[0] = 0)
+- `> 200f`: Speed up to 9f
+
+**Leash/return trigger** (switches to phasing return):
+- Base: `500` pixels (no target)
+- With target: `1000` pixels
+- UFO (423) with target: `1200` pixels  
+- Cell (613) with target: `1350` pixels
+
+**Teleport threshold**: `> 2000` pixels → instant teleport to player
+
+### aiStyle 66 (Twins, Deadly Sphere)
+
+Similar to aiStyle 62 but with different attack patterns. Uses same general hover offset of ~60 pixels above player.
+
+### aiStyle 67 (Pirate)
+
+**Ground formation position**:
+```
+baseX = player.Center.X - (15 + player.width/2) * direction
+offset = minionPos * 20 * direction  // or 40 depending on variant
+```
+
+Spaces pirates 20-40 pixels apart behind the player.
+
+**Parrot retrieval trigger**: `> 500` pixels (summons parrot to carry back)
+
+### aiStyle 26 (Pygmy, Spider)
+
+Ground-based with minionPos formation. Uses similar spacing to Pirates but with different base offset.
+
+### aiStyle 121 (Stardust Dragon)
+
+**Idle hover**: ~100-200 pixels from player center, worm-style movement.
+
+**Teleport threshold**: `> 2000` pixels
+
+### aiStyle 156 (Sanguine Bat, Terraprisma)
+
+**Idle position**: Calculated per-minion in a fan/arc formation around player:
+- Sanguine: Arc formation 40 pixels from player, spread by `4.4 radians / totalIndexes`
+- Terraprisma: Orbital pattern with bobbing, offset `(direction * (index * -6 - 16), -15f)`
+
+---
+
+## Follow Distance Constants for Pathfinding
+
+```csharp
+public static class MinionFollowDistances
+{
+    // "I'm close enough" - stop actively pathfinding
+    public const float CloseEnough_Flying = 70f;
+    public const float CloseEnough_Ground = 50f;
+    
+    // "I should be moving toward player" - start pathfinding
+    public const float StartFollowing_Flying = 100f;
+    public const float StartFollowing_Ground = 80f;
+    
+    // Vanilla leash distances (triggers phasing return)
+    public const float Leash_Default = 500f;
+    public const float Leash_WithTarget = 1000f;
+    public const float Leash_UFO_WithTarget = 1200f;
+    public const float Leash_Cell_WithTarget = 1350f;
+    
+    // Instant teleport threshold
+    public const float TeleportThreshold = 2000f;
+    
+    // Ground minion formation spacing
+    public const float PirateSpacing = 20f;      // or 40f for larger variants
+    public const float PygmySpacing = 40f;
+    
+    // Flying minion hover offset (above player)
+    public const float HoverOffset_Default = 60f;
+    public const float HoverOffset_Sharknado = 20f;
+    
+    /// <summary>
+    /// Get the target idle position for a minion
+    /// </summary>
+    public static Vector2 GetIdlePosition(Projectile proj, MinionStateInfo state)
+    {
+        Player owner = Main.player[proj.owner];
+        
+        if (state.Locomotion == MinionLocomotion.Ground)
+        {
+            // Ground minions form up behind player
+            float spacing = proj.aiStyle == 67 ? PirateSpacing : PygmySpacing;
+            float offset = (15 + owner.width / 2 + state.MinionPosIndex * spacing) * owner.direction;
+            return new Vector2(owner.Center.X - offset, owner.Bottom.Y);
+        }
+        else
+        {
+            // Flying minions hover above
+            float hoverY = proj.type == 407 ? HoverOffset_Sharknado : HoverOffset_Default;
+            return owner.Center - new Vector2(0, hoverY);
+        }
+    }
+    
+    /// <summary>
+    /// Check if minion is "close enough" to stop pathfinding
+    /// </summary>
+    public static bool IsCloseEnough(Projectile proj, MinionStateInfo state, Vector2 target)
+    {
+        float dist = Vector2.Distance(proj.Center, target);
+        float threshold = state.Locomotion == MinionLocomotion.Ground 
+            ? CloseEnough_Ground 
+            : CloseEnough_Flying;
+        return dist < threshold;
+    }
+}
+```
+
+---
+
 ## Minion State Extraction Code
 
 ```csharp
