@@ -1,0 +1,343 @@
+using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.DataStructures;
+using Terraria.ID;
+using Terraria.ModLoader;
+using System;
+
+namespace TerrariaSurvivalMod.Players
+{
+    /// <summary>
+    /// Handles the Emergency Shield mechanic for Copper/Tin and Gold/Platinum armor.
+    /// When player takes damage while wearing shield-tier armor and shield is off cooldown,
+    /// a shield activates that absorbs incoming damage.
+    /// </summary>
+    public class EmergencyShieldPlayer : ModPlayer
+    {
+        // ╔════════════════════════════════════════════════════════════════════╗
+        // ║                        TUNABLE CONSTANTS                           ║
+        // ╚════════════════════════════════════════════════════════════════════╝
+
+        /// <summary>DEBUG: Set to true for verbose shield activation logging</summary>
+        private const bool DebugShieldActivation = true;
+
+        /// <summary>Cooldown in seconds for Copper/Tin tier shield (normal: 60)</summary>
+        private const int CopperTinShieldCooldownSeconds = 10; // DEBUG: Set to 60 for release
+
+        /// <summary>Cooldown in seconds for Gold/Platinum tier shield (normal: 120)</summary>
+        private const int GoldPlatinumShieldCooldownSeconds = 10; // DEBUG: Set to 120 for release
+
+        /// <summary>Shield HP for Copper/Tin tier (flat amount)</summary>
+        private const int CopperTinShieldHP = 30;
+
+        /// <summary>Shield duration in seconds for Copper/Tin tier</summary>
+        private const int CopperTinShieldDurationSeconds = 5;
+
+        /// <summary>Shield HP percentage for Gold/Platinum tier (15% of max HP)</summary>
+        private const float GoldPlatinumShieldHPPercent = 0.15f;
+
+        /// <summary>Shield duration in seconds for Gold/Platinum tier</summary>
+        private const int GoldPlatinumShieldDurationSeconds = 10;
+
+        // ╔════════════════════════════════════════════════════════════════════╗
+        // ║                          INSTANCE STATE                            ║
+        // ╚════════════════════════════════════════════════════════════════════╝
+
+        /// <summary>Remaining shield HP that absorbs damage</summary>
+        private int shieldCurrentHP;
+
+        /// <summary>Maximum shield HP when activated (for visual ratio)</summary>
+        private int shieldMaxHP;
+
+        /// <summary>Remaining duration in ticks (60 ticks = 1 second)</summary>
+        private int shieldDurationRemainingTicks;
+
+        /// <summary>Cooldown remaining before shield can trigger again</summary>
+        private int shieldCooldownRemainingTicks;
+
+        /// <summary>Whether the current shield is Gold/Platinum tier (affects color)</summary>
+        private bool isGoldTierShield;
+
+        // ╔════════════════════════════════════════════════════════════════════╗
+        // ║                          PUBLIC PROPERTIES                         ║
+        // ╚════════════════════════════════════════════════════════════════════╝
+
+        /// <summary>Check if emergency shield is currently active and has HP remaining.</summary>
+        public bool HasActiveShield => shieldCurrentHP > 0 && shieldDurationRemainingTicks > 0;
+
+        /// <summary>Current shield HP for display purposes.</summary>
+        public int CurrentShieldHP => shieldCurrentHP;
+
+        /// <summary>Ratio of current shield HP to maximum (for visual fill).</summary>
+        public float ShieldRatio => shieldMaxHP > 0 ? (float)shieldCurrentHP / shieldMaxHP : 0f;
+
+        /// <summary>Whether the current shield is from Gold/Platinum tier (affects color).</summary>
+        public bool IsGoldTierShield => isGoldTierShield;
+
+        // ╔════════════════════════════════════════════════════════════════════╗
+        // ║                          ARMOR DETECTION                           ║
+        // ╚════════════════════════════════════════════════════════════════════╝
+
+        /// <summary>Shield armor tiers</summary>
+        public enum ShieldArmorTier
+        {
+            None,
+            CopperTin,      // 30 HP flat, 5s duration, 60s cooldown
+            GoldPlatinum    // 15% max HP, 10s duration, 120s cooldown, purges debuffs
+        }
+
+        /// <summary>
+        /// Detect which shield-tier chestplate the player is wearing.
+        /// Only Copper/Tin and Gold/Platinum provide shields.
+        /// </summary>
+        private ShieldArmorTier DetectShieldArmorTier()
+        {
+            Item chestplate = Player.armor[1];
+
+            if (chestplate == null || chestplate.IsAir)
+                return ShieldArmorTier.None;
+
+            int chestplateType = chestplate.type;
+
+            // Copper/Tin tier
+            if (chestplateType == ItemID.CopperChainmail || chestplateType == ItemID.TinChainmail)
+                return ShieldArmorTier.CopperTin;
+
+            // Gold/Platinum tier  
+            if (chestplateType == ItemID.GoldChainmail || chestplateType == ItemID.PlatinumChainmail)
+                return ShieldArmorTier.GoldPlatinum;
+
+            return ShieldArmorTier.None;
+        }
+
+        // ╔════════════════════════════════════════════════════════════════════╗
+        // ║                          TICK UPDATES                              ║
+        // ╚════════════════════════════════════════════════════════════════════╝
+
+        public override void PostUpdate()
+        {
+            // Tick down shield duration
+            if (shieldDurationRemainingTicks > 0) {
+                shieldDurationRemainingTicks--;
+                if (shieldDurationRemainingTicks == 0) {
+                    // Shield expired
+                    shieldCurrentHP = 0;
+                    if (DebugShieldActivation)
+                        Main.NewText("[SHIELD] Shield expired (duration ran out)", Color.Gray);
+                }
+            }
+
+            // Tick down cooldown
+            if (shieldCooldownRemainingTicks > 0) {
+                shieldCooldownRemainingTicks--;
+                if (shieldCooldownRemainingTicks == 0 && DebugShieldActivation) {
+                    Main.NewText("[SHIELD] Cooldown finished - ready for next activation", Color.Green);
+                }
+            }
+        }
+
+        // ╔════════════════════════════════════════════════════════════════════╗
+        // ║                    DAMAGE PROCESSING (SHIELD)                      ║
+        // ╚════════════════════════════════════════════════════════════════════╝
+
+        /// <summary>
+        /// Process incoming damage from external source (called by GlobalNPC.ModifyHitPlayer).
+        /// This is the correct entry point for NPC-to-player damage interception.
+        /// </summary>
+        /// <param name="modifiers">The damage modifiers to adjust</param>
+        /// <param name="incomingDamage">The raw damage amount</param>
+        /// <param name="damageSource">Description of damage source for debug logging</param>
+        public void ProcessIncomingDamage(ref Player.HurtModifiers modifiers, int incomingDamage, string damageSource)
+        {
+            if (DebugShieldActivation) {
+                Main.NewText($"[SHIELD] ProcessIncomingDamage: {incomingDamage} from {damageSource}", Color.Yellow);
+            }
+
+            if (incomingDamage <= 0) {
+                if (DebugShieldActivation)
+                    Main.NewText("[SHIELD] ABORT: Incoming damage <= 0", Color.Red);
+                return;
+            }
+
+            // Step 1: Detect armor tier
+            ShieldArmorTier armorTier = DetectShieldArmorTier();
+
+            if (DebugShieldActivation) {
+                Main.NewText($"[SHIELD] Armor tier: {armorTier}, HasActiveShield: {HasActiveShield}, Cooldown: {shieldCooldownRemainingTicks}", Color.Yellow);
+            }
+
+            // Step 2: If no active shield, try to create one
+            if (!HasActiveShield) {
+                // Check cooldown
+                if (shieldCooldownRemainingTicks > 0) {
+                    if (DebugShieldActivation)
+                        Main.NewText($"[SHIELD] ABORT: On cooldown ({shieldCooldownRemainingTicks} ticks remaining)", Color.Orange);
+                    return;
+                }
+
+                // Check armor tier
+                if (armorTier == ShieldArmorTier.None) {
+                    if (DebugShieldActivation)
+                        Main.NewText("[SHIELD] ABORT: Not wearing shield-tier armor", Color.Orange);
+                    return;
+                }
+
+                // Create shield based on tier
+                CreateShield(armorTier);
+            }
+
+            // Step 3: Absorb damage if we have a shield
+            if (HasActiveShield) {
+                AbsorbDamageWithShield(ref modifiers, incomingDamage);
+            }
+            else {
+                if (DebugShieldActivation)
+                    Main.NewText("[SHIELD] No active shield after creation attempt - damage NOT absorbed", Color.Red);
+            }
+        }
+
+        /// <summary>
+        /// Create a new shield based on armor tier.
+        /// </summary>
+        private void CreateShield(ShieldArmorTier armorTier)
+        {
+            if (DebugShieldActivation)
+                Main.NewText($"[SHIELD] Creating shield for tier: {armorTier}", Color.Cyan);
+
+            if (armorTier == ShieldArmorTier.CopperTin) {
+                shieldMaxHP = CopperTinShieldHP;
+                shieldDurationRemainingTicks = CopperTinShieldDurationSeconds * 60;
+                shieldCooldownRemainingTicks = CopperTinShieldCooldownSeconds * 60;
+                isGoldTierShield = false;
+
+                // Add Fragile debuff to show cooldown
+                Player.AddBuff(ModContent.BuffType<Buffs.FragileBuff>(), CopperTinShieldCooldownSeconds * 60);
+            }
+            else // GoldPlatinum
+            {
+                shieldMaxHP = (int)(Player.statLifeMax2 * GoldPlatinumShieldHPPercent);
+                shieldDurationRemainingTicks = GoldPlatinumShieldDurationSeconds * 60;
+                shieldCooldownRemainingTicks = GoldPlatinumShieldCooldownSeconds * 60;
+                isGoldTierShield = true;
+
+                // Add Fragile debuff to show cooldown
+                Player.AddBuff(ModContent.BuffType<Buffs.FragileBuff>(), GoldPlatinumShieldCooldownSeconds * 60);
+
+                // Gold tier purges debuffs
+                PurgeCommonDebuffs();
+            }
+
+            shieldCurrentHP = shieldMaxHP;
+
+            if (DebugShieldActivation)
+                Main.NewText($"[SHIELD] Shield created: {shieldCurrentHP} HP, {shieldDurationRemainingTicks / 60}s duration", Color.Cyan);
+
+            // Visual feedback - burst of particles
+            SpawnShieldActivationParticles();
+        }
+
+        /// <summary>
+        /// Absorb damage with the active shield.
+        /// </summary>
+        private void AbsorbDamageWithShield(ref Player.HurtModifiers modifiers, int incomingDamage)
+        {
+            int absorbedDamage = Math.Min(shieldCurrentHP, incomingDamage);
+            shieldCurrentHP -= absorbedDamage;
+
+            // Calculate remaining percentage for display
+            int remainingPercent = shieldMaxHP > 0
+                ? (int)(100f * shieldCurrentHP / shieldMaxHP)
+                : 0;
+
+            if (DebugShieldActivation)
+                Main.NewText($"[SHIELD] Absorbing {absorbedDamage} damage, shield now {shieldCurrentHP}/{shieldMaxHP} ({remainingPercent}%)", Color.Lime);
+
+            // Negate the damage
+            if (absorbedDamage >= incomingDamage) {
+                modifiers.FinalDamage *= 0f; // Completely negate
+                if (DebugShieldActivation)
+                    Main.NewText("[SHIELD] Damage fully negated!", Color.Lime);
+            }
+            else {
+                // Partial absorption (shield broke mid-hit)
+                modifiers.SourceDamage.Base -= absorbedDamage;
+                if (DebugShieldActivation)
+                    Main.NewText($"[SHIELD] Partial absorption, remaining damage: {modifiers.SourceDamage.Base}", Color.Yellow);
+            }
+
+            // Show combat text
+            CombatText.NewText(Player.Hitbox, Color.Cyan, $"Blocked {absorbedDamage} ({remainingPercent}%)");
+
+            // Check if shield broke
+            if (shieldCurrentHP <= 0) {
+                if (DebugShieldActivation)
+                    Main.NewText("[SHIELD] Shield broke!", Color.Orange);
+            }
+        }
+
+        /// <summary>
+        /// Spawn particle burst when shield activates.
+        /// </summary>
+        private void SpawnShieldActivationParticles()
+        {
+            for (int i = 0; i < 30; i++) {
+                float angle = Main.rand.NextFloat() * MathHelper.TwoPi;
+                Vector2 velocity = new Vector2(
+                    (float)Math.Cos(angle) * 3f,
+                    (float)Math.Sin(angle) * 3f
+                );
+                Dust.NewDust(Player.Center, 0, 0, DustID.MagicMirror, velocity.X, velocity.Y, Alpha: 100, Scale: 1.2f);
+            }
+        }
+
+        /// <summary>
+        /// Clear common negative debuffs (gold/platinum set bonus).
+        /// </summary>
+        private void PurgeCommonDebuffs()
+        {
+            Player.ClearBuff(BuffID.OnFire);
+            Player.ClearBuff(BuffID.OnFire3); // Hellfire
+            Player.ClearBuff(BuffID.Poisoned);
+            Player.ClearBuff(BuffID.Venom);
+            Player.ClearBuff(BuffID.Chilled);
+            Player.ClearBuff(BuffID.Frozen);
+            Player.ClearBuff(BuffID.Burning);
+            Player.ClearBuff(BuffID.Bleeding);
+            Player.ClearBuff(BuffID.Confused);
+            Player.ClearBuff(BuffID.Slow);
+        }
+
+        // ╔════════════════════════════════════════════════════════════════════╗
+        // ║                          VISUAL EFFECTS                            ║
+        // ╚════════════════════════════════════════════════════════════════════╝
+
+        /// <summary>
+        /// Draw shield dust particles around the player when shield is active.
+        /// </summary>
+        public override void DrawEffects(PlayerDrawSet drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright)
+        {
+            if (!HasActiveShield)
+                return;
+
+            // Create dust particles around player for shield effect
+            if (Main.rand.NextBool(3)) // ~20 particles per second
+            {
+                float angle = Main.rand.NextFloat() * MathHelper.TwoPi;
+                float dustRadius = 10f;
+                Vector2 dustPosition = Player.Center + new Vector2(
+                    (float)Math.Cos(angle) * dustRadius,
+                    (float)Math.Sin(angle) * dustRadius
+                );
+
+                Dust shieldDust = Dust.NewDustPerfect(
+                    dustPosition,
+                    DustID.MagicMirror,
+                    Vector2.Zero,
+                    Alpha: 100,
+                    Scale: 0.8f
+                );
+                shieldDust.noGravity = true;
+            }
+        }
+    }
+}

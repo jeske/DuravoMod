@@ -19,22 +19,22 @@ namespace TerrariaSurvivalMod.Players
         public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
         {
             // Only show if player has active shield
-            ArmorSetBonusPlayer modPlayer = drawInfo.drawPlayer.GetModPlayer<ArmorSetBonusPlayer>();
-            return modPlayer.HasActiveShield;
+            EmergencyShieldPlayer shieldPlayer = drawInfo.drawPlayer.GetModPlayer<EmergencyShieldPlayer>();
+            return shieldPlayer.HasActiveShield;
         }
 
         protected override void Draw(ref PlayerDrawSet drawInfo)
         {
             Player player = drawInfo.drawPlayer;
-            ArmorSetBonusPlayer modPlayer = player.GetModPlayer<ArmorSetBonusPlayer>();
+            EmergencyShieldPlayer shieldPlayer = player.GetModPlayer<EmergencyShieldPlayer>();
 
-            if (!modPlayer.HasActiveShield)
+            if (!shieldPlayer.HasActiveShield)
                 return;
 
             // Get shield state from the player
-            float shieldRatio = modPlayer.ShieldRatio;
-            int shieldHP = modPlayer.CurrentShieldHP;
-            bool isGoldTier = modPlayer.IsGoldTierShield;
+            float shieldRatio = shieldPlayer.ShieldRatio;
+            int shieldHP = shieldPlayer.CurrentShieldHP;
+            bool isGoldTier = shieldPlayer.IsGoldTierShield;
 
             // Draw the shield circle
             DrawShieldCircle(drawInfo, player, shieldRatio, isGoldTier);

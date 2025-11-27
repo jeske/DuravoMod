@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using TerrariaSurvivalMod;
 
 namespace TerrariaSurvivalMod
 {
@@ -20,8 +21,8 @@ namespace TerrariaSurvivalMod
         /// <summary>Duration of spawn immunity in seconds (DEBUG: 8s for testing, set to 3 for release)</summary>
         private const double SpawnImmunityDurationSeconds = 3.0;
         
-        /// <summary>DEBUG: Enable detailed damage source logging during immunity</summary>
-        private const bool DebugLogDamageSources = true;
+        /// <summary>Get debug message setting from mod config</summary>
+        private static bool DebugMessagesEnabled => ModContent.GetInstance<TerrariaSurvivalModConfig>()?.EnableDebugMessages ?? false;
         
         /// <summary>DEBUG: Block Environmental/Unknown damage during immunity (suffocation, etc)</summary>
         private const bool BlockEnvironmentalDamageDuringImmunity = true;
@@ -168,9 +169,9 @@ namespace TerrariaSurvivalMod
                     spawnDust.fadeIn = 0.5f;
                 }
                 
-                // Log approximately every 2 seconds so we can see it's working
+                // Log approximately every 2 seconds so we can see it's working (only if debug enabled)
                 int currentSecond = (int)remainingSeconds;
-                if (currentSecond != lastLoggedSecond && currentSecond % 2 == 0 && currentSecond > 0)
+                if (DebugMessagesEnabled && currentSecond != lastLoggedSecond && currentSecond % 2 == 0 && currentSecond > 0)
                 {
                     lastLoggedSecond = currentSecond;
                     Main.NewText($"[TSM] ABSOLUTE Immunity: {currentSecond}s remaining", 100, 255, 100);
@@ -178,8 +179,11 @@ namespace TerrariaSurvivalMod
             }
             else if (lastLoggedSecond != -1)
             {
-                // Immunity just ended - log it once
-                Main.NewText($"[TSM] Immunity ENDED - you can now take damage!", 255, 100, 100);
+                // Immunity just ended - log it once (only if debug enabled)
+                if (DebugMessagesEnabled)
+                {
+                    Main.NewText($"[TSM] Immunity ENDED - you can now take damage!", 255, 100, 100);
+                }
                 lastLoggedSecond = -1;
             }
         }
@@ -218,7 +222,7 @@ namespace TerrariaSurvivalMod
             if (shouldBlock)
             {
                 // Debug log BEFORE blocking (so we see original values)
-                if (DebugLogDamageSources)
+                if (DebugMessagesEnabled)
                 {
                     string sourceDetails = GetDamageSourceDetails(modifiers, damageCategory);
                     int secondsRemaining = (int)GetImmunityRemainingSeconds();
@@ -231,7 +235,7 @@ namespace TerrariaSurvivalMod
             }
             else
             {
-                if (DebugLogDamageSources)
+                if (DebugMessagesEnabled)
                 {
                     string sourceDetails = GetDamageSourceDetails(modifiers, damageCategory);
                     Main.NewText($"[TSM] ALLOWING {damageCategory}: src={sourceDamageBase} final={finalDamageBase} | {sourceDetails}", 255, 100, 100);

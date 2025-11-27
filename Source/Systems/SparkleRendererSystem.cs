@@ -16,7 +16,7 @@ namespace TerrariaSurvivalMod.Systems
         {
             // Get the spriteBatch and begin drawing in screen coordinates
             SpriteBatch spriteBatch = Main.spriteBatch;
-            
+
             // Begin spriteBatch with additive blending for glow effect
             // Using TransformationMatrix to handle zoom and camera properly
             spriteBatch.Begin(
@@ -28,10 +28,10 @@ namespace TerrariaSurvivalMod.Systems
                 null,
                 Main.GameViewMatrix.TransformationMatrix
             );
-            
+
             // Draw all active sparkles
             ArmorSetBonusPlayer.DrawSparkles(spriteBatch);
-            
+
             spriteBatch.End();
         }
     }

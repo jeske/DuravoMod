@@ -1,5 +1,17 @@
 Mods: {
 	TerrariaSurvivalMod: {
+		Configs: {
+			TerrariaSurvivalModConfig: {
+				DisplayName: Terraria Survival Mod Config
+				Headers.Debug: Debug Header
+
+				EnableDebugMessages: {
+					Label: Enable Debug Messages
+					Tooltip: Show detailed debug messages in chat (immunity status, damage blocking, etc.)
+				}
+			}
+		}
+
 		Buffs: {
 			ShinyBuff: {
 				DisplayName: Shiny
