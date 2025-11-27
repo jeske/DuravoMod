@@ -23,7 +23,7 @@ namespace CrucibleMod.PersistentPosition
         private const double SpawnImmunityDurationSeconds = 3.0;
 
         /// <summary>Get debug player persistence setting from mod config</summary>
-        private static bool DebugMessagesEnabled => ModContent.GetInstance<CruicibleModConfig>()?.Debug?.DebugPlayerPersistence ?? false;
+        private static bool DebugMessagesEnabled => ModContent.GetInstance<CrucibleModConfig>()?.Debug?.DebugPlayerPersistence ?? false;
 
         /// <summary>DEBUG: Block Environmental/Unknown damage during immunity (suffocation, etc)</summary>
         private const bool BlockEnvironmentalDamageDuringImmunity = true;

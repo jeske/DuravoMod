@@ -1,4 +1,4 @@
-[h1]Terraria Survival Overhaul[/h1]
+[h1]Kuro's Cruicible Mod[/h1]
 
 Enhances the survival RPG experience by increasing the need for bases, making biome-specific bases serve a functional purpose, encouraging combat, enhancing gear progression, and making combat less avoidable.
 

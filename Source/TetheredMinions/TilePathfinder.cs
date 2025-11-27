@@ -18,7 +18,7 @@ namespace CrucibleMod.TetheredMinions
         // ╚════════════════════════════════════════════════════════════════════╝
 
         /// <summary>Get debug pathfinding setting from mod config</summary>
-        private static bool DebugPathfinding => ModContent.GetInstance<CruicibleModConfig>()?.Debug?.DebugMinionPathfinding ?? false;
+        private static bool DebugPathfinding => ModContent.GetInstance<CrucibleModConfig>()?.Debug?.DebugMinionPathfinding ?? false;
 
         /// <summary>Default maximum search radius in tiles (bounded by minion tether distance)</summary>
         public const int DefaultMaxSearchRadiusTiles = 100;

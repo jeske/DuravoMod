@@ -8,7 +8,7 @@ namespace CrucibleMod
     /// Client-side configuration for the Terraria Survival Mod.
     /// Access via ModContent.GetInstance<TerrariaSurvivalModConfig>().
     /// </summary>
-    public class CruicibleModConfig : ModConfig
+    public class CrucibleModConfig : ModConfig
     {
         public override ConfigScope Mode => ConfigScope.ClientSide;
 

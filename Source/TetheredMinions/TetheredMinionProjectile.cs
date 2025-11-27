@@ -48,13 +48,13 @@ namespace CrucibleMod.TetheredMinions
         // ╚════════════════════════════════════════════════════════════════════╝
 
         /// <summary>Get debug pathfinding setting from mod config</summary>
-        private static bool DebugTethering => ModContent.GetInstance<CruicibleModConfig>()?.Debug?.DebugMinionPathfinding ?? false;
+        private static bool DebugTethering => ModContent.GetInstance<CrucibleModConfig>()?.Debug?.DebugMinionPathfinding ?? false;
 
         /// <summary>Get smart pathfinding enabled setting from mod config</summary>
-        private static bool EnableQoLFollowPathing => ModContent.GetInstance<CruicibleModConfig>()?.MinionSmartPathfinding ?? true;
+        private static bool EnableQoLFollowPathing => ModContent.GetInstance<CrucibleModConfig>()?.MinionSmartPathfinding ?? true;
 
         /// <summary>Get isolated return (anti-cheese) enabled setting from mod config</summary>
-        private static bool EnableIsolatedReturn => ModContent.GetInstance<CruicibleModConfig>()?.MinionIsolatedReturn ?? true;
+        private static bool EnableIsolatedReturn => ModContent.GetInstance<CrucibleModConfig>()?.MinionIsolatedReturn ?? true;
 
         // ╔════════════════════════════════════════════════════════════════════╗
         // ║                        TUNABLE CONSTANTS                           ║

@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace CrucibleMod
 {
-    public class CruicibleMod : Mod
+    public class CrucibleMod : Mod
     {
         // Main mod class - tModLoader entry point
         // Features are implemented via ModPlayer, GlobalNPC, etc. classes
