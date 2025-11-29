@@ -1,10 +1,12 @@
-# Duravo Mod - Project Structure
+# Duravo QOL Mod - Project Structure
 
 ## Project Purpose
 
-A tModLoader mod that surgically removes exploits that trivialize Terraria's exploration and combat. The core philosophy: Terraria presents platformer-combat aesthetics but gives players tools that make engagement optional. This mod removes the worst offenders while preserving legitimate building and crafting QoL.
+A tModLoader mod focused on quality-of-life improvements for Terraria. Features include smarter minion behavior, persistent player position across sessions, improved armor progression feedback, and visual enhancements that make the game more intuitive.
 
-**See [`_DOCS/Terraria-Survival-Mod-SPEC.md`](_DOCS/Terraria-Survival-Mod-SPEC.md) for feature specifications and implementation ordering.**
+**Note:** Larger gameplay goals (earned combat, anti-exploit systems, enemy rebalancing) are planned for a future companion mod: **DuravoMod** or **DuravoWorld**.
+
+**See [`_SPECS/Terraria-Survival-Mod-SPEC.md`](_SPECS/Terraria-Survival-Mod-SPEC.md) for feature specifications and implementation ordering.**
 
 ---
 
@@ -27,7 +29,7 @@ DuravoQOLMod/
 ├── _TASKS/                      # Current work items
 │   └── _TOP_LEVEL_TODO.md
 │
-├── _DOCS/                       # All design documentation
+├── _SPECS/                      # All design documentation
 │   ├── Terraria-Survival-Mod-SPEC.md    # AUTHORITATIVE spec & implementation order
 │   ├── WIP-DEFINITELY-IDEAS/            # Features we WILL implement (not yet in main spec)
 │   ├── WIP-MAYBE-IDEAS/                 # Brainstorms (probably won't implement)
@@ -37,10 +39,10 @@ DuravoQOLMod/
 ├── Source/                      # All mod source code (feature-organized)
 │   ├── DuravoQOLMod.cs                     # Main mod class
 │   ├── DuravoQOLModConfig.cs               # Mod configuration
-│   ├── ArmorRebalance/                  # Early armor overhaul feature
-│   ├── EnemySmartHopping/               # Zombie jump calculation feature
-│   ├── PersistentPosition/              # Logout position saving feature
-│   └── TetheredMinions/                 # Minion tethering/pathfinding feature
+│   ├── ArmorRebalance/                  # Armor visual feedback & progression
+│   ├── EnemySmartHopping/               # Improved NPC jump calculations
+│   ├── PersistentPosition/              # Save/restore player position on logout
+│   └── TetheredMinions/                 # Smarter minion pathfinding
 │
 ├── Localization/                # Internationalization files
 │   └── en-US.hjson                      # English strings (primary)
@@ -57,7 +59,7 @@ DuravoQOLMod/
 ├── build.txt                    # tModLoader mod metadata
 ├── description.txt              # Mod description for browser
 ├── icon.png                     # Mod icon
-└── DuravoQOLMod.sln                # Visual Studio solution
+└── DuravoMod.sln                   # Visual Studio solution
 ```
 
 ---
@@ -108,4 +110,4 @@ See [`.env.example`](.env.example) for detailed instructions.
 
 - [tModLoader Wiki](https://github.com/tModLoader/tModLoader/wiki)
 - [tModLoader Documentation](https://docs.tmodloader.net/)
-- Feature Spec & Roadmap: [`_DOCS/Terraria-Survival-Mod-SPEC.md`](_DOCS/Terraria-Survival-Mod-SPEC.md)
+- Feature Spec & Roadmap: [`_SPECS/Terraria-Survival-Mod-SPEC.md`](_SPECS/Terraria-Survival-Mod-SPEC.md)
