@@ -46,8 +46,17 @@ public partial class CraftingInfoPanelUI : UIState
     /// <summary>Currently selected tab index</summary>
     private int selectedTabIndex = 0;
 
-    /// <summary>Tab labels</summary>
-    private readonly string[] tabNames = { "Armor", "Weapons", "Materials", "Furn 1", "Furn 2" };
+    /// <summary>Tab labels (for tooltips)</summary>
+    private readonly string[] tabNames = { "Armor", "Weapons", "Materials", "Furniture 1", "Furniture 2" };
+    
+    /// <summary>Tab icon item IDs</summary>
+    private readonly int[] tabIconItemIds = {
+        ItemID.LeadChainmail,    // Armor tab
+        ItemID.LeadBow,          // Weapons tab
+        ItemID.Torch,            // Materials tab
+        ItemID.WorkBench,        // Furniture 1 tab
+        ItemID.SpookyWorkBench   // Furniture 2 tab
+    };
 
     /// <summary>Position calculators for each tab</summary>
     private PanelPositionCalculator<CraftingSlotInfo> armorTabLayout = null!;
@@ -180,12 +189,13 @@ public partial class CraftingInfoPanelUI : UIState
     {
         bool isSelected = tabIndex == selectedTabIndex;
 
+        // Active tab: lighter (current inactive style), Inactive: much darker
         Color tabBgColor = isSelected
-            ? new Color(74, 58, 42, 255)
-            : new Color(58, 58, 90, 255);
+            ? new Color(58, 58, 90, 255)     // Active: lighter blue-purple
+            : new Color(25, 25, 40, 255);    // Inactive: much darker
         Color tabBorderColor = isSelected
-            ? new Color(138, 106, 74)
-            : new Color(90, 90, 122);
+            ? new Color(90, 90, 122)         // Active: visible border
+            : new Color(40, 40, 60);         // Inactive: subdued border
 
         Texture2D pixel = TextureAssets.MagicPixel.Value;
 
@@ -199,13 +209,33 @@ public partial class CraftingInfoPanelUI : UIState
         spriteBatch.Draw(pixel, new Rectangle((int)x, (int)y + tabHeight - 2, tabWidth, 2), tabBorderColor);
         spriteBatch.Draw(pixel, new Rectangle((int)x, (int)y, 2, tabHeight), tabBorderColor);
 
-        string tabLabel = tabNames[tabIndex].Substring(0, 1);
-        Vector2 textPos = new Vector2(x + tabWidth / 2, y + tabHeight / 2);
-        Color textColor = isSelected ? new Color(240, 192, 96) : new Color(170, 170, 170);
-        Utils.DrawBorderString(spriteBatch, tabLabel, textPos, textColor, 1f, 0.5f, 0.5f);
+        // Draw item icon instead of letter
+        int iconItemId = tabIconItemIds[tabIndex];
+        Main.instance.LoadItem(iconItemId);
+        Texture2D iconTexture = TextureAssets.Item[iconItemId].Value;
+        
+        // Scale to fit within tab (with padding)
+        float maxIconSize = tabWidth - 8;
+        float iconScale = 1f;
+        if (iconTexture.Width > maxIconSize || iconTexture.Height > maxIconSize) {
+            float scaleX = maxIconSize / iconTexture.Width;
+            float scaleY = maxIconSize / iconTexture.Height;
+            iconScale = System.Math.Min(scaleX, scaleY);
+        }
+        
+        Vector2 iconCenter = new Vector2(x + tabWidth / 2f, y + tabHeight / 2f);
+        Vector2 iconOrigin = new Vector2(iconTexture.Width / 2f, iconTexture.Height / 2f);
+        // Active: full brightness, Inactive: dimmed
+        Color iconTint = isSelected ? Color.White : new Color(100, 100, 100);
+        spriteBatch.Draw(iconTexture, iconCenter, null, iconTint, 0f, iconOrigin, iconScale, SpriteEffects.None, 0f);
 
-        // Handle click
-        if (tabRect.Contains(Main.mouseX, Main.mouseY) && Main.mouseLeft && Main.mouseLeftRelease) {
+        // Handle click and hover tooltip
+        bool isHovering = tabRect.Contains(Main.mouseX, Main.mouseY);
+        if (isHovering) {
+            Main.hoverItemName = tabNames[tabIndex];
+        }
+        
+        if (isHovering && Main.mouseLeft && Main.mouseLeftRelease) {
             selectedTabIndex = tabIndex;
             Main.mouseLeftRelease = false;
         }
