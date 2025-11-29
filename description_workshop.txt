@@ -1,55 +1,41 @@
-[h1]Duravo QOL[/h1]
+[h1]Duravo QOL Mod[/h1]
 
-Duravo QOL is a set of refinements to make Terraria feel more engaging
-and rewarding, from the first moment of gameplay to the last.
+Duravo QOL is a collection of quality-of-life improvements that make Terraria more intuitive and enjoyable without changing core gameplay.
 
-[url=http://duravomod.org]🌐 Visit our Website[/url]
-[url=TO_BE_FILLED_IN] Join our Forum Thread[/url]
+[url=http://duravomod.org]🌐 Website[/url] | [url=https://github.com/jeske/DuravoQOLMod]📦 GitHub Source[/url]
 
-[h2]🎯 Our Goals[/h2]
+[h2]Core Philosophy[/h2]
 [list]
-[*] Deepen engagement with Terraria's rich world
-[*] Make more biomes "start viable"
-[*] Create satisfying tension between risk and reward
-[*] Increase engagement with armor progression
-[*] Increase investment needed to reach zoom-zoom gameplay
-[*] Give purpose to biome-specific base crafting items
+[*] Tweaks to make Terraria a little more like we wish it was
+[*] Mechanics that add visual clarity and fun
+[*] All features individually toggleable
 [/list]
 
-[h2]✅ Current Features[/h2]
+[h2]Current Features[/h2]
 
-[b]Persistent Player Position[/b]
-Your character stays where you left them. Log out in a cave? Wake up in that cave. The only fast travel is pylons.
+[h3]🗺️ Persistent Player Position[/h3]
+Log back in exactly where you left off. No more losing where you are because you need a break.
 
-[b]Armor Rebalance[/b]
+[h3]🛡️ Crafted Armor Rework[/h3]
+Defense baked into pieces (no penalty for breaking sets), plus new 2-piece mix-and-match bonuses.
+
+[h3]⚡ Emergency Shield[/h3]
+Chestpieces grant reactive shields with visual feedback showing damage blocked.
+
+[h3]✨ Shiny Buff[/h3]
+2pc armor bonus making nearby ores sparkle (only slightly beyond torch range), making early mining a little more fun.
+
+[h3]🐾 Smart Minion Pathfinding[/h3]
+Minions navigate around obstacles using A* pathfinding instead of getting stuck.
+
+[h3]📋 Crafting Info Panel[/h3]
+Organized visual reference showing all craftable items by category. Hover for recipes, click to focus in crafting menu.
+
+[h2]Coming Soon[/h2]
 [list]
-[*] New non-combat set bonuses make breaking sets viable
-[*] [b]Emergency Shield[/b] - Chestpieces grant damage-absorbing shields to help new players learn combat
-[*] [b]Shiny[/b] - Set bonus that makes nearby ores and gems sparkle
-[*] Defense redistributed into individual pieces (no more losing set bonus defense when upgrading one piece)
+[*] Mini-Player Healthbar
+[*] Native Biome Bootstrap (craft basic stations from [i]any[/i] local materials)
 [/list]
 
-[b]Minion Tethering[/b]
-[list]
-[*] Minions stay near you - no more AFK murder rooms
-[*] Smart pathfinding follows you through terrain
-[/list]
-
-[h2]🔜 Coming Soon[/h2]
-[list]
-[*] Digging-based spawn scaling
-[*] Enhanced enemy behaviors (smart jumping, burrowing)
-[*] Strategic travel systems (removing recall, adding portal networks)
-[*] Depth-scaled difficulty
-[/list]
-
-[h2]🎮 Stretch Goal[/h2]
-Best speedrun times should increase from 50 minutes to 5+ hours, because you can no longer blast past and skip/ignore enemies, progression, and exploration.
-
-[hr][/hr]
-
-[i]For players who want their victories to feel truly earned.[/i]
-
-[h3]Feedback & Development[/h3]
-This mod is in active development. Feedback welcome!
-
+[h2]Localization[/h2]
+Available in: English, German, Spanish, French, Italian, Portuguese (BR), Russian, Polish, Simplified Chinese

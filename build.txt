@@ -2,4 +2,4 @@ displayName = Duravo QOL
 author = KuroParkCity
 version = 0.1.0
 homepage = http://duravomod.org
-buildIgnore = _DOCS/*, _TASKS/*, .vscode/*, Archive/*, AssetSource/*, docs/*, *.md, .env*, .git*, .editorconfig
+buildIgnore = _DOCS/*, _TASKS/*, .vscode/*, Archive/*, AssetSource/*, docs/*, *.md, .env*, .git*, .editorconfig, Scripts/*

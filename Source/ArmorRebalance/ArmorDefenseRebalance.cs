@@ -20,6 +20,9 @@ namespace DuravoQOLMod.ArmorRebalance
     /// </summary>
     public class ArmorDefenseRebalance : GlobalItem
     {
+        // FEATURE FLAG: Set to true when knockback bonus is implemented
+        private const bool EnableHeavyKnockbackBonus = false;
+        
         // Tooltip color hex codes (pre-computed to avoid allocations)
         private const string HexColorActiveBuffName = "00FF00";   // Green
         private const string HexColorInactiveText = "666666";     // Dark grey
@@ -255,10 +258,13 @@ namespace DuravoQOLMod.ArmorRebalance
 
         /// <summary>
         /// Add tooltip for Heavy chestplate effect (Iron/Lead/Tungsten only).
-        /// Shows static format for inventory, dynamic format with colors for equipped.
+        /// Only shown when EnableHeavyKnockbackBonus is true.
         /// </summary>
         private void AddHeavyChestplateTooltip(int itemType, bool isEquipped, List<TooltipLine> tooltips)
         {
+            // Don't show Heavy tooltip until knockback feature is implemented
+            if (!EnableHeavyKnockbackBonus) return;
+            
             bool isHeavyChestplate = itemType switch {
                 ItemID.IronChainmail => true,
                 ItemID.LeadChainmail => true,

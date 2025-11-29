@@ -10,14 +10,13 @@ Core Philosophy:
 
 Current Features:
 
-- *Persistent Player Position* - Log back in exactly where you left off. No more losing where you are because you need a break.
-- *Crafted Armor Rework* - Defense baked into pieces (no penalty for breaking sets), plus new 2-piece mix-and-match bonuses.
-- *Emergency Shield* - Chestpieces grant reactive shields with visual feedback showing damage blocked.
-- *Shiny Buff* - 2pc crafted armor makes nearby ores sparkle, reducing missed-ore anxiety.
-- *Smart Minion Pathfinding* - Minions navigate around obstacles using A* pathfinding instead of getting stuck.
-- *Crafting Info Panel* - Organized visual reference showing all craftable items by category. Hover for recipes, click to focus in crafting menu.
+Persistent Player Position: Log back in exactly where you left off. No more losing where you are because you need a break.
+Crafted Armor Rework: Defense baked into pieces (no penalty for breaking sets), plus new 2-piece mix-and-match bonuses.
+Emergency Shield: Chestpieces grant reactive shields with visual feedback showing damage blocked.
+Shiny Buff: 2pc bonus making nearby ores sparkle (only slightly beyond torch range), making early mining a little more fun.
+Smart Minion Pathfinding: Minions navigate around obstacles using A* pathfinding instead of getting stuck.
+Crafting Info Panel: Organized visual reference showing all craftable items by category. Hover for recipes, click to focus in crafting menu.
 
 Coming Soon:
 - Mini-Player Healthbar
-- Craftable Rope from Fiber
-- Native Biome Bootstrap (craft basic stations from local materials)
+- Native Biome Bootstrap (craft basic stations from *any* local materials)

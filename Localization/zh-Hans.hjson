@@ -1,0 +1,207 @@
+Mods: {
+	DuravoQOLMod: {
+		// ═══════════════════════════════════════════════════════════════════
+		// GLOBAL MOD CONFIGURATION
+		// ═══════════════════════════════════════════════════════════════════
+		Configs: {
+			DuravoQOLModConfig: {
+				DisplayName: Duravo QOL Mod 配置
+
+				Headers: {
+					FeatureToggles: 功能开关
+					MinionBehavior: 仆从行为
+					CraftingPanel: 制作面板
+				}
+
+				ClientPersistentPosition: {
+					Label: 客户端位置持久化
+					Tooltip: 离开世界时将角色位置保存到玩家文件中。这是你的个人设置 - 与服务器设置无关。
+				}
+
+				ArmorRebalance: {
+					Label: 制作盔甲重平衡
+					Tooltip: 启用制作盔甲改进：反应护盾、闪亮矿石检测和重新平衡的防御属性。
+				}
+
+				EnemySmartHopping: {
+					Label: 敌人智能跳跃
+					Tooltip: 敌人会计算更好的跳跃轨迹来接近你。使地面敌人在地形导航方面稍微更强。
+				}
+
+				MinionSmartPathfinding: {
+					Label: 仆从智能寻路
+					Tooltip: 当仆从在跟随你时被地形阻挡，它会绕过障碍物而不是卡住。禁用以使用原版仆从移动。
+				}
+
+				MinionIsolatedReturn: {
+					Label: 仆从隔离相位返回
+					Tooltip: 当你放置一个方块将仆从困住且没有视线和返回路径时，仆从会穿墙返回你身边。
+				}
+
+				Debug: {
+					Label: 调试选项
+					Tooltip: ""
+				}
+
+				CraftingPanelEnabled: {
+					Label: 启用 Duravo 制作面板
+					Tooltip:
+						'''
+						启用 Duravo 制作面板功能。
+						禁用时，面板按钮和所有面板功能将隐藏。
+						'''
+				}
+
+				CraftingPanelStickyAutoShowAtBenches: {
+					Label: 工作台自动显示
+					Tooltip:
+						'''
+						启用时，尊重工作台自动显示设置。
+						禁用时，面板永远不会在制作站自动打开。
+						'''
+				}
+
+				CraftingPanelOnlyShowSeenItems: {
+					Label: 仅显示已见物品
+					Tooltip:
+						'''
+						仅在制作面板中显示你已见过至少一种配方材料的可制作物品。
+						在你进展过程中保持发现体验。
+						'''
+				}
+			}
+
+			DuravoQOLModServerConfig: {
+				DisplayName: 服务器/世界设置
+				Headers.WorldFeatures: 世界功能（服务器控制）
+
+				WorldServerPersistentPosition: {
+					Label: 世界玩家位置持久化
+					Tooltip: 世界在世界文件中跟踪玩家位置。玩家重新加入时会恢复到之前的位置。
+				}
+			}
+
+			DebugSettings: {
+				DisplayName: 调试设置
+
+				DebugPlayerPersistence: {
+					Label: 调试玩家持久化
+					Tooltip: 显示玩家位置保存/恢复和出生免疫的调试消息。
+				}
+
+				DebugMinionPathfinding: {
+					Label: 调试仆从寻路
+					Tooltip: 显示仆从寻路决策的调试信息（阻挡检测、A*路径、相位等）
+				}
+
+				DebugArmorShields: {
+					Label: 调试盔甲护盾
+					Tooltip: 显示紧急护盾激活、伤害吸收、冷却时间和护盾破碎的调试消息。
+				}
+
+				DebugEnemySmartHopping: {
+					Label: 调试敌人智能跳跃
+					Tooltip: 显示敌人执行智能跳跃越过墙壁时的调试消息。
+				}
+
+				Tooltip: ""
+			}
+		}
+
+		// ═══════════════════════════════════════════════════════════════════
+		// ARMOR REBALANCE FEATURE
+		// Defense redistribution, multi-piece buffs, emergency shield
+		// ═══════════════════════════════════════════════════════════════════
+		ArmorRebalance: {
+			Buffs: {
+				ShinyBuff: {
+					DisplayName: 闪亮
+					Description: 附近的矿石和宝石会闪烁
+				}
+
+				FragileBuff: {
+					DisplayName: 脆弱
+					Description: 暂时无法获得紧急护盾
+				}
+			}
+
+			CombatText.ShieldBlocked: "{0}（已格挡）"
+
+			// Multi-piece buff names (plain text, code adds colors/formatting)
+			BuffNames: {
+				Shiny: 闪亮
+				SuperShiny: 超级闪亮
+				Heavy: 沉重
+			}
+
+			// Multi-piece buff descriptions (plain text, code adds colors/formatting)
+			BuffDescriptions: {
+				Shiny: 附近的矿石和宝石会闪烁
+				SuperShiny: 附近的矿石和宝石会闪烁（扩展范围）
+				Heavy: +15% 击退和击退反射
+			}
+
+			// Chestplate-only bonuses (plain text, code adds colors/formatting)
+			ChestBonuses: {
+				Shield30HP: 受击时 +30 HP 护盾持续5秒（60秒冷却）
+				Shield15Pct: 受击时 15% HP 护盾持续10秒（120秒冷却，净化减益）
+				Speed15Pct: +15% 移动速度
+			}
+		}
+
+		// ═══════════════════════════════════════════════════════════════════
+		// CRAFTING PANEL FEATURE
+		// Visual crafting reference panel with tab-based organization
+		// ═══════════════════════════════════════════════════════════════════
+		CraftingPanel: {
+			// Tab names
+			TabNames: {
+				Armor: 盔甲
+				Weapons: 武器
+				Materials: 材料
+				Furniture1: 家具 1
+				Furniture2: 家具 2
+			}
+
+			// Hardmode toggle button
+			Hardmode: 困难模式
+			HardmodeTooltipOn: 点击显示困难模式前物品
+			HardmodeTooltipOff: 点击显示困难模式物品
+			// Recipe tooltip
+			Requires: 需要：{0}
+			// Toggle button tooltips
+			HideCraftingPanel: 隐藏制作面板
+			ShowCraftingPanel: 显示制作面板
+			NoCraftingStationNearby: （附近没有制作站）
+			DisableAutoShow: 禁用工作台自动显示
+			EnableAutoShow: 启用工作台自动显示
+			CurrentlyOn: （当前：开启）
+			CurrentlyOff: （当前：关闭）
+		}
+
+		// ═══════════════════════════════════════════════════════════════════
+		// PERSISTENT POSITION FEATURE
+		// Save/restore player position on logout/login
+		// ═══════════════════════════════════════════════════════════════════
+		PersistentPosition: {
+		}
+
+		// Root-level Buffs section - tModLoader auto-discovers these for ModBuff classes
+		Buffs: {
+			FragileBuff: {
+				DisplayName: 脆弱
+				Description: 暂时无法获得紧急护盾
+			}
+
+			ShinyBuff: {
+				DisplayName: 闪亮
+				Description: 附近的矿石和宝石会闪烁
+			}
+
+			HeavyBuff: {
+				DisplayName: 沉重
+				Description: Mods.DuravoQOLMod.Buffs.HeavyBuff.Description
+			}
+		}
+	}
+}

@@ -1,0 +1,207 @@
+Mods: {
+	DuravoQOLMod: {
+		// ═══════════════════════════════════════════════════════════════════
+		// GLOBAL MOD CONFIGURATION
+		// ═══════════════════════════════════════════════════════════════════
+		Configs: {
+			DuravoQOLModConfig: {
+				DisplayName: Configuração do Duravo QOL Mod
+
+				Headers: {
+					FeatureToggles: Ativar/Desativar Recursos
+					MinionBehavior: Comportamento de Lacaios
+					CraftingPanel: Painel de Criação
+				}
+
+				ClientPersistentPosition: {
+					Label: Posição Persistente do Cliente
+					Tooltip: Salva a posição do seu personagem no arquivo do jogador ao sair de um mundo. Esta é a SUA configuração pessoal - independente das configurações do servidor.
+				}
+
+				ArmorRebalance: {
+					Label: Rebalanceamento de Armadura Criada
+					Tooltip: Ativa melhorias de armadura criada: escudos reativos, detecção de minério brilhante e estatísticas de defesa rebalanceadas.
+				}
+
+				EnemySmartHopping: {
+					Label: Pulo Inteligente de Inimigos
+					Tooltip: Inimigos calculam melhores trajetórias de pulo para alcançar você. Torna os inimigos terrestres um pouco mais capazes de navegar o terreno.
+				}
+
+				MinionSmartPathfinding: {
+					Label: Navegação Inteligente de Lacaios
+					Tooltip: Quando um lacaio está bloqueado pelo terreno enquanto te segue, ele encontrará um caminho ao redor dos obstáculos ao invés de ficar preso. Desative para usar o movimento vanilla de lacaios.
+				}
+
+				MinionIsolatedReturn: {
+					Label: Retorno de Fase de Lacaio Isolado
+					Tooltip: Quando você coloca um bloco que prende um lacaio sem linha de visão e sem caminho de volta, o lacaio atravessará paredes para retornar a você.
+				}
+
+				Debug: {
+					Label: Opções de Depuração
+					Tooltip: ""
+				}
+
+				CraftingPanelEnabled: {
+					Label: Ativar Painel de Criação Duravo
+					Tooltip:
+						'''
+						Ativa o recurso do Painel de Criação Duravo.
+						Quando desativado, o botão do painel e todos os recursos do painel ficam ocultos.
+						'''
+				}
+
+				CraftingPanelStickyAutoShowAtBenches: {
+					Label: Auto-Mostrar em Bancadas
+					Tooltip:
+						'''
+						Quando ativado, o auto-mostrar em bancadas é respeitado.
+						Quando desativado, o painel nunca abre automaticamente em estações de criação.
+						'''
+				}
+
+				CraftingPanelOnlyShowSeenItems: {
+					Label: Mostrar Apenas Itens Vistos
+					Tooltip:
+						'''
+						Mostra apenas itens criáveis no Painel de Criação se você viu pelo menos um ingrediente da receita.
+						Preserva a experiência de descoberta enquanto você progride.
+						'''
+				}
+			}
+
+			DuravoQOLModServerConfig: {
+				DisplayName: Configurações de Servidor/Mundo
+				Headers.WorldFeatures: Recursos do Mundo (Controlados pelo Servidor)
+
+				WorldServerPersistentPosition: {
+					Label: Persistência de Posição do Jogador no Mundo
+					Tooltip: O mundo rastreia as posições dos jogadores no arquivo do mundo. Jogadores são restaurados à sua posição anterior quando reconectam.
+				}
+			}
+
+			DebugSettings: {
+				DisplayName: Configurações de Depuração
+
+				DebugPlayerPersistence: {
+					Label: Depurar Persistência do Jogador
+					Tooltip: Mostra mensagens de depuração para salvar/restaurar posição do jogador e imunidade de spawn.
+				}
+
+				DebugMinionPathfinding: {
+					Label: Depurar Navegação de Lacaios
+					Tooltip: Mostra informações de depuração sobre decisões de navegação de lacaios (detecção de bloqueio, caminho A*, fase, etc.)
+				}
+
+				DebugArmorShields: {
+					Label: Depurar Escudos de Armadura
+					Tooltip: Mostra mensagens de depuração para ativação de escudo de emergência, absorção de dano, tempos de recarga e quebras de escudo.
+				}
+
+				DebugEnemySmartHopping: {
+					Label: Depurar Pulo Inteligente de Inimigos
+					Tooltip: Mostra mensagens de depuração quando inimigos executam pulos inteligentes sobre paredes.
+				}
+
+				Tooltip: ""
+			}
+		}
+
+		// ═══════════════════════════════════════════════════════════════════
+		// ARMOR REBALANCE FEATURE
+		// Defense redistribution, multi-piece buffs, emergency shield
+		// ═══════════════════════════════════════════════════════════════════
+		ArmorRebalance: {
+			Buffs: {
+				ShinyBuff: {
+					DisplayName: Brilhante
+					Description: Minérios e gemas próximas brilham
+				}
+
+				FragileBuff: {
+					DisplayName: Frágil
+					Description: Incapaz de adquirir escudo de emergência por um tempo
+				}
+			}
+
+			CombatText.ShieldBlocked: "{0} (bloqueado)"
+
+			// Multi-piece buff names (plain text, code adds colors/formatting)
+			BuffNames: {
+				Shiny: Brilhante
+				SuperShiny: Super Brilhante
+				Heavy: Pesado
+			}
+
+			// Multi-piece buff descriptions (plain text, code adds colors/formatting)
+			BuffDescriptions: {
+				Shiny: Minérios e gemas próximas brilham
+				SuperShiny: Minérios e gemas próximas brilham (alcance estendido)
+				Heavy: +15% repulsão e reflexão de repulsão
+			}
+
+			// Chestplate-only bonuses (plain text, code adds colors/formatting)
+			ChestBonuses: {
+				Shield30HP: +30 HP de Escudo por 5s quando atingido (60s de recarga)
+				Shield15Pct: 15% HP de Escudo por 10s quando atingido (120s de recarga, remove debuffs)
+				Speed15Pct: +15% velocidade de movimento
+			}
+		}
+
+		// ═══════════════════════════════════════════════════════════════════
+		// CRAFTING PANEL FEATURE
+		// Visual crafting reference panel with tab-based organization
+		// ═══════════════════════════════════════════════════════════════════
+		CraftingPanel: {
+			// Tab names
+			TabNames: {
+				Armor: Armadura
+				Weapons: Armas
+				Materials: Materiais
+				Furniture1: Móveis 1
+				Furniture2: Móveis 2
+			}
+
+			// Hardmode toggle button
+			Hardmode: Modo Difícil
+			HardmodeTooltipOn: Clique para mostrar itens pré-Modo Difícil
+			HardmodeTooltipOff: Clique para mostrar itens do Modo Difícil
+			// Recipe tooltip
+			Requires: Requer: {0}
+			// Toggle button tooltips
+			HideCraftingPanel: Ocultar Painel de Criação
+			ShowCraftingPanel: Mostrar Painel de Criação
+			NoCraftingStationNearby: (Sem estação de criação por perto)
+			DisableAutoShow: Desativar auto-mostrar em bancadas
+			EnableAutoShow: Ativar auto-mostrar em bancadas
+			CurrentlyOn: (Atual: LIGADO)
+			CurrentlyOff: (Atual: DESLIGADO)
+		}
+
+		// ═══════════════════════════════════════════════════════════════════
+		// PERSISTENT POSITION FEATURE
+		// Save/restore player position on logout/login
+		// ═══════════════════════════════════════════════════════════════════
+		PersistentPosition: {
+		}
+
+		// Root-level Buffs section - tModLoader auto-discovers these for ModBuff classes
+		Buffs: {
+			FragileBuff: {
+				DisplayName: Frágil
+				Description: Incapaz de adquirir escudo de emergência por um tempo
+			}
+
+			ShinyBuff: {
+				DisplayName: Brilhante
+				Description: Minérios e gemas próximas brilham
+			}
+
+			HeavyBuff: {
+				DisplayName: Pesado
+				Description: Mods.DuravoQOLMod.Buffs.HeavyBuff.Description
+			}
+		}
+	}
+}

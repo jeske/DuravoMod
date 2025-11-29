@@ -1,0 +1,207 @@
+Mods: {
+	DuravoQOLMod: {
+		// ═══════════════════════════════════════════════════════════════════
+		// GLOBAL MOD CONFIGURATION
+		// ═══════════════════════════════════════════════════════════════════
+		Configs: {
+			DuravoQOLModConfig: {
+				DisplayName: Konfiguracja Duravo QOL Mod
+
+				Headers: {
+					FeatureToggles: Włączanie/Wyłączanie Funkcji
+					MinionBehavior: Zachowanie Stronników
+					CraftingPanel: Panel Wytwarzania
+				}
+
+				ClientPersistentPosition: {
+					Label: Trwała Pozycja Klienta
+					Tooltip: Zapisuje pozycję twojej postaci w pliku gracza przy opuszczaniu świata. To TWOJE osobiste ustawienie - niezależne od ustawień serwera.
+				}
+
+				ArmorRebalance: {
+					Label: Rebalans Wytwarzanej Zbroi
+					Tooltip: Włącza ulepszenia wytwarzanej zbroi: reaktywne tarcze, wykrywanie błyszczących rud i zbalansowane statystyki obrony.
+				}
+
+				EnemySmartHopping: {
+					Label: Inteligentne Skoki Wrogów
+					Tooltip: Wrogowie obliczają lepsze trajektorie skoków, aby cię dosięgnąć. Sprawia, że wrogowie naziemni są nieco bardziej zdolni do nawigacji po terenie.
+				}
+
+				MinionSmartPathfinding: {
+					Label: Inteligentne Znajdowanie Ścieżki Stronników
+					Tooltip: Gdy stronnik jest zablokowany przez teren podczas podążania za tobą, znajdzie drogę dookoła przeszkód zamiast utknąć. Wyłącz, aby używać waniliowego ruchu stronników.
+				}
+
+				MinionIsolatedReturn: {
+					Label: Fazowy Powrót Izolowanego Stronnika
+					Tooltip: Gdy umieścisz blok, który uwięzi stronnika bez linii wzroku i bez drogi powrotnej, stronnik przejdzie przez ściany, aby do ciebie wrócić.
+				}
+
+				Debug: {
+					Label: Opcje Debugowania
+					Tooltip: ""
+				}
+
+				CraftingPanelEnabled: {
+					Label: Włącz Panel Wytwarzania Duravo
+					Tooltip:
+						'''
+						Włącza funkcję Panelu Wytwarzania Duravo.
+						Gdy wyłączone, przycisk panelu i wszystkie funkcje panelu są ukryte.
+						'''
+				}
+
+				CraftingPanelStickyAutoShowAtBenches: {
+					Label: Auto-Pokazywanie przy Stołach
+					Tooltip:
+						'''
+						Gdy włączone, auto-pokazywanie przy stołach jest respektowane.
+						Gdy wyłączone, panel nigdy nie otwiera się automatycznie przy stacjach wytwarzania.
+						'''
+				}
+
+				CraftingPanelOnlyShowSeenItems: {
+					Label: Pokazuj Tylko Widziane Przedmioty
+					Tooltip:
+						'''
+						Pokazuje tylko przedmioty do wytworzenia w Panelu Wytwarzania, jeśli widziałeś co najmniej jeden składnik przepisu.
+						Zachowuje doświadczenie odkrywania podczas postępów.
+						'''
+				}
+			}
+
+			DuravoQOLModServerConfig: {
+				DisplayName: Ustawienia Serwera/Świata
+				Headers.WorldFeatures: Funkcje Świata (Kontrolowane przez Serwer)
+
+				WorldServerPersistentPosition: {
+					Label: Trwałość Pozycji Gracza w Świecie
+					Tooltip: Świat śledzi pozycje graczy w pliku świata. Gracze są przywracani na poprzednią pozycję gdy się ponownie połączą.
+				}
+			}
+
+			DebugSettings: {
+				DisplayName: Ustawienia Debugowania
+
+				DebugPlayerPersistence: {
+					Label: Debuguj Trwałość Gracza
+					Tooltip: Pokazuje komunikaty debugowania dla zapisywania/przywracania pozycji gracza i odporności przy spawnie.
+				}
+
+				DebugMinionPathfinding: {
+					Label: Debuguj Znajdowanie Ścieżki Stronników
+					Tooltip: Pokazuje informacje debugowania o decyzjach znajdowania ścieżki stronników (wykrywanie blokady, ścieżka A*, faza, itp.)
+				}
+
+				DebugArmorShields: {
+					Label: Debuguj Tarcze Zbroi
+					Tooltip: Pokazuje komunikaty debugowania dla aktywacji tarczy awaryjnej, absorpcji obrażeń, czasów odnowienia i złamań tarczy.
+				}
+
+				DebugEnemySmartHopping: {
+					Label: Debuguj Inteligentne Skoki Wrogów
+					Tooltip: Pokazuje komunikaty debugowania gdy wrogowie wykonują inteligentne skoki nad ścianami.
+				}
+
+				Tooltip: ""
+			}
+		}
+
+		// ═══════════════════════════════════════════════════════════════════
+		// ARMOR REBALANCE FEATURE
+		// Defense redistribution, multi-piece buffs, emergency shield
+		// ═══════════════════════════════════════════════════════════════════
+		ArmorRebalance: {
+			Buffs: {
+				ShinyBuff: {
+					DisplayName: Błyszczący
+					Description: Pobliskie rudy i klejnoty błyszczą
+				}
+
+				FragileBuff: {
+					DisplayName: Kruchy
+					Description: Niemożliwe zdobycie tarczy awaryjnej przez jakiś czas
+				}
+			}
+
+			CombatText.ShieldBlocked: "{0} (zablokowano)"
+
+			// Multi-piece buff names (plain text, code adds colors/formatting)
+			BuffNames: {
+				Shiny: Błyszczący
+				SuperShiny: Super Błyszczący
+				Heavy: Ciężki
+			}
+
+			// Multi-piece buff descriptions (plain text, code adds colors/formatting)
+			BuffDescriptions: {
+				Shiny: Pobliskie rudy i klejnoty błyszczą
+				SuperShiny: Pobliskie rudy i klejnoty błyszczą (zwiększony zasięg)
+				Heavy: +15% odrzut i odbicie odrzutu
+			}
+
+			// Chestplate-only bonuses (plain text, code adds colors/formatting)
+			ChestBonuses: {
+				Shield30HP: +30 HP Tarcza na 5s po trafieniu (60s odnowienie)
+				Shield15Pct: 15% HP Tarcza na 10s po trafieniu (120s odnowienie, oczyszcza debuffs)
+				Speed15Pct: +15% prędkość ruchu
+			}
+		}
+
+		// ═══════════════════════════════════════════════════════════════════
+		// CRAFTING PANEL FEATURE
+		// Visual crafting reference panel with tab-based organization
+		// ═══════════════════════════════════════════════════════════════════
+		CraftingPanel: {
+			// Tab names
+			TabNames: {
+				Armor: Zbroja
+				Weapons: Bronie
+				Materials: Materiały
+				Furniture1: Meble 1
+				Furniture2: Meble 2
+			}
+
+			// Hardmode toggle button
+			Hardmode: Tryb Trudny
+			HardmodeTooltipOn: Kliknij aby pokazać przedmioty przed-Tryb Trudny
+			HardmodeTooltipOff: Kliknij aby pokazać przedmioty Trybu Trudnego
+			// Recipe tooltip
+			Requires: Wymaga: {0}
+			// Toggle button tooltips
+			HideCraftingPanel: Ukryj Panel Wytwarzania
+			ShowCraftingPanel: Pokaż Panel Wytwarzania
+			NoCraftingStationNearby: (Brak stacji wytwarzania w pobliżu)
+			DisableAutoShow: Wyłącz auto-pokazywanie przy stołach
+			EnableAutoShow: Włącz auto-pokazywanie przy stołach
+			CurrentlyOn: (Obecnie: WŁ)
+			CurrentlyOff: (Obecnie: WYŁ)
+		}
+
+		// ═══════════════════════════════════════════════════════════════════
+		// PERSISTENT POSITION FEATURE
+		// Save/restore player position on logout/login
+		// ═══════════════════════════════════════════════════════════════════
+		PersistentPosition: {
+		}
+
+		// Root-level Buffs section - tModLoader auto-discovers these for ModBuff classes
+		Buffs: {
+			FragileBuff: {
+				DisplayName: Kruchy
+				Description: Niemożliwe zdobycie tarczy awaryjnej przez jakiś czas
+			}
+
+			ShinyBuff: {
+				DisplayName: Błyszczący
+				Description: Pobliskie rudy i klejnoty błyszczą
+			}
+
+			HeavyBuff: {
+				DisplayName: Ciężki
+				Description: Mods.DuravoQOLMod.Buffs.HeavyBuff.Description
+			}
+		}
+	}
+}

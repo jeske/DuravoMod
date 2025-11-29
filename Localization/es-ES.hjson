@@ -1,0 +1,207 @@
+Mods: {
+	DuravoQOLMod: {
+		// ═══════════════════════════════════════════════════════════════════
+		// GLOBAL MOD CONFIGURATION
+		// ═══════════════════════════════════════════════════════════════════
+		Configs: {
+			DuravoQOLModConfig: {
+				DisplayName: Configuración de Duravo QOL Mod
+
+				Headers: {
+					FeatureToggles: Activar/Desactivar Funciones
+					MinionBehavior: Comportamiento de Súbditos
+					CraftingPanel: Panel de Fabricación
+				}
+
+				ClientPersistentPosition: {
+					Label: Posición Persistente del Cliente
+					Tooltip: Guarda la posición de tu personaje en tu archivo de jugador al salir de un mundo. Esta es TU configuración personal - independiente de la configuración del servidor.
+				}
+
+				ArmorRebalance: {
+					Label: Rebalanceo de Armadura Fabricada
+					Tooltip: Activa mejoras de armadura fabricada: escudos reactivos, detección de minerales brillantes y estadísticas de defensa rebalanceadas.
+				}
+
+				EnemySmartHopping: {
+					Label: Salto Inteligente de Enemigos
+					Tooltip: Los enemigos calculan mejores trayectorias de salto para alcanzarte. Hace que los enemigos terrestres sean un poco más capaces de navegar el terreno.
+				}
+
+				MinionSmartPathfinding: {
+					Label: Búsqueda de Camino Inteligente de Súbditos
+					Tooltip: Cuando un súbdito está bloqueado por el terreno mientras te sigue, encontrará un camino alrededor de los obstáculos en lugar de quedarse atascado. Desactiva para usar el movimiento vanilla de súbditos.
+				}
+
+				MinionIsolatedReturn: {
+					Label: Retorno de Fase de Súbdito Aislado
+					Tooltip: Cuando colocas un bloque que atrapa a un súbdito sin línea de visión y sin camino de regreso, el súbdito atravesará paredes para regresar a ti.
+				}
+
+				Debug: {
+					Label: Opciones de Depuración
+					Tooltip: ""
+				}
+
+				CraftingPanelEnabled: {
+					Label: Activar Panel de Fabricación Duravo
+					Tooltip:
+						'''
+						Activa la función del Panel de Fabricación Duravo.
+						Cuando está desactivado, el botón del panel y todas las funciones del panel están ocultos.
+						'''
+				}
+
+				CraftingPanelStickyAutoShowAtBenches: {
+					Label: Auto-Mostrar en Bancos de Trabajo
+					Tooltip:
+						'''
+						Cuando está activado, se respeta el auto-mostrar en bancos de trabajo.
+						Cuando está desactivado, el panel nunca se abre automáticamente en estaciones de fabricación.
+						'''
+				}
+
+				CraftingPanelOnlyShowSeenItems: {
+					Label: Solo Mostrar Objetos Vistos
+					Tooltip:
+						'''
+						Solo muestra objetos fabricables en el Panel de Fabricación si has visto al menos un ingrediente de la receta.
+						Preserva la experiencia de descubrimiento mientras progresas.
+						'''
+				}
+			}
+
+			DuravoQOLModServerConfig: {
+				DisplayName: Configuración de Servidor/Mundo
+				Headers.WorldFeatures: Funciones del Mundo (Controladas por Servidor)
+
+				WorldServerPersistentPosition: {
+					Label: Persistencia de Posición del Jugador en el Mundo
+					Tooltip: El mundo rastrea las posiciones de los jugadores en el archivo del mundo. Los jugadores son restaurados a su posición anterior cuando se reconectan.
+				}
+			}
+
+			DebugSettings: {
+				DisplayName: Configuración de Depuración
+
+				DebugPlayerPersistence: {
+					Label: Depurar Persistencia del Jugador
+					Tooltip: Muestra mensajes de depuración para guardar/restaurar posición del jugador e inmunidad de aparición.
+				}
+
+				DebugMinionPathfinding: {
+					Label: Depurar Búsqueda de Camino de Súbditos
+					Tooltip: Muestra información de depuración sobre decisiones de búsqueda de camino de súbditos (detección de bloqueo, camino A*, fase, etc.)
+				}
+
+				DebugArmorShields: {
+					Label: Depurar Escudos de Armadura
+					Tooltip: Muestra mensajes de depuración para activación de escudo de emergencia, absorción de daño, tiempos de reutilización y roturas de escudo.
+				}
+
+				DebugEnemySmartHopping: {
+					Label: Depurar Salto Inteligente de Enemigos
+					Tooltip: Muestra mensajes de depuración cuando los enemigos realizan saltos inteligentes sobre paredes.
+				}
+
+				Tooltip: ""
+			}
+		}
+
+		// ═══════════════════════════════════════════════════════════════════
+		// ARMOR REBALANCE FEATURE
+		// Defense redistribution, multi-piece buffs, emergency shield
+		// ═══════════════════════════════════════════════════════════════════
+		ArmorRebalance: {
+			Buffs: {
+				ShinyBuff: {
+					DisplayName: Brillante
+					Description: Los minerales y gemas cercanos brillan
+				}
+
+				FragileBuff: {
+					DisplayName: Frágil
+					Description: No puede adquirir escudo de emergencia por un tiempo
+				}
+			}
+
+			CombatText.ShieldBlocked: "{0} (bloqueado)"
+
+			// Multi-piece buff names (plain text, code adds colors/formatting)
+			BuffNames: {
+				Shiny: Brillante
+				SuperShiny: Super Brillante
+				Heavy: Pesado
+			}
+
+			// Multi-piece buff descriptions (plain text, code adds colors/formatting)
+			BuffDescriptions: {
+				Shiny: Los minerales y gemas cercanos brillan
+				SuperShiny: Los minerales y gemas cercanos brillan (rango extendido)
+				Heavy: +15% retroceso y reflexión de retroceso
+			}
+
+			// Chestplate-only bonuses (plain text, code adds colors/formatting)
+			ChestBonuses: {
+				Shield30HP: +30 HP de Escudo por 5s al ser golpeado (60s de reutilización)
+				Shield15Pct: 15% HP de Escudo por 10s al ser golpeado (120s de reutilización, purga debuffs)
+				Speed15Pct: +15% velocidad de movimiento
+			}
+		}
+
+		// ═══════════════════════════════════════════════════════════════════
+		// CRAFTING PANEL FEATURE
+		// Visual crafting reference panel with tab-based organization
+		// ═══════════════════════════════════════════════════════════════════
+		CraftingPanel: {
+			// Tab names
+			TabNames: {
+				Armor: Armadura
+				Weapons: Armas
+				Materials: Materiales
+				Furniture1: Muebles 1
+				Furniture2: Muebles 2
+			}
+
+			// Hardmode toggle button
+			Hardmode: Modo Difícil
+			HardmodeTooltipOn: Clic para mostrar objetos pre-Modo Difícil
+			HardmodeTooltipOff: Clic para mostrar objetos de Modo Difícil
+			// Recipe tooltip
+			Requires: Requiere: {0}
+			// Toggle button tooltips
+			HideCraftingPanel: Ocultar Panel de Fabricación
+			ShowCraftingPanel: Mostrar Panel de Fabricación
+			NoCraftingStationNearby: (Sin estación de fabricación cerca)
+			DisableAutoShow: Desactivar auto-mostrar en bancos de trabajo
+			EnableAutoShow: Activar auto-mostrar en bancos de trabajo
+			CurrentlyOn: (Actualmente: ACTIVADO)
+			CurrentlyOff: (Actualmente: DESACTIVADO)
+		}
+
+		// ═══════════════════════════════════════════════════════════════════
+		// PERSISTENT POSITION FEATURE
+		// Save/restore player position on logout/login
+		// ═══════════════════════════════════════════════════════════════════
+		PersistentPosition: {
+		}
+
+		// Root-level Buffs section - tModLoader auto-discovers these for ModBuff classes
+		Buffs: {
+			FragileBuff: {
+				DisplayName: Frágil
+				Description: No puede adquirir escudo de emergencia por un tiempo
+			}
+
+			ShinyBuff: {
+				DisplayName: Brillante
+				Description: Los minerales y gemas cercanos brillan
+			}
+
+			HeavyBuff: {
+				DisplayName: Pesado
+				Description: Mods.DuravoQOLMod.Buffs.HeavyBuff.Description
+			}
+		}
+	}
+}

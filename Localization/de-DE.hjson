@@ -1,0 +1,207 @@
+Mods: {
+	DuravoQOLMod: {
+		// ═══════════════════════════════════════════════════════════════════
+		// GLOBAL MOD CONFIGURATION
+		// ═══════════════════════════════════════════════════════════════════
+		Configs: {
+			DuravoQOLModConfig: {
+				DisplayName: Duravo QOL Mod Konfiguration
+
+				Headers: {
+					FeatureToggles: Funktionen Ein/Aus
+					MinionBehavior: Diener-Verhalten
+					CraftingPanel: Handwerks-Panel
+				}
+
+				ClientPersistentPosition: {
+					Label: Client Persistente Position
+					Tooltip: Speichert die Position deines Charakters in deiner Spielerdatei beim Verlassen einer Welt. Dies ist DEINE persönliche Einstellung - unabhängig von Server-Einstellungen.
+				}
+
+				ArmorRebalance: {
+					Label: Hergestellte Rüstung Neuausrichtung
+					Tooltip: Aktiviert Verbesserungen für hergestellte Rüstungen: reaktive Schilde, glänzende Erzerkennung und neu ausgewogene Verteidigungswerte.
+				}
+
+				EnemySmartHopping: {
+					Label: Intelligentes Feind-Springen
+					Tooltip: Feinde berechnen bessere Sprungbahnen, um dich zu erreichen. Macht Bodenfeinde etwas fähiger im Navigieren von Gelände.
+				}
+
+				MinionSmartPathfinding: {
+					Label: Intelligente Diener-Wegfindung
+					Tooltip: Wenn ein Diener beim Folgen durch Gelände blockiert wird, findet er einen Weg um Hindernisse herum, anstatt stecken zu bleiben. Deaktivieren für Vanilla-Dienerbewegung.
+				}
+
+				MinionIsolatedReturn: {
+					Label: Diener Isolierte Phasen-Rückkehr
+					Tooltip: Wenn du einen Block platzierst, der einen Diener ohne Sichtlinie und ohne Rückweg einsperrt, wird der Diener durch Wände phasen, um zu dir zurückzukehren.
+				}
+
+				Debug: {
+					Label: Debug-Optionen
+					Tooltip: ""
+				}
+
+				CraftingPanelEnabled: {
+					Label: Duravo Handwerks-Panel aktivieren
+					Tooltip:
+						'''
+						Aktiviert das Duravo Handwerks-Panel Feature.
+						Wenn deaktiviert, sind der Panel-Button und alle Panel-Funktionen versteckt.
+						'''
+				}
+
+				CraftingPanelStickyAutoShowAtBenches: {
+					Label: Automatisches Anzeigen an Werkbänken
+					Tooltip:
+						'''
+						Wenn aktiviert, wird die Auto-Anzeige an Werkbänken respektiert.
+						Wenn deaktiviert, öffnet sich das Panel nie automatisch an Handwerksstationen.
+						'''
+				}
+
+				CraftingPanelOnlyShowSeenItems: {
+					Label: Nur Gesehene Items Anzeigen
+					Tooltip:
+						'''
+						Zeigt nur herstellbare Items im Handwerks-Panel, wenn du mindestens eine Rezeptzutat gesehen hast.
+						Bewahrt das Entdeckungserlebnis während du fortschreitest.
+						'''
+				}
+			}
+
+			DuravoQOLModServerConfig: {
+				DisplayName: Server/Welt Einstellungen
+				Headers.WorldFeatures: Welt-Funktionen (Server-kontrolliert)
+
+				WorldServerPersistentPosition: {
+					Label: Welt Spielerposition Persistenz
+					Tooltip: Die Welt verfolgt Spielerpositionen in der Weltdatei. Spieler werden an ihre vorherige Position zurückgesetzt, wenn sie wieder beitreten.
+				}
+			}
+
+			DebugSettings: {
+				DisplayName: Debug Einstellungen
+
+				DebugPlayerPersistence: {
+					Label: Debug Spieler-Persistenz
+					Tooltip: Zeigt Debug-Nachrichten für Spielerposition Speichern/Wiederherstellen und Spawn-Immunität.
+				}
+
+				DebugMinionPathfinding: {
+					Label: Debug Diener-Wegfindung
+					Tooltip: Zeigt Debug-Informationen über Diener-Wegfindungsentscheidungen (Blockierung, A* Pfad, Phasen, etc.)
+				}
+
+				DebugArmorShields: {
+					Label: Debug Rüstungsschilde
+					Tooltip: Zeigt Debug-Nachrichten für Notschild-Aktivierung, Schadensabsorption, Abklingzeiten und Schildbrüche.
+				}
+
+				DebugEnemySmartHopping: {
+					Label: Debug Intelligentes Feind-Springen
+					Tooltip: Zeigt Debug-Nachrichten wenn Feinde intelligente Sprünge über Wände ausführen.
+				}
+
+				Tooltip: ""
+			}
+		}
+
+		// ═══════════════════════════════════════════════════════════════════
+		// ARMOR REBALANCE FEATURE
+		// Defense redistribution, multi-piece buffs, emergency shield
+		// ═══════════════════════════════════════════════════════════════════
+		ArmorRebalance: {
+			Buffs: {
+				ShinyBuff: {
+					DisplayName: Glänzend
+					Description: Nahe Erze und Edelsteine funkeln
+				}
+
+				FragileBuff: {
+					DisplayName: Zerbrechlich
+					Description: Kann für eine Weile keinen Notschild erhalten
+				}
+			}
+
+			CombatText.ShieldBlocked: "{0} (blockiert)"
+
+			// Multi-piece buff names (plain text, code adds colors/formatting)
+			BuffNames: {
+				Shiny: Glänzend
+				SuperShiny: Super Glänzend
+				Heavy: Schwer
+			}
+
+			// Multi-piece buff descriptions (plain text, code adds colors/formatting)
+			BuffDescriptions: {
+				Shiny: Nahe Erze und Edelsteine funkeln
+				SuperShiny: Nahe Erze und Edelsteine funkeln (erweiterte Reichweite)
+				Heavy: +15% Rückstoß und Rückstoß-Reflexion
+			}
+
+			// Chestplate-only bonuses (plain text, code adds colors/formatting)
+			ChestBonuses: {
+				Shield30HP: +30 HP Schild für 5s bei Treffer (60s Abklingzeit)
+				Shield15Pct: 15% HP Schild für 10s bei Treffer (120s Abklingzeit, entfernt Debuffs)
+				Speed15Pct: +15% Bewegungsgeschwindigkeit
+			}
+		}
+
+		// ═══════════════════════════════════════════════════════════════════
+		// CRAFTING PANEL FEATURE
+		// Visual crafting reference panel with tab-based organization
+		// ═══════════════════════════════════════════════════════════════════
+		CraftingPanel: {
+			// Tab names
+			TabNames: {
+				Armor: Rüstung
+				Weapons: Waffen
+				Materials: Materialien
+				Furniture1: Möbel 1
+				Furniture2: Möbel 2
+			}
+
+			// Hardmode toggle button
+			Hardmode: Hardmode
+			HardmodeTooltipOn: Klicke um Pre-Hardmode Items zu zeigen
+			HardmodeTooltipOff: Klicke um Hardmode Items zu zeigen
+			// Recipe tooltip
+			Requires: Benötigt: {0}
+			// Toggle button tooltips
+			HideCraftingPanel: Handwerks-Panel ausblenden
+			ShowCraftingPanel: Handwerks-Panel anzeigen
+			NoCraftingStationNearby: (Keine Handwerksstation in der Nähe)
+			DisableAutoShow: Auto-Anzeige an Werkbänken deaktivieren
+			EnableAutoShow: Auto-Anzeige an Werkbänken aktivieren
+			CurrentlyOn: (Aktuell: AN)
+			CurrentlyOff: (Aktuell: AUS)
+		}
+
+		// ═══════════════════════════════════════════════════════════════════
+		// PERSISTENT POSITION FEATURE
+		// Save/restore player position on logout/login
+		// ═══════════════════════════════════════════════════════════════════
+		PersistentPosition: {
+		}
+
+		// Root-level Buffs section - tModLoader auto-discovers these for ModBuff classes
+		Buffs: {
+			FragileBuff: {
+				DisplayName: Zerbrechlich
+				Description: Kann für eine Weile keinen Notschild erhalten
+			}
+
+			ShinyBuff: {
+				DisplayName: Glänzend
+				Description: Nahe Erze und Edelsteine funkeln
+			}
+
+			HeavyBuff: {
+				DisplayName: Schwer
+				Description: Mods.DuravoQOLMod.Buffs.HeavyBuff.Description
+			}
+		}
+	}
+}

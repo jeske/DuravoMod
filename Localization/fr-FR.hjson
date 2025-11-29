@@ -1,0 +1,207 @@
+Mods: {
+	DuravoQOLMod: {
+		// ═══════════════════════════════════════════════════════════════════
+		// GLOBAL MOD CONFIGURATION
+		// ═══════════════════════════════════════════════════════════════════
+		Configs: {
+			DuravoQOLModConfig: {
+				DisplayName: Configuration Duravo QOL Mod
+
+				Headers: {
+					FeatureToggles: Activer/Désactiver les Fonctionnalités
+					MinionBehavior: Comportement des Serviteurs
+					CraftingPanel: Panneau de Fabrication
+				}
+
+				ClientPersistentPosition: {
+					Label: Position Persistante du Client
+					Tooltip: Sauvegarde la position de votre personnage dans votre fichier joueur en quittant un monde. C'est VOTRE réglage personnel - indépendant des paramètres du serveur.
+				}
+
+				ArmorRebalance: {
+					Label: Rééquilibrage des Armures Fabriquées
+					Tooltip: Active les améliorations d'armures fabriquées : boucliers réactifs, détection de minerais brillants et statistiques de défense rééquilibrées.
+				}
+
+				EnemySmartHopping: {
+					Label: Saut Intelligent des Ennemis
+					Tooltip: Les ennemis calculent de meilleures trajectoires de saut pour vous atteindre. Rend les ennemis terrestres légèrement plus capables de naviguer le terrain.
+				}
+
+				MinionSmartPathfinding: {
+					Label: Navigation Intelligente des Serviteurs
+					Tooltip: Quand un serviteur est bloqué par le terrain en vous suivant, il trouvera un chemin autour des obstacles au lieu de rester coincé. Désactivez pour utiliser le mouvement vanilla des serviteurs.
+				}
+
+				MinionIsolatedReturn: {
+					Label: Retour de Phase du Serviteur Isolé
+					Tooltip: Quand vous placez un bloc qui piège un serviteur sans ligne de vue et sans chemin de retour, le serviteur traversera les murs pour revenir à vous.
+				}
+
+				Debug: {
+					Label: Options de Débogage
+					Tooltip: ""
+				}
+
+				CraftingPanelEnabled: {
+					Label: Activer le Panneau de Fabrication Duravo
+					Tooltip:
+						'''
+						Active la fonctionnalité du Panneau de Fabrication Duravo.
+						Quand désactivé, le bouton du panneau et toutes les fonctionnalités sont cachés.
+						'''
+				}
+
+				CraftingPanelStickyAutoShowAtBenches: {
+					Label: Affichage Auto aux Établis
+					Tooltip:
+						'''
+						Quand activé, l'affichage automatique aux établis est respecté.
+						Quand désactivé, le panneau ne s'ouvre jamais automatiquement aux stations de fabrication.
+						'''
+				}
+
+				CraftingPanelOnlyShowSeenItems: {
+					Label: Afficher Uniquement les Objets Vus
+					Tooltip:
+						'''
+						Affiche uniquement les objets fabricables dans le Panneau de Fabrication si vous avez vu au moins un ingrédient de la recette.
+						Préserve l'expérience de découverte pendant votre progression.
+						'''
+				}
+			}
+
+			DuravoQOLModServerConfig: {
+				DisplayName: Paramètres Serveur/Monde
+				Headers.WorldFeatures: Fonctionnalités du Monde (Contrôlées par le Serveur)
+
+				WorldServerPersistentPosition: {
+					Label: Persistance de Position du Joueur dans le Monde
+					Tooltip: Le monde suit les positions des joueurs dans le fichier du monde. Les joueurs sont restaurés à leur position précédente quand ils se reconnectent.
+				}
+			}
+
+			DebugSettings: {
+				DisplayName: Paramètres de Débogage
+
+				DebugPlayerPersistence: {
+					Label: Déboguer la Persistance du Joueur
+					Tooltip: Affiche les messages de débogage pour la sauvegarde/restauration de position du joueur et l'immunité d'apparition.
+				}
+
+				DebugMinionPathfinding: {
+					Label: Déboguer la Navigation des Serviteurs
+					Tooltip: Affiche les informations de débogage sur les décisions de navigation des serviteurs (détection de blocage, chemin A*, phase, etc.)
+				}
+
+				DebugArmorShields: {
+					Label: Déboguer les Boucliers d'Armure
+					Tooltip: Affiche les messages de débogage pour l'activation du bouclier d'urgence, l'absorption de dégâts, les temps de recharge et les bris de bouclier.
+				}
+
+				DebugEnemySmartHopping: {
+					Label: Déboguer le Saut Intelligent des Ennemis
+					Tooltip: Affiche les messages de débogage quand les ennemis effectuent des sauts intelligents par-dessus les murs.
+				}
+
+				Tooltip: ""
+			}
+		}
+
+		// ═══════════════════════════════════════════════════════════════════
+		// ARMOR REBALANCE FEATURE
+		// Defense redistribution, multi-piece buffs, emergency shield
+		// ═══════════════════════════════════════════════════════════════════
+		ArmorRebalance: {
+			Buffs: {
+				ShinyBuff: {
+					DisplayName: Brillant
+					Description: Les minerais et gemmes proches scintillent
+				}
+
+				FragileBuff: {
+					DisplayName: Fragile
+					Description: Incapable d'acquérir un bouclier d'urgence pendant un moment
+				}
+			}
+
+			CombatText.ShieldBlocked: "{0} (bloqué)"
+
+			// Multi-piece buff names (plain text, code adds colors/formatting)
+			BuffNames: {
+				Shiny: Brillant
+				SuperShiny: Super Brillant
+				Heavy: Lourd
+			}
+
+			// Multi-piece buff descriptions (plain text, code adds colors/formatting)
+			BuffDescriptions: {
+				Shiny: Les minerais et gemmes proches scintillent
+				SuperShiny: Les minerais et gemmes proches scintillent (portée étendue)
+				Heavy: +15% recul et réflexion de recul
+			}
+
+			// Chestplate-only bonuses (plain text, code adds colors/formatting)
+			ChestBonuses: {
+				Shield30HP: +30 PV de Bouclier pendant 5s quand touché (60s de recharge)
+				Shield15Pct: 15% PV de Bouclier pendant 10s quand touché (120s de recharge, purge les débuffs)
+				Speed15Pct: +15% vitesse de déplacement
+			}
+		}
+
+		// ═══════════════════════════════════════════════════════════════════
+		// CRAFTING PANEL FEATURE
+		// Visual crafting reference panel with tab-based organization
+		// ═══════════════════════════════════════════════════════════════════
+		CraftingPanel: {
+			// Tab names
+			TabNames: {
+				Armor: Armure
+				Weapons: Armes
+				Materials: Matériaux
+				Furniture1: Meubles 1
+				Furniture2: Meubles 2
+			}
+
+			// Hardmode toggle button
+			Hardmode: Mode Difficile
+			HardmodeTooltipOn: Cliquez pour afficher les objets pré-Mode Difficile
+			HardmodeTooltipOff: Cliquez pour afficher les objets Mode Difficile
+			// Recipe tooltip
+			Requires: Nécessite : {0}
+			// Toggle button tooltips
+			HideCraftingPanel: Masquer le Panneau de Fabrication
+			ShowCraftingPanel: Afficher le Panneau de Fabrication
+			NoCraftingStationNearby: (Pas de station de fabrication à proximité)
+			DisableAutoShow: Désactiver l'affichage auto aux établis
+			EnableAutoShow: Activer l'affichage auto aux établis
+			CurrentlyOn: (Actuel : ACTIVÉ)
+			CurrentlyOff: (Actuel : DÉSACTIVÉ)
+		}
+
+		// ═══════════════════════════════════════════════════════════════════
+		// PERSISTENT POSITION FEATURE
+		// Save/restore player position on logout/login
+		// ═══════════════════════════════════════════════════════════════════
+		PersistentPosition: {
+		}
+
+		// Root-level Buffs section - tModLoader auto-discovers these for ModBuff classes
+		Buffs: {
+			FragileBuff: {
+				DisplayName: Fragile
+				Description: Incapable d'acquérir un bouclier d'urgence pendant un moment
+			}
+
+			ShinyBuff: {
+				DisplayName: Brillant
+				Description: Les minerais et gemmes proches scintillent
+			}
+
+			HeavyBuff: {
+				DisplayName: Lourd
+				Description: Mods.DuravoQOLMod.Buffs.HeavyBuff.Description
+			}
+		}
+	}
+}

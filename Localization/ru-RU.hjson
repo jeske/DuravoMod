@@ -1,0 +1,207 @@
+Mods: {
+	DuravoQOLMod: {
+		// ═══════════════════════════════════════════════════════════════════
+		// GLOBAL MOD CONFIGURATION
+		// ═══════════════════════════════════════════════════════════════════
+		Configs: {
+			DuravoQOLModConfig: {
+				DisplayName: Настройки Duravo QOL Mod
+
+				Headers: {
+					FeatureToggles: Включение/Выключение Функций
+					MinionBehavior: Поведение Прислужников
+					CraftingPanel: Панель Крафта
+				}
+
+				ClientPersistentPosition: {
+					Label: Постоянная Позиция Клиента
+					Tooltip: Сохраняет позицию вашего персонажа в файле игрока при выходе из мира. Это ВАША личная настройка - независимо от настроек сервера.
+				}
+
+				ArmorRebalance: {
+					Label: Ребаланс Создаваемой Брони
+					Tooltip: Включает улучшения создаваемой брони: реактивные щиты, обнаружение блестящей руды и перебалансированные характеристики защиты.
+				}
+
+				EnemySmartHopping: {
+					Label: Умные Прыжки Врагов
+					Tooltip: Враги рассчитывают лучшие траектории прыжков, чтобы достать вас. Делает наземных врагов немного более способными преодолевать местность.
+				}
+
+				MinionSmartPathfinding: {
+					Label: Умный Поиск Пути Прислужников
+					Tooltip: Когда прислужник заблокирован местностью при следовании за вами, он найдёт путь вокруг препятствий вместо того, чтобы застрять. Отключите для использования ванильного движения прислужников.
+				}
+
+				MinionIsolatedReturn: {
+					Label: Фазовый Возврат Изолированного Прислужника
+					Tooltip: Когда вы размещаете блок, который ловит прислужника без линии видимости и пути назад, прислужник пройдёт сквозь стены, чтобы вернуться к вам.
+				}
+
+				Debug: {
+					Label: Опции Отладки
+					Tooltip: ""
+				}
+
+				CraftingPanelEnabled: {
+					Label: Включить Панель Крафта Duravo
+					Tooltip:
+						'''
+						Включает функцию Панели Крафта Duravo.
+						Когда отключено, кнопка панели и все функции панели скрыты.
+						'''
+				}
+
+				CraftingPanelStickyAutoShowAtBenches: {
+					Label: Автопоказ у Верстаков
+					Tooltip:
+						'''
+						Когда включено, автопоказ у верстаков соблюдается.
+						Когда отключено, панель никогда не открывается автоматически у станций крафта.
+						'''
+				}
+
+				CraftingPanelOnlyShowSeenItems: {
+					Label: Показывать Только Виденные Предметы
+					Tooltip:
+						'''
+						Показывает только создаваемые предметы в Панели Крафта, если вы видели хотя бы один ингредиент рецепта.
+						Сохраняет опыт открытий по мере вашего прогресса.
+						'''
+				}
+			}
+
+			DuravoQOLModServerConfig: {
+				DisplayName: Настройки Сервера/Мира
+				Headers.WorldFeatures: Функции Мира (Контролируются Сервером)
+
+				WorldServerPersistentPosition: {
+					Label: Сохранение Позиции Игрока в Мире
+					Tooltip: Мир отслеживает позиции игроков в файле мира. Игроки восстанавливаются на их предыдущую позицию при переподключении.
+				}
+			}
+
+			DebugSettings: {
+				DisplayName: Настройки Отладки
+
+				DebugPlayerPersistence: {
+					Label: Отладка Сохранения Игрока
+					Tooltip: Показывает отладочные сообщения для сохранения/восстановления позиции игрока и иммунитета при спавне.
+				}
+
+				DebugMinionPathfinding: {
+					Label: Отладка Поиска Пути Прислужников
+					Tooltip: Показывает отладочную информацию о решениях поиска пути прислужников (обнаружение блокировки, путь A*, фаза и т.д.)
+				}
+
+				DebugArmorShields: {
+					Label: Отладка Щитов Брони
+					Tooltip: Показывает отладочные сообщения для активации аварийного щита, поглощения урона, времени перезарядки и поломки щита.
+				}
+
+				DebugEnemySmartHopping: {
+					Label: Отладка Умных Прыжков Врагов
+					Tooltip: Показывает отладочные сообщения, когда враги выполняют умные прыжки через стены.
+				}
+
+				Tooltip: ""
+			}
+		}
+
+		// ═══════════════════════════════════════════════════════════════════
+		// ARMOR REBALANCE FEATURE
+		// Defense redistribution, multi-piece buffs, emergency shield
+		// ═══════════════════════════════════════════════════════════════════
+		ArmorRebalance: {
+			Buffs: {
+				ShinyBuff: {
+					DisplayName: Блестящий
+					Description: Ближайшие руды и драгоценности сверкают
+				}
+
+				FragileBuff: {
+					DisplayName: Хрупкий
+					Description: Невозможно получить аварийный щит некоторое время
+				}
+			}
+
+			CombatText.ShieldBlocked: "{0} (заблокировано)"
+
+			// Multi-piece buff names (plain text, code adds colors/formatting)
+			BuffNames: {
+				Shiny: Блестящий
+				SuperShiny: Супер Блестящий
+				Heavy: Тяжёлый
+			}
+
+			// Multi-piece buff descriptions (plain text, code adds colors/formatting)
+			BuffDescriptions: {
+				Shiny: Ближайшие руды и драгоценности сверкают
+				SuperShiny: Ближайшие руды и драгоценности сверкают (увеличенный радиус)
+				Heavy: +15% отбрасывание и отражение отбрасывания
+			}
+
+			// Chestplate-only bonuses (plain text, code adds colors/formatting)
+			ChestBonuses: {
+				Shield30HP: +30 HP Щит на 5с при ударе (60с перезарядка)
+				Shield15Pct: 15% HP Щит на 10с при ударе (120с перезарядка, очищает дебаффы)
+				Speed15Pct: +15% скорость передвижения
+			}
+		}
+
+		// ═══════════════════════════════════════════════════════════════════
+		// CRAFTING PANEL FEATURE
+		// Visual crafting reference panel with tab-based organization
+		// ═══════════════════════════════════════════════════════════════════
+		CraftingPanel: {
+			// Tab names
+			TabNames: {
+				Armor: Броня
+				Weapons: Оружие
+				Materials: Материалы
+				Furniture1: Мебель 1
+				Furniture2: Мебель 2
+			}
+
+			// Hardmode toggle button
+			Hardmode: Хардмод
+			HardmodeTooltipOn: Нажмите, чтобы показать предметы до-Хардмода
+			HardmodeTooltipOff: Нажмите, чтобы показать предметы Хардмода
+			// Recipe tooltip
+			Requires: Требуется: {0}
+			// Toggle button tooltips
+			HideCraftingPanel: Скрыть Панель Крафта
+			ShowCraftingPanel: Показать Панель Крафта
+			NoCraftingStationNearby: (Нет станции крафта поблизости)
+			DisableAutoShow: Отключить автопоказ у верстаков
+			EnableAutoShow: Включить автопоказ у верстаков
+			CurrentlyOn: (Сейчас: ВКЛ)
+			CurrentlyOff: (Сейчас: ВЫКЛ)
+		}
+
+		// ═══════════════════════════════════════════════════════════════════
+		// PERSISTENT POSITION FEATURE
+		// Save/restore player position on logout/login
+		// ═══════════════════════════════════════════════════════════════════
+		PersistentPosition: {
+		}
+
+		// Root-level Buffs section - tModLoader auto-discovers these for ModBuff classes
+		Buffs: {
+			FragileBuff: {
+				DisplayName: Хрупкий
+				Description: Невозможно получить аварийный щит некоторое время
+			}
+
+			ShinyBuff: {
+				DisplayName: Блестящий
+				Description: Ближайшие руды и драгоценности сверкают
+			}
+
+			HeavyBuff: {
+				DisplayName: Тяжёлый
+				Description: Mods.DuravoQOLMod.Buffs.HeavyBuff.Description
+			}
+		}
+	}
+}
