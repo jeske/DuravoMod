@@ -12,9 +12,9 @@ Mods: {
 					MinionBehavior: Minion Behavior
 				}
 
-				PersistentPosition: {
-					Label: Persistent Character Position
-					Tooltip: Save and restore your character's position when leaving and rejoining a world. No more spawning at world origin after a break.
+				ClientPersistentPosition: {
+					Label: Client Persistent Position
+					Tooltip: Save your character's position in your player file when leaving a world. This is YOUR personal setting - independent of server settings.
 				}
 
 				ArmorRebalance: {
@@ -40,6 +40,16 @@ Mods: {
 				Debug: {
 					Label: Debug Options
 					Tooltip: ""
+				}
+			}
+
+			DuravoQOLModServerConfig: {
+				DisplayName: Server/World Settings
+				Headers.WorldFeatures: World Features (Server-Controlled)
+
+				WorldServerPersistentPosition: {
+					Label: World Player Position Persistance
+					Tooltip: The world tracks player positions in the world file. Players are restored to their prior position when they rejoin.
 				}
 			}
 

@@ -1,4 +1,15 @@
 // MIT Licensed - Copyright (c) 2025 David W. Jeske
+// ╔════════════════════════════════════════════════════════════════════════════════╗
+// ║  CLIENT-SIDE ONLY - This code runs on the PLAYER'S MACHINE                     ║
+// ║                                                                                 ║
+// ║  This file does NOT interact with PersistentPositionWorld.cs at all!           ║
+// ║  - Stores position in the player's .plr file (client-side storage)             ║
+// ║  - Controlled by client config: ClientPersistentPosition                       ║
+// ║  - Works even on servers that don't have this mod                              ║
+// ║                                                                                 ║
+// ║  PersistentPositionWorld.cs is a COMPLETELY SEPARATE system for server-side    ║
+// ║  storage that runs on the server machine.                                      ║
+// ╚════════════════════════════════════════════════════════════════════════════════╝
 using System;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -10,8 +21,8 @@ using DuravoQOLMod;
 namespace DuravoQOLMod.PersistentPosition
 {
     /// <summary>
-    /// Saves and restores player position on world exit/enter.
-    /// This prevents using logout as a free escape mechanism.
+    /// CLIENT-SIDE position persistence. Saves/restores from player file.
+    /// Completely independent from PersistentPositionWorld (server-side storage).
     /// </summary>
     public class PersistentPositionPlayer : ModPlayer
     {
@@ -72,8 +83,8 @@ namespace DuravoQOLMod.PersistentPosition
         /// </summary>
         public override void SaveData(TagCompound tag)
         {
-            // Check if feature is enabled (static accessor)
-            if (!DuravoQOLModConfig.EnablePersistentPosition)
+            // Check if CLIENT-SIDE position storage is enabled (player's personal preference)
+            if (!DuravoQOLModConfig.EnableClientPersistentPosition)
                 return;
 
             // Don't save position if player is dead - they should respawn normally
@@ -108,8 +119,8 @@ namespace DuravoQOLMod.PersistentPosition
         /// </summary>
         public override void OnEnterWorld()
         {
-            // Check if feature is enabled (static accessor) - if not, skip position restore but still clear saved data
-            if (!DuravoQOLModConfig.EnablePersistentPosition) {
+            // Check if CLIENT-SIDE position storage is enabled - if not, skip position restore but still clear saved data
+            if (!DuravoQOLModConfig.EnableClientPersistentPosition) {
                 hasValidSavedPosition = false;
                 return;
             }

@@ -34,8 +34,8 @@ namespace DuravoQOLMod
         /// <summary>Check if Enemy Smart Hopping feature is enabled. ALWAYS use this static property.</summary>
         public static bool EnableEnemySmartHopping => ModContent.GetInstance<DuravoQOLModConfig>()?.EnemySmartHopping ?? true;
 
-        /// <summary>Check if Persistent Position feature is enabled. ALWAYS use this static property.</summary>
-        public static bool EnablePersistentPosition => ModContent.GetInstance<DuravoQOLModConfig>()?.PersistentPosition ?? true;
+        /// <summary>Check if Client Persistent Position is enabled (stores in player file). ALWAYS use this static property.</summary>
+        public static bool EnableClientPersistentPosition => ModContent.GetInstance<DuravoQOLModConfig>()?.ClientPersistentPosition ?? true;
 
         // ╔════════════════════════════════════════════════════════════════════╗
         // ║                      FEATURE TOGGLES (TOP LEVEL)                    ║
@@ -43,7 +43,7 @@ namespace DuravoQOLMod
 
         [Header("FeatureToggles")]
         [DefaultValue(true)]
-        public bool PersistentPosition { get; set; } = true;
+        public bool ClientPersistentPosition { get; set; } = true;
 
         [DefaultValue(true)]
         public bool ArmorRebalance { get; set; } = true;
