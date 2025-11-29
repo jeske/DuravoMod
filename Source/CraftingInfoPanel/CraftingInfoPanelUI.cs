@@ -29,7 +29,7 @@ public struct CraftingSlotInfo
 /// Shows a fixed grid of craftable items organized by material tier.
 /// Position: Bottom center of screen, below vanilla crafting grid.
 /// </summary>
-public class CraftingInfoPanelUI : UIState
+public partial class CraftingInfoPanelUI : UIState
 {
     /// <summary>The main panel container element</summary>
     private UIElement panelContainer = null!;
@@ -53,6 +53,10 @@ public class CraftingInfoPanelUI : UIState
     private PanelPositionCalculator<CraftingSlotInfo> materialsTabLayout = null!;
     private PanelPositionCalculator<CraftingSlotInfo> furnitureTabLayout = null!;
 
+    /// <summary>Fixed panel dimensions based on largest tab (prevents jumping when switching)</summary>
+    private int maxContentWidth;
+    private int maxContentHeight;
+
     /// <summary>Get the current tab's layout</summary>
     private PanelPositionCalculator<CraftingSlotInfo> CurrentTabLayout => selectedTabIndex switch {
         0 => armorTabLayout,
@@ -60,149 +64,6 @@ public class CraftingInfoPanelUI : UIState
         2 => materialsTabLayout,
         3 => furnitureTabLayout,
         _ => armorTabLayout
-    };
-
-    // ===========================================
-    // ARMOR TAB DATA
-    // ===========================================
-
-    private readonly int[] armorMaterialTierItemIds = {
-        ItemID.CopperBar, ItemID.TinBar, ItemID.IronBar, ItemID.LeadBar,
-        ItemID.SilverBar, ItemID.TungstenBar, ItemID.GoldBar, ItemID.PlatinumBar
-    };
-
-    private readonly int[,] armorItemGrid = {
-        // Helmets
-        { ItemID.CopperHelmet, ItemID.TinHelmet, ItemID.IronHelmet, ItemID.LeadHelmet,
-          ItemID.SilverHelmet, ItemID.TungstenHelmet, ItemID.GoldHelmet, ItemID.PlatinumHelmet },
-        // Chestplates
-        { ItemID.CopperChainmail, ItemID.TinChainmail, ItemID.IronChainmail, ItemID.LeadChainmail,
-          ItemID.SilverChainmail, ItemID.TungstenChainmail, ItemID.GoldChainmail, ItemID.PlatinumChainmail },
-        // Greaves
-        { ItemID.CopperGreaves, ItemID.TinGreaves, ItemID.IronGreaves, ItemID.LeadGreaves,
-          ItemID.SilverGreaves, ItemID.TungstenGreaves, ItemID.GoldGreaves, ItemID.PlatinumGreaves }
-    };
-
-    // Accessories section (right side of armor tab)
-    private readonly int[] accessoryMaterialTierItemIds = {
-        ItemID.CopperBar, ItemID.TinBar, ItemID.SilverBar, ItemID.GoldBar, ItemID.PlatinumBar
-    };
-
-    private readonly int[] watchItemIds = {
-        ItemID.CopperWatch, ItemID.TinWatch, ItemID.SilverWatch, ItemID.GoldWatch, ItemID.PlatinumWatch
-    };
-
-    private readonly int[] chandelierFromBarItemIds = {
-        ItemID.CopperChandelier, ItemID.TinChandelier, ItemID.SilverChandelier,
-        ItemID.GoldChandelier, ItemID.PlatinumChandelier
-    };
-
-    // ===========================================
-    // WEAPONS TAB DATA
-    // ===========================================
-
-    private readonly int[] weaponMaterialTierItemIds = {
-        ItemID.Wood, ItemID.CopperBar, ItemID.TinBar, ItemID.IronBar, ItemID.LeadBar,
-        ItemID.SilverBar, ItemID.TungstenBar, ItemID.GoldBar, ItemID.PlatinumBar
-    };
-
-    private readonly int[] swordItemIds = {
-        ItemID.WoodenSword, ItemID.CopperBroadsword, ItemID.TinBroadsword,
-        ItemID.IronBroadsword, ItemID.LeadBroadsword, ItemID.SilverBroadsword,
-        ItemID.TungstenBroadsword, ItemID.GoldBroadsword, ItemID.PlatinumBroadsword
-    };
-
-    private readonly int[] bowItemIds = {
-        ItemID.WoodenBow, ItemID.CopperBow, ItemID.TinBow, ItemID.IronBow, ItemID.LeadBow,
-        ItemID.SilverBow, ItemID.TungstenBow, ItemID.GoldBow, ItemID.PlatinumBow
-    };
-
-    private readonly int[] pickaxeItemIds = {
-        -1, ItemID.CopperPickaxe, ItemID.TinPickaxe, ItemID.IronPickaxe, ItemID.LeadPickaxe,
-        ItemID.SilverPickaxe, ItemID.TungstenPickaxe, ItemID.GoldPickaxe, ItemID.PlatinumPickaxe
-    };
-
-    private readonly int[] axeItemIds = {
-        -1, ItemID.CopperAxe, ItemID.TinAxe, ItemID.IronAxe, ItemID.LeadAxe,
-        ItemID.SilverAxe, ItemID.TungstenAxe, ItemID.GoldAxe, ItemID.PlatinumAxe
-    };
-
-    private readonly int[] hammerItemIds = {
-        ItemID.WoodenHammer, ItemID.CopperHammer, ItemID.TinHammer, ItemID.IronHammer,
-        ItemID.LeadHammer, ItemID.SilverHammer, ItemID.TungstenHammer, ItemID.GoldHammer,
-        ItemID.PlatinumHammer
-    };
-
-    // ===========================================
-    // MATERIALS TAB DATA
-    // ===========================================
-
-    private readonly int[] barItemIds = {
-        ItemID.CopperBar, ItemID.TinBar, ItemID.IronBar, ItemID.LeadBar,
-        ItemID.SilverBar, ItemID.TungstenBar, ItemID.GoldBar, ItemID.PlatinumBar
-    };
-
-    private readonly int[] brickItemIds = {
-        ItemID.CopperBrick, ItemID.TinBrick, ItemID.IronBrick, ItemID.LeadBrick,
-        ItemID.SilverBrick, ItemID.TungstenBrick, ItemID.GoldBrick, ItemID.PlatinumBrick
-    };
-
-    private readonly int[] miscMaterialItemIds = {
-        ItemID.Torch, ItemID.Rope, ItemID.Chain, ItemID.Glass, ItemID.Bottle
-    };
-
-    private readonly int[] craftingStationItemIds = {
-        ItemID.Furnace, ItemID.IronAnvil, ItemID.LeadAnvil, ItemID.Sawmill,
-        ItemID.Loom, ItemID.Hellforge, ItemID.AlchemyTable, ItemID.TinkerersWorkshop,
-        ItemID.ImbuingStation
-    };
-
-    // ===========================================
-    // FURNITURE TAB DATA
-    // ===========================================
-
-    // Wood types (rows): Wood, Boreal, Palm, Rich Mahogany, Ebonwood, Shadewood, Pearlwood, Spooky
-    // Furniture pieces (columns): Work Bench, Door, Table, Chair, Bed, Platform, Chest, Candle, Chandelier, Clock
-
-    private readonly int[,] furnitureItemGrid = {
-        // Wood
-        { ItemID.WorkBench, ItemID.WoodenDoor, ItemID.WoodenTable, ItemID.WoodenChair,
-          ItemID.Bed, ItemID.WoodPlatform, ItemID.Chest, ItemID.Candle,
-          ItemID.Chandelier, ItemID.GrandfatherClock },
-        // Boreal
-        { ItemID.BorealWoodWorkBench, ItemID.BorealWoodDoor, ItemID.BorealWoodTable, ItemID.BorealWoodChair,
-          ItemID.BorealWoodBed, ItemID.BorealWoodPlatform, ItemID.BorealWoodChest, ItemID.BorealWoodCandle,
-          ItemID.BorealWoodChandelier, ItemID.BorealWoodClock },
-        // Palm
-        { ItemID.PalmWoodWorkBench, ItemID.PalmWoodDoor, ItemID.PalmWoodTable, ItemID.PalmWoodChair,
-          ItemID.PalmWoodBed, ItemID.PalmWoodPlatform, ItemID.PalmWoodChest, ItemID.PalmWoodCandle,
-          ItemID.PalmWoodChandelier, ItemID.PalmWoodClock },
-        // Rich Mahogany
-        { ItemID.RichMahoganyWorkBench, ItemID.RichMahoganyDoor, ItemID.RichMahoganyTable, ItemID.RichMahoganyChair,
-          ItemID.RichMahoganyBed, ItemID.RichMahoganyPlatform, ItemID.RichMahoganyChest, ItemID.RichMahoganyCandle,
-          ItemID.RichMahoganyChandelier, ItemID.RichMahoganyClock },
-        // Ebonwood
-        { ItemID.EbonwoodWorkBench, ItemID.EbonwoodDoor, ItemID.EbonwoodTable, ItemID.EbonwoodChair,
-          ItemID.EbonwoodBed, ItemID.EbonwoodPlatform, ItemID.EbonwoodChest, ItemID.EbonwoodCandle,
-          ItemID.EbonwoodChandelier, ItemID.EbonwoodClock },
-        // Shadewood
-        { ItemID.ShadewoodWorkBench, ItemID.ShadewoodDoor, ItemID.ShadewoodTable, ItemID.ShadewoodChair,
-          ItemID.ShadewoodBed, ItemID.ShadewoodPlatform, ItemID.ShadewoodChest, ItemID.ShadewoodCandle,
-          ItemID.ShadewoodChandelier, ItemID.ShadewoodClock },
-        // Pearlwood
-        { ItemID.PearlwoodWorkBench, ItemID.PearlwoodDoor, ItemID.PearlwoodTable, ItemID.PearlwoodChair,
-          ItemID.PearlwoodBed, ItemID.PearlwoodPlatform, ItemID.PearlwoodChest, ItemID.PearlwoodCandle,
-          ItemID.PearlwoodChandelier, ItemID.PearlwoodClock },
-        // Spooky
-        { ItemID.SpookyWorkBench, ItemID.SpookyDoor, ItemID.SpookyTable, ItemID.SpookyChair,
-          ItemID.SpookyBed, ItemID.SpookyPlatform, ItemID.SpookyChest, ItemID.SpookyCandle,
-          ItemID.SpookyChandelier, ItemID.SpookyClock }
-    };
-
-    // Wood type header items (for row labels)
-    private readonly int[] woodTypeItemIds = {
-        ItemID.Wood, ItemID.BorealWood, ItemID.PalmWood, ItemID.RichMahogany,
-        ItemID.Ebonwood, ItemID.Shadewood, ItemID.Pearlwood, ItemID.SpookyWood
     };
 
     public override void OnInitialize()
@@ -213,181 +74,36 @@ public class CraftingInfoPanelUI : UIState
         BuildMaterialsTabLayout();
         BuildFurnitureTabLayout();
 
-        // Create main panel container - will be updated in Draw based on selected tab
+        // Calculate maximum dimensions across all tabs for fixed positioning
+        CalculateMaxPanelDimensions();
+
+        // Create main panel container with fixed size
         panelContainer = new UIElement();
-        UpdatePanelSize();
-
-        Append(panelContainer);
-    }
-
-    private void UpdatePanelSize()
-    {
-        var currentLayout = CurrentTabLayout;
-        int contentWidth = currentLayout.CalculatedWidth;
-        int contentHeight = currentLayout.CalculatedHeight;
-        int panelWidth = TAB_AREA_WIDTH + contentWidth;
-        int panelHeight = contentHeight + 10;
+        int panelWidth = TAB_AREA_WIDTH + maxContentWidth;
+        int panelHeight = maxContentHeight + 10;
 
         panelContainer.Width.Set(panelWidth, 0f);
         panelContainer.Height.Set(panelHeight, 0f);
         panelContainer.HAlign = 0.5f;
         panelContainer.VAlign = 1.0f;
         panelContainer.Top.Set(-20, 0f);
+
+        Append(panelContainer);
     }
 
     /// <summary>
-    /// Build the armor tab layout.
-    /// Left section: 8 ore tiers × (header + 3 armor pieces)
-    /// Right section: 5 tiers × (header + watches + chandeliers)
+    /// Calculate the maximum width and height across all tab layouts.
+    /// This ensures the panel stays in a fixed position regardless of which tab is selected.
     /// </summary>
-    private void BuildArmorTabLayout()
+    private void CalculateMaxPanelDimensions()
     {
-        armorTabLayout = new PanelPositionCalculator<CraftingSlotInfo>(padding: 8);
+        maxContentWidth = System.Math.Max(armorTabLayout.CalculatedWidth,
+            System.Math.Max(weaponsTabLayout.CalculatedWidth,
+            System.Math.Max(materialsTabLayout.CalculatedWidth, furnitureTabLayout.CalculatedWidth)));
 
-        // ===== LEFT SECTION: Armor =====
-        int leftColumnCount = armorMaterialTierItemIds.Length;  // 8 columns
-
-        // Header row
-        for (int col = 0; col < leftColumnCount; col++) {
-            int slotX = col * (SLOT_SIZE + SLOT_SPACING);
-            armorTabLayout.AddElement(slotX, 0, SLOT_SIZE, SLOT_SIZE,
-                new CraftingSlotInfo(armorMaterialTierItemIds[col], isHeader: true));
-        }
-
-        // Armor rows
-        for (int row = 0; row < 3; row++) {
-            int slotY = (SLOT_SIZE + SLOT_SPACING) + 4 + row * (SLOT_SIZE + SLOT_SPACING);
-            for (int col = 0; col < leftColumnCount; col++) {
-                int slotX = col * (SLOT_SIZE + SLOT_SPACING);
-                armorTabLayout.AddElement(slotX, slotY, SLOT_SIZE, SLOT_SIZE,
-                    new CraftingSlotInfo(armorItemGrid[row, col], isHeader: false));
-            }
-        }
-
-        // ===== RIGHT SECTION: Accessories =====
-        int rightColumnCount = accessoryMaterialTierItemIds.Length;  // 5 columns
-        int rightSectionX = leftColumnCount * (SLOT_SIZE + SLOT_SPACING) + 20;  // Gap between sections
-
-        // Header row
-        for (int col = 0; col < rightColumnCount; col++) {
-            int slotX = rightSectionX + col * (SLOT_SIZE + SLOT_SPACING);
-            armorTabLayout.AddElement(slotX, 0, SLOT_SIZE, SLOT_SIZE,
-                new CraftingSlotInfo(accessoryMaterialTierItemIds[col], isHeader: true));
-        }
-
-        // Watches row
-        int watchRowY = SLOT_SIZE + SLOT_SPACING + 4;
-        for (int col = 0; col < rightColumnCount; col++) {
-            int slotX = rightSectionX + col * (SLOT_SIZE + SLOT_SPACING);
-            armorTabLayout.AddElement(slotX, watchRowY, SLOT_SIZE, SLOT_SIZE,
-                new CraftingSlotInfo(watchItemIds[col], isHeader: false));
-        }
-
-        // Chandeliers row
-        int chandelierRowY = watchRowY + SLOT_SIZE + SLOT_SPACING;
-        for (int col = 0; col < rightColumnCount; col++) {
-            int slotX = rightSectionX + col * (SLOT_SIZE + SLOT_SPACING);
-            armorTabLayout.AddElement(slotX, chandelierRowY, SLOT_SIZE, SLOT_SIZE,
-                new CraftingSlotInfo(chandelierFromBarItemIds[col], isHeader: false));
-        }
-    }
-
-    /// <summary>
-    /// Build the weapons tab layout.
-    /// 9 columns (Wood + 8 ores) × 6 rows (header + 5 weapon types)
-    /// </summary>
-    private void BuildWeaponsTabLayout()
-    {
-        weaponsTabLayout = new PanelPositionCalculator<CraftingSlotInfo>(padding: 8);
-
-        int columnCount = weaponMaterialTierItemIds.Length;  // 9 columns
-
-        // Header row
-        for (int col = 0; col < columnCount; col++) {
-            int slotX = col * (SLOT_SIZE + SLOT_SPACING);
-            weaponsTabLayout.AddElement(slotX, 0, SLOT_SIZE, SLOT_SIZE,
-                new CraftingSlotInfo(weaponMaterialTierItemIds[col], isHeader: true));
-        }
-
-        int[][] weaponRows = { swordItemIds, bowItemIds, pickaxeItemIds, axeItemIds, hammerItemIds };
-
-        for (int row = 0; row < weaponRows.Length; row++) {
-            int slotY = (SLOT_SIZE + SLOT_SPACING) + 4 + row * (SLOT_SIZE + SLOT_SPACING);
-            for (int col = 0; col < columnCount; col++) {
-                int itemId = weaponRows[row][col];
-                if (itemId > 0) {  // Skip -1 entries (empty slots)
-                    int slotX = col * (SLOT_SIZE + SLOT_SPACING);
-                    weaponsTabLayout.AddElement(slotX, slotY, SLOT_SIZE, SLOT_SIZE,
-                        new CraftingSlotInfo(itemId, isHeader: false));
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// Build the materials tab layout.
-    /// Bars, Bricks, misc items, crafting stations
-    /// </summary>
-    private void BuildMaterialsTabLayout()
-    {
-        materialsTabLayout = new PanelPositionCalculator<CraftingSlotInfo>(padding: 8);
-
-        int currentY = 0;
-
-        // Bars row
-        for (int col = 0; col < barItemIds.Length; col++) {
-            int slotX = col * (SLOT_SIZE + SLOT_SPACING);
-            materialsTabLayout.AddElement(slotX, currentY, SLOT_SIZE, SLOT_SIZE,
-                new CraftingSlotInfo(barItemIds[col], isHeader: false));
-        }
-        currentY += SLOT_SIZE + SLOT_SPACING;
-
-        // Bricks row
-        for (int col = 0; col < brickItemIds.Length; col++) {
-            int slotX = col * (SLOT_SIZE + SLOT_SPACING);
-            materialsTabLayout.AddElement(slotX, currentY, SLOT_SIZE, SLOT_SIZE,
-                new CraftingSlotInfo(brickItemIds[col], isHeader: false));
-        }
-        currentY += SLOT_SIZE + SLOT_SPACING + 10;  // Extra gap
-
-        // Misc materials row
-        for (int col = 0; col < miscMaterialItemIds.Length; col++) {
-            int slotX = col * (SLOT_SIZE + SLOT_SPACING);
-            materialsTabLayout.AddElement(slotX, currentY, SLOT_SIZE, SLOT_SIZE,
-                new CraftingSlotInfo(miscMaterialItemIds[col], isHeader: false));
-        }
-        currentY += SLOT_SIZE + SLOT_SPACING + 10;  // Extra gap
-
-        // Crafting stations row
-        for (int col = 0; col < craftingStationItemIds.Length; col++) {
-            int slotX = col * (SLOT_SIZE + SLOT_SPACING);
-            materialsTabLayout.AddElement(slotX, currentY, SLOT_SIZE, SLOT_SIZE,
-                new CraftingSlotInfo(craftingStationItemIds[col], isHeader: false));
-        }
-    }
-
-    /// <summary>
-    /// Build the furniture tab layout.
-    /// 8 rows (wood types) × 10 columns (furniture pieces)
-    /// </summary>
-    private void BuildFurnitureTabLayout()
-    {
-        furnitureTabLayout = new PanelPositionCalculator<CraftingSlotInfo>(padding: 8);
-
-        int rowCount = woodTypeItemIds.Length;  // 8 rows
-        int columnCount = furnitureItemGrid.GetLength(1);  // 10 columns
-
-        for (int row = 0; row < rowCount; row++) {
-            int slotY = row * (SLOT_SIZE + SLOT_SPACING);
-            for (int col = 0; col < columnCount; col++) {
-                int slotX = col * (SLOT_SIZE + SLOT_SPACING);
-                int itemId = furnitureItemGrid[row, col];
-                if (itemId > 0) {
-                    furnitureTabLayout.AddElement(slotX, slotY, SLOT_SIZE, SLOT_SIZE,
-                        new CraftingSlotInfo(itemId, isHeader: false));
-                }
-            }
-        }
+        maxContentHeight = System.Math.Max(armorTabLayout.CalculatedHeight,
+            System.Math.Max(weaponsTabLayout.CalculatedHeight,
+            System.Math.Max(materialsTabLayout.CalculatedHeight, furnitureTabLayout.CalculatedHeight)));
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -408,18 +124,20 @@ public class CraftingInfoPanelUI : UIState
         // Update layout screen position
         currentLayout.SetScreenPosition(contentScreenX, contentScreenY);
 
-        // Block game input when mouse is over panel (including tabs)
+        // Block game input when mouse is over panel (use actual current tab dimensions, not max)
+        int actualPanelWidth = TAB_AREA_WIDTH + currentLayout.CalculatedWidth;
+        int actualPanelHeight = currentLayout.CalculatedHeight + 10;
         Rectangle panelHitArea = new Rectangle(
             (int)panelTopLeft.X,
             (int)panelTopLeft.Y,
-            (int)panelDimensions.Width,
-            (int)panelDimensions.Height
+            actualPanelWidth,
+            actualPanelHeight
         );
         if (panelHitArea.Contains(Main.mouseX, Main.mouseY)) {
             Main.LocalPlayer.mouseInterface = true;
         }
 
-        // Draw content area background
+        // Draw content area background (use current tab's dimensions for the visible border)
         DrawContentBackground(spriteBatch, contentScreenX, contentScreenY,
             currentLayout.CalculatedWidth, currentLayout.CalculatedHeight);
 
@@ -481,10 +199,7 @@ public class CraftingInfoPanelUI : UIState
 
         // Handle click
         if (tabRect.Contains(Main.mouseX, Main.mouseY) && Main.mouseLeft && Main.mouseLeftRelease) {
-            if (selectedTabIndex != tabIndex) {
-                selectedTabIndex = tabIndex;
-                UpdatePanelSize();
-            }
+            selectedTabIndex = tabIndex;
             Main.mouseLeftRelease = false;
         }
     }
@@ -523,4 +238,163 @@ public class CraftingInfoPanelUI : UIState
             }
         }
     }
+    private void DrawItemSlot(SpriteBatch spriteBatch, Rectangle screenBounds, int itemId, bool isHeader, bool canCraft)
+    {
+        Texture2D pixelTexture = TextureAssets.MagicPixel.Value;
+        float opacity = 1f;
 
+        Texture2D slotTexture;
+        Color slotTint;
+
+        if (isHeader) {
+            slotTexture = TextureAssets.InventoryBack5.Value;
+            slotTint = new Color(150, 150, 180);
+        }
+        else if (canCraft) {
+            slotTexture = TextureAssets.InventoryBack10.Value;
+            slotTint = Color.White;
+        }
+        else {
+            slotTexture = TextureAssets.InventoryBack.Value;
+            slotTint = Color.White;
+            opacity = 0.4f;
+        }
+
+        spriteBatch.Draw(slotTexture, screenBounds, slotTint * opacity);
+
+        // Yellow border for craftable items
+        if (!isHeader && canCraft) {
+            Color highlightColor = Color.Yellow;
+            int borderWidth = 2;
+            spriteBatch.Draw(pixelTexture, new Rectangle(screenBounds.X, screenBounds.Y, screenBounds.Width, borderWidth), highlightColor);
+            spriteBatch.Draw(pixelTexture, new Rectangle(screenBounds.X, screenBounds.Bottom - borderWidth, screenBounds.Width, borderWidth), highlightColor);
+            spriteBatch.Draw(pixelTexture, new Rectangle(screenBounds.X, screenBounds.Y, borderWidth, screenBounds.Height), highlightColor);
+            spriteBatch.Draw(pixelTexture, new Rectangle(screenBounds.Right - borderWidth, screenBounds.Y, borderWidth, screenBounds.Height), highlightColor);
+        }
+
+        // Draw item
+        Main.instance.LoadItem(itemId);
+        Texture2D itemTexture = TextureAssets.Item[itemId].Value;
+
+        float maxItemSize = SLOT_SIZE - 8;
+        float scale = 1f;
+        if (itemTexture.Width > maxItemSize || itemTexture.Height > maxItemSize) {
+            float scaleX = maxItemSize / itemTexture.Width;
+            float scaleY = maxItemSize / itemTexture.Height;
+            scale = System.Math.Min(scaleX, scaleY);
+        }
+
+        Vector2 itemCenter = new Vector2(screenBounds.X + SLOT_SIZE / 2, screenBounds.Y + SLOT_SIZE / 2);
+        Vector2 itemOrigin = new Vector2(itemTexture.Width / 2, itemTexture.Height / 2);
+        Color itemTint = (canCraft || isHeader) ? Color.White : Color.White * opacity;
+        spriteBatch.Draw(itemTexture, itemCenter, null, itemTint, 0f, itemOrigin, scale, SpriteEffects.None, 0f);
+    }
+
+    private string BuildItemTooltip(int itemId, bool isHeader)
+    {
+        System.Text.StringBuilder tooltipBuilder = new System.Text.StringBuilder();
+
+        string itemName = Lang.GetItemNameValue(itemId);
+        tooltipBuilder.AppendLine(itemName);
+
+        Recipe? foundRecipe = null;
+        for (int recipeIndex = 0; recipeIndex < Recipe.numRecipes; recipeIndex++) {
+            Recipe recipe = Main.recipe[recipeIndex];
+            if (recipe.createItem.type == itemId) {
+                foundRecipe = recipe;
+                break;
+            }
+        }
+
+        if (foundRecipe != null) {
+            tooltipBuilder.AppendLine("");
+            tooltipBuilder.AppendLine("Recipe:");
+
+            foreach (Item requiredItem in foundRecipe.requiredItem) {
+                if (requiredItem.type == ItemID.None) {
+                    break;
+                }
+                string ingredientName = Lang.GetItemNameValue(requiredItem.type);
+                int playerHas = CountPlayerItems(requiredItem.type);
+                tooltipBuilder.AppendLine($"  {ingredientName}: {playerHas}/{requiredItem.stack}");
+            }
+
+            if (foundRecipe.requiredTile.Count > 0 && foundRecipe.requiredTile[0] != -1) {
+                tooltipBuilder.AppendLine("");
+                tooltipBuilder.Append("Requires: ");
+                bool firstTile = true;
+                foreach (int tileId in foundRecipe.requiredTile) {
+                    if (tileId == -1) {
+                        break;
+                    }
+                    if (!firstTile) {
+                        tooltipBuilder.Append(", ");
+                    }
+                    tooltipBuilder.Append(GetCraftingStationName(tileId));
+                    firstTile = false;
+                }
+            }
+        }
+
+        return tooltipBuilder.ToString().TrimEnd();
+    }
+
+    private string GetCraftingStationName(int tileId)
+    {
+        return tileId switch {
+            TileID.WorkBenches => "Work Bench",
+            TileID.Furnaces => "Furnace",
+            TileID.Anvils => "Anvil",
+            TileID.MythrilAnvil => "Mythril Anvil",
+            TileID.Bottles => "Bottle",
+            TileID.Sawmill => "Sawmill",
+            TileID.Loom => "Loom",
+            TileID.Chairs => "Chair",
+            TileID.Tables => "Table",
+            TileID.CookingPots => "Cooking Pot",
+            TileID.TinkerersWorkbench => "Tinkerer's Workshop",
+            TileID.DemonAltar => "Demon Altar",
+            TileID.Hellforge => "Hellforge",
+            _ => $"Station #{tileId}"
+        };
+    }
+
+    private bool CanCraftItem(int itemId)
+    {
+        for (int availableIndex = 0; availableIndex < Main.numAvailableRecipes; availableIndex++) {
+            int globalRecipeIndex = Main.availableRecipe[availableIndex];
+            Recipe recipe = Main.recipe[globalRecipeIndex];
+            if (recipe.createItem.type == itemId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private int CountPlayerItems(int itemType)
+    {
+        int count = 0;
+        Player player = Main.LocalPlayer;
+
+        for (int slotIndex = 0; slotIndex < player.inventory.Length; slotIndex++) {
+            if (player.inventory[slotIndex].type == itemType) {
+                count += player.inventory[slotIndex].stack;
+            }
+        }
+
+        return count;
+    }
+
+    private void FocusRecipeForItem(int itemId)
+    {
+        for (int availableIndex = 0; availableIndex < Main.numAvailableRecipes; availableIndex++) {
+            int globalRecipeIndex = Main.availableRecipe[availableIndex];
+            Recipe recipe = Main.recipe[globalRecipeIndex];
+            if (recipe.createItem.type == itemId) {
+                Main.focusRecipe = availableIndex;
+                Main.recFastScroll = true;
+                break;
+            }
+        }
+    }
+}
