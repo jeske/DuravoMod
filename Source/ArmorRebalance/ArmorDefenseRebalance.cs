@@ -271,15 +271,8 @@ namespace DuravoQOLMod.ArmorRebalance
             string buffName = Language.GetTextValue(LocKeyBuffNameHeavy);
             string buffDescription = Language.GetTextValue(LocKeyBuffDescHeavy);
 
-            string tooltipText;
-            if (!isEquipped) {
-                // Inventory: static format
-                tooltipText = $"{buffName} {buffDescription}";
-            }
-            else {
-                // Equipped: show with active color (Heavy is always active when worn)
-                tooltipText = $"[c/{HexColorChestBonus}:{buffName}] {buffDescription}";
-            }
+            // Heavy is always cyan (like chestplate bonuses), regardless of equipped state
+            string tooltipText = $"[c/{HexColorChestBonus}:{buffName} {buffDescription}]";
 
             var tooltipLine = new TooltipLine(Mod, "HeavyEffect", tooltipText);
             tooltips.Add(tooltipLine);

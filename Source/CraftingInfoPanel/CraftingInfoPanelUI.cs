@@ -242,7 +242,7 @@ public partial class CraftingInfoPanelUI : UIState
 
         // Active tab: lighter (current inactive style), Inactive: much darker
         Color tabBgColor = isSelected
-            ? new Color(58, 58, 90, 255)     // Active: lighter blue-purple
+            ? new Color(39, 39, 62, 255)     // Active: lighter blue-purple (toned down ~35% from original)
             : new Color(25, 25, 40, 255);    // Inactive: much darker
         Color tabBorderColor = isSelected
             ? new Color(90, 90, 122)         // Active: visible border

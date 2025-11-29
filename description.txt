@@ -1,23 +1,23 @@
-Duravo QOL is a set of refinements to make Terraria feel more engaging
-and rewarding, from the first moment of gameplay to the last.
+Duravo QOL is a collection of quality-of-life improvements that make Terraria 
+more intuitive and enjoyable without changing core gameplay.
 
 Website: http://duravomod.org
 
-Our Quality Of Life Goals:
-- Deepen engagement with Terraria's rich world
-- Increase engagement with the crafted armor progression
-- Give purpose to biome-specific base crafting items
+Core Philosophy:
+- Tweaks to make Terraria a little more like we wish it was
+- Mechanics that add visual clarity and fun
+- All features individually toggleable
 
 Current Features:
 
-- *Persistent Player Position* Your character stays where you left them. The only fast travel is pylons.
-- *Crafted Armor rebalance* Shifted set defense bonuses into armor pieces and added new mix-and-match set bonuses.
-- *Reactive Shield Effect* Low-tier chestpieces get a reactive shield effect, making crafting armor feel more exciting, and giving the new player visual feedback to help understand combat.
-- *Mini-Spelunker Shiny-Buff* Makes crafting more fun
+- *Persistent Player Position* - Log back in exactly where you left off. No more losing where you are because you need a break.
+- *Crafted Armor Rework* - Defense baked into pieces (no penalty for breaking sets), plus new 2-piece mix-and-match bonuses.
+- *Emergency Shield* - Chestpieces grant reactive shields with visual feedback showing damage blocked.
+- *Shiny Buff* - 2pc crafted armor makes nearby ores sparkle, reducing missed-ore anxiety.
+- *Smart Minion Pathfinding* - Minions navigate around obstacles using A* pathfinding instead of getting stuck.
+- *Crafting Info Panel* - Organized visual reference showing all craftable items by category. Hover for recipes, click to focus in crafting menu.
 
 Coming Soon:
-- Digging-based spawn scaling
-- Enhanced enemy behaviors (variable jump size, digging)
-- Strategic travel systems
-
-For players who want their victories to feel truly earned.
+- Mini-Player Healthbar
+- Craftable Rope from Fiber
+- Native Biome Bootstrap (craft basic stations from local materials)

@@ -103,3 +103,19 @@ public class PersistentPosition : ModPlayer {
 | Hardcore       | Must survive or lose everything |
 
 This feature makes Mediumcore/Hardcore actually mean something.
+
+---
+
+## TODO / Known Limitations
+
+- [ ] **Enemy NPCs Not Persisted** - When the world is saved and reloaded, hostile NPCs near the player's saved position are despawned (this is vanilla Terraria behavior). This means if a player logs out while a dangerous enemy is nearby, the enemy will be gone when they return.
+
+  **Impact:** This reduces the "commitment" aspect somewhat - a player fleeing a boss could quit and the boss will be gone on reload.
+
+  **Potential Solutions:**
+  - Save NPCs within a radius of the player's position and restore them on reload
+  - This would require careful consideration of which NPCs to save (bosses? regular enemies? critters?)
+  - Unknown if this is safe/feasible in multiplayer scenarios where the world state must sync
+  - May require server-side mod support for multiplayer
+
+  **Current Status:** Accepted limitation. The feature still provides significant value for exploration commitment even without enemy persistence.
