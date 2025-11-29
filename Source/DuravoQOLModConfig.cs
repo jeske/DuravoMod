@@ -48,8 +48,8 @@ namespace DuravoQOLMod
         [DefaultValue(true)]
         public bool ArmorRebalance { get; set; } = true;
 
-        [DefaultValue(true)]
-        public bool EnemySmartHopping { get; set; } = true;
+        [DefaultValue(false)]
+        public bool EnemySmartHopping { get; set; } = false;
 
         // ╔════════════════════════════════════════════════════════════════════╗
         // ║                      MINION BEHAVIOR                                ║

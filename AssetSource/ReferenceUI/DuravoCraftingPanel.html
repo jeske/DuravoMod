@@ -247,6 +247,9 @@
             <!-- ARMOR TAB CONTENT -->
             <div class="tab-content" id="tab-armor">
             
+            <div style="display: flex; gap: 20px;">
+            <!-- Left column: Armor -->
+            <div>
             <!-- Bar Key Row (shows tier by material) -->
             <div class="grid-row">
                 <div class="row-label"></div>
@@ -369,6 +372,36 @@
                     <span class="item-icon">👖</span>
                     <div class="bonus-dot"></div>
                 </div>
+            </div>
+            </div>
+            
+            <!-- Right column: Watches/Accessories -->
+            <div>
+            <div class="grid-row">
+                <div class="row-label"></div>
+                <div class="item-slot key-item" data-name="Copper Bar"><span class="item-icon">▬</span></div>
+                <div class="item-slot key-item" data-name="Tin Bar"><span class="item-icon">▬</span></div>
+                <div class="item-slot key-item" data-name="Silver Bar"><span class="item-icon">▬</span></div>
+                <div class="item-slot key-item" data-name="Gold Bar"><span class="item-icon">▬</span></div>
+                <div class="item-slot key-item" data-name="Platinum Bar"><span class="item-icon">▬</span></div>
+            </div>
+            <div class="grid-row">
+                <div class="row-label"></div>
+                <div class="item-slot available" data-name="Copper Watch" data-available="true"><span class="item-icon">⌚</span></div>
+                <div class="item-slot unavailable" data-name="Tin Watch" data-available="false"><span class="item-icon">⌚</span></div>
+                <div class="item-slot unavailable" data-name="Silver Watch" data-available="false"><span class="item-icon">⌚</span></div>
+                <div class="item-slot unavailable" data-name="Gold Watch" data-available="false"><span class="item-icon">⌚</span></div>
+                <div class="item-slot unavailable" data-name="Platinum Watch" data-available="false"><span class="item-icon">⌚</span></div>
+            </div>
+            <div class="grid-row">
+                <div class="row-label"></div>
+                <div class="item-slot unavailable" data-name="Copper Chandelier" data-available="false"><span class="item-icon">💡</span></div>
+                <div class="item-slot unavailable" data-name="Tin Chandelier" data-available="false"><span class="item-icon">💡</span></div>
+                <div class="item-slot unavailable" data-name="Silver Chandelier" data-available="false"><span class="item-icon">💡</span></div>
+                <div class="item-slot unavailable" data-name="Gold Chandelier" data-available="false"><span class="item-icon">💡</span></div>
+                <div class="item-slot unavailable" data-name="Platinum Chandelier" data-available="false"><span class="item-icon">💡</span></div>
+            </div>
+            </div>
             </div>
             
             </div><!-- end tab-armor -->
@@ -503,62 +536,145 @@
                 <div class="item-slot unavailable" data-name="Bottle" data-available="false"><span class="item-icon">🍾</span></div>
             </div>
             
-            </div><!-- end tab-materials -->
+            <div style="height: 10px;"></div>
             
-            <!-- FURNITURE TAB CONTENT -->
-            <div class="tab-content" id="tab-furniture" style="display: none;">
-            
-            <!-- Crafting Stations Row -->
+            <!-- Crafting stations row -->
             <div class="grid-row">
                 <div class="row-label"></div>
-                <div class="item-slot available" data-name="Work Bench" data-available="true"><span class="item-icon">🪑</span></div>
                 <div class="item-slot available" data-name="Furnace" data-available="true"><span class="item-icon">🔥</span></div>
                 <div class="item-slot available" data-name="Iron Anvil" data-available="true"><span class="item-icon">⚒️</span></div>
                 <div class="item-slot unavailable" data-name="Lead Anvil" data-available="false"><span class="item-icon">⚒️</span></div>
                 <div class="item-slot unavailable" data-name="Sawmill" data-available="false"><span class="item-icon">🪚</span></div>
                 <div class="item-slot unavailable" data-name="Loom" data-available="false"><span class="item-icon">🧵</span></div>
-            </div>
-            
-            <!-- Advanced Stations Row -->
-            <div class="grid-row">
-                <div class="row-label"></div>
                 <div class="item-slot unavailable" data-name="Hellforge" data-available="false"><span class="item-icon">🔥</span></div>
                 <div class="item-slot unavailable" data-name="Alchemy Table" data-available="false"><span class="item-icon">⚗️</span></div>
                 <div class="item-slot unavailable" data-name="Tinkerer's Workshop" data-available="false"><span class="item-icon">🔧</span></div>
                 <div class="item-slot unavailable" data-name="Imbuing Station" data-available="false"><span class="item-icon">✨</span></div>
             </div>
             
-            <div style="height: 10px;"></div>
+            </div><!-- end tab-materials -->
             
-            <!-- Storage Row -->
+            <!-- FURNITURE TAB CONTENT -->
+            <div class="tab-content" id="tab-furniture" style="display: none;">
+            
+            <!-- Wood biome -->
             <div class="grid-row">
                 <div class="row-label"></div>
-                <div class="item-slot available" data-name="Chest" data-available="true"><span class="item-icon">📦</span></div>
-                <div class="item-slot unavailable" data-name="Gold Chest" data-available="false"><span class="item-icon">📦</span></div>
-                <div class="item-slot unavailable" data-name="Shadow Chest" data-available="false"><span class="item-icon">📦</span></div>
-                <div class="item-slot available" data-name="Barrel" data-available="true"><span class="item-icon">🛢️</span></div>
-            </div>
-            
-            <!-- Lighting Row -->
-            <div class="grid-row">
-                <div class="row-label"></div>
-                <div class="item-slot available" data-name="Torch" data-available="true"><span class="item-icon">🔥</span></div>
-                <div class="item-slot available" data-name="Candle" data-available="true"><span class="item-icon">🕯️</span></div>
-                <div class="item-slot unavailable" data-name="Chandelier" data-available="false"><span class="item-icon">💡</span></div>
-                <div class="item-slot unavailable" data-name="Lamp" data-available="false"><span class="item-icon">🪔</span></div>
-                <div class="item-slot unavailable" data-name="Lantern" data-available="false"><span class="item-icon">🏮</span></div>
-            </div>
-            
-            <div style="height: 10px;"></div>
-            
-            <!-- Wood furniture Row -->
-            <div class="grid-row">
-                <div class="row-label"></div>
+                <div class="item-slot available" data-name="Work Bench" data-available="true"><span class="item-icon">🔨</span></div>
                 <div class="item-slot available" data-name="Wooden Door" data-available="true"><span class="item-icon">🚪</span></div>
-                <div class="item-slot available" data-name="Wood Platform" data-available="true"><span class="item-icon">━</span></div>
-                <div class="item-slot available" data-name="Wooden Chair" data-available="true"><span class="item-icon">🪑</span></div>
                 <div class="item-slot available" data-name="Wooden Table" data-available="true"><span class="item-icon">🪵</span></div>
+                <div class="item-slot available" data-name="Wooden Chair" data-available="true"><span class="item-icon">🪑</span></div>
                 <div class="item-slot available" data-name="Wooden Bed" data-available="true"><span class="item-icon">🛏️</span></div>
+                <div class="item-slot available" data-name="Wood Platform" data-available="true"><span class="item-icon">━</span></div>
+                <div class="item-slot available" data-name="Chest" data-available="true"><span class="item-icon">📦</span></div>
+                <div class="item-slot available" data-name="Candle" data-available="true"><span class="item-icon">🕯️</span></div>
+                <div class="item-slot unavailable" data-name="Wooden Chandelier" data-available="false"><span class="item-icon">💡</span></div>
+                <div class="item-slot unavailable" data-name="Grandfather Clock" data-available="false"><span class="item-icon">🕐</span></div>
+            </div>
+            
+            <!-- Boreal Wood -->
+            <div class="grid-row">
+                <div class="row-label"></div>
+                <div class="item-slot unavailable" data-name="Boreal Wood Work Bench" data-available="false"><span class="item-icon">🔨</span></div>
+                <div class="item-slot unavailable" data-name="Boreal Wood Door" data-available="false"><span class="item-icon">🚪</span></div>
+                <div class="item-slot unavailable" data-name="Boreal Wood Table" data-available="false"><span class="item-icon">🪵</span></div>
+                <div class="item-slot unavailable" data-name="Boreal Wood Chair" data-available="false"><span class="item-icon">🪑</span></div>
+                <div class="item-slot unavailable" data-name="Boreal Wood Bed" data-available="false"><span class="item-icon">🛏️</span></div>
+                <div class="item-slot unavailable" data-name="Boreal Wood Platform" data-available="false"><span class="item-icon">━</span></div>
+                <div class="item-slot unavailable" data-name="Boreal Wood Chest" data-available="false"><span class="item-icon">📦</span></div>
+                <div class="item-slot unavailable" data-name="Boreal Wood Candle" data-available="false"><span class="item-icon">🕯️</span></div>
+                <div class="item-slot unavailable" data-name="Boreal Wood Chandelier" data-available="false"><span class="item-icon">💡</span></div>
+                <div class="item-slot unavailable" data-name="Boreal Wood Clock" data-available="false"><span class="item-icon">🕐</span></div>
+            </div>
+            
+            <!-- Palm Wood -->
+            <div class="grid-row">
+                <div class="row-label"></div>
+                <div class="item-slot unavailable" data-name="Palm Wood Work Bench" data-available="false"><span class="item-icon">🔨</span></div>
+                <div class="item-slot unavailable" data-name="Palm Wood Door" data-available="false"><span class="item-icon">🚪</span></div>
+                <div class="item-slot unavailable" data-name="Palm Wood Table" data-available="false"><span class="item-icon">🪵</span></div>
+                <div class="item-slot unavailable" data-name="Palm Wood Chair" data-available="false"><span class="item-icon">🪑</span></div>
+                <div class="item-slot unavailable" data-name="Palm Wood Bed" data-available="false"><span class="item-icon">🛏️</span></div>
+                <div class="item-slot unavailable" data-name="Palm Wood Platform" data-available="false"><span class="item-icon">━</span></div>
+                <div class="item-slot unavailable" data-name="Palm Wood Chest" data-available="false"><span class="item-icon">📦</span></div>
+                <div class="item-slot unavailable" data-name="Palm Wood Candle" data-available="false"><span class="item-icon">🕯️</span></div>
+                <div class="item-slot unavailable" data-name="Palm Wood Chandelier" data-available="false"><span class="item-icon">💡</span></div>
+                <div class="item-slot unavailable" data-name="Palm Wood Clock" data-available="false"><span class="item-icon">🕐</span></div>
+            </div>
+            
+            <!-- Rich Mahogany -->
+            <div class="grid-row">
+                <div class="row-label"></div>
+                <div class="item-slot unavailable" data-name="Rich Mahogany Work Bench" data-available="false"><span class="item-icon">🔨</span></div>
+                <div class="item-slot unavailable" data-name="Rich Mahogany Door" data-available="false"><span class="item-icon">🚪</span></div>
+                <div class="item-slot unavailable" data-name="Rich Mahogany Table" data-available="false"><span class="item-icon">🪵</span></div>
+                <div class="item-slot unavailable" data-name="Rich Mahogany Chair" data-available="false"><span class="item-icon">🪑</span></div>
+                <div class="item-slot unavailable" data-name="Rich Mahogany Bed" data-available="false"><span class="item-icon">🛏️</span></div>
+                <div class="item-slot unavailable" data-name="Rich Mahogany Platform" data-available="false"><span class="item-icon">━</span></div>
+                <div class="item-slot unavailable" data-name="Rich Mahogany Chest" data-available="false"><span class="item-icon">📦</span></div>
+                <div class="item-slot unavailable" data-name="Rich Mahogany Candle" data-available="false"><span class="item-icon">🕯️</span></div>
+                <div class="item-slot unavailable" data-name="Rich Mahogany Chandelier" data-available="false"><span class="item-icon">💡</span></div>
+                <div class="item-slot unavailable" data-name="Rich Mahogany Clock" data-available="false"><span class="item-icon">🕐</span></div>
+            </div>
+            
+            <!-- Ebonwood -->
+            <div class="grid-row">
+                <div class="row-label"></div>
+                <div class="item-slot unavailable" data-name="Ebonwood Work Bench" data-available="false"><span class="item-icon">🔨</span></div>
+                <div class="item-slot unavailable" data-name="Ebonwood Door" data-available="false"><span class="item-icon">🚪</span></div>
+                <div class="item-slot unavailable" data-name="Ebonwood Table" data-available="false"><span class="item-icon">🪵</span></div>
+                <div class="item-slot unavailable" data-name="Ebonwood Chair" data-available="false"><span class="item-icon">🪑</span></div>
+                <div class="item-slot unavailable" data-name="Ebonwood Bed" data-available="false"><span class="item-icon">🛏️</span></div>
+                <div class="item-slot unavailable" data-name="Ebonwood Platform" data-available="false"><span class="item-icon">━</span></div>
+                <div class="item-slot unavailable" data-name="Ebonwood Chest" data-available="false"><span class="item-icon">📦</span></div>
+                <div class="item-slot unavailable" data-name="Ebonwood Candle" data-available="false"><span class="item-icon">🕯️</span></div>
+                <div class="item-slot unavailable" data-name="Ebonwood Chandelier" data-available="false"><span class="item-icon">💡</span></div>
+                <div class="item-slot unavailable" data-name="Ebonwood Clock" data-available="false"><span class="item-icon">🕐</span></div>
+            </div>
+            
+            <!-- Shadewood -->
+            <div class="grid-row">
+                <div class="row-label"></div>
+                <div class="item-slot unavailable" data-name="Shadewood Work Bench" data-available="false"><span class="item-icon">🔨</span></div>
+                <div class="item-slot unavailable" data-name="Shadewood Door" data-available="false"><span class="item-icon">🚪</span></div>
+                <div class="item-slot unavailable" data-name="Shadewood Table" data-available="false"><span class="item-icon">🪵</span></div>
+                <div class="item-slot unavailable" data-name="Shadewood Chair" data-available="false"><span class="item-icon">🪑</span></div>
+                <div class="item-slot unavailable" data-name="Shadewood Bed" data-available="false"><span class="item-icon">🛏️</span></div>
+                <div class="item-slot unavailable" data-name="Shadewood Platform" data-available="false"><span class="item-icon">━</span></div>
+                <div class="item-slot unavailable" data-name="Shadewood Chest" data-available="false"><span class="item-icon">📦</span></div>
+                <div class="item-slot unavailable" data-name="Shadewood Candle" data-available="false"><span class="item-icon">🕯️</span></div>
+                <div class="item-slot unavailable" data-name="Shadewood Chandelier" data-available="false"><span class="item-icon">💡</span></div>
+                <div class="item-slot unavailable" data-name="Shadewood Clock" data-available="false"><span class="item-icon">🕐</span></div>
+            </div>
+            
+            <!-- Pearlwood -->
+            <div class="grid-row">
+                <div class="row-label"></div>
+                <div class="item-slot unavailable" data-name="Pearlwood Work Bench" data-available="false"><span class="item-icon">🔨</span></div>
+                <div class="item-slot unavailable" data-name="Pearlwood Door" data-available="false"><span class="item-icon">🚪</span></div>
+                <div class="item-slot unavailable" data-name="Pearlwood Table" data-available="false"><span class="item-icon">🪵</span></div>
+                <div class="item-slot unavailable" data-name="Pearlwood Chair" data-available="false"><span class="item-icon">🪑</span></div>
+                <div class="item-slot unavailable" data-name="Pearlwood Bed" data-available="false"><span class="item-icon">🛏️</span></div>
+                <div class="item-slot unavailable" data-name="Pearlwood Platform" data-available="false"><span class="item-icon">━</span></div>
+                <div class="item-slot unavailable" data-name="Pearlwood Chest" data-available="false"><span class="item-icon">📦</span></div>
+                <div class="item-slot unavailable" data-name="Pearlwood Candle" data-available="false"><span class="item-icon">🕯️</span></div>
+                <div class="item-slot unavailable" data-name="Pearlwood Chandelier" data-available="false"><span class="item-icon">💡</span></div>
+                <div class="item-slot unavailable" data-name="Pearlwood Clock" data-available="false"><span class="item-icon">🕐</span></div>
+            </div>
+            
+            <!-- Spooky Wood -->
+            <div class="grid-row">
+                <div class="row-label"></div>
+                <div class="item-slot unavailable" data-name="Spooky Work Bench" data-available="false"><span class="item-icon">🔨</span></div>
+                <div class="item-slot unavailable" data-name="Spooky Door" data-available="false"><span class="item-icon">🚪</span></div>
+                <div class="item-slot unavailable" data-name="Spooky Table" data-available="false"><span class="item-icon">🪵</span></div>
+                <div class="item-slot unavailable" data-name="Spooky Chair" data-available="false"><span class="item-icon">🪑</span></div>
+                <div class="item-slot unavailable" data-name="Spooky Bed" data-available="false"><span class="item-icon">🛏️</span></div>
+                <div class="item-slot unavailable" data-name="Spooky Platform" data-available="false"><span class="item-icon">━</span></div>
+                <div class="item-slot unavailable" data-name="Spooky Chest" data-available="false"><span class="item-icon">📦</span></div>
+                <div class="item-slot unavailable" data-name="Spooky Candle" data-available="false"><span class="item-icon">🕯️</span></div>
+                <div class="item-slot unavailable" data-name="Spooky Chandelier" data-available="false"><span class="item-icon">💡</span></div>
+                <div class="item-slot unavailable" data-name="Spooky Clock" data-available="false"><span class="item-icon">🕐</span></div>
             </div>
             
             </div><!-- end tab-furniture -->
