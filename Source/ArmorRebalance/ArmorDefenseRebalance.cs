@@ -1,5 +1,6 @@
 // MIT Licensed - Copyright (c) 2025 David W. Jeske
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -9,16 +10,21 @@ namespace DuravoMod.ArmorRebalance
 {
     /// <summary>
     /// Rebalances vanilla armor defense values.
-    /// Issue in Vanilla: Upgrading indivudal pieces does not feel meaningful because
+    /// Issue in Vanilla: Upgrading individual pieces does not feel meaningful because
     ///           of breaking set bonuses, and by the time you have enough for the full
     ///           next tier, you may have enough to skip 1-2 tiers of armor entirely.
     /// Goal: Make all upgrades feel meaningful. Move all defense to the pieces and buff
-    ///       defense so there is more reason for piecemeal upgrades. 
-    ///       Set bonuses become utility (handled in ArmorSetBonusPlayer), giving the
-    ///       player more of a reason to make and maintain the kits they like.
+    ///       defense so there is more reason for piecemeal upgrades.
+    ///       Multi-piece buffs replace set bonuses (handled in ArmorSetBonusPlayer),
+    ///       giving the player more of a reason to make and maintain the kits they like.
     /// </summary>
     public class ArmorDefenseRebalance : GlobalItem
     {
+        // Tooltip colors
+        private static readonly Color ColorActiveBuffName = new Color(0x00, 0xFF, 0x00);    // Green
+        private static readonly Color ColorInactiveText = new Color(0x66, 0x66, 0x66);      // Dark grey
+        private static readonly Color ColorInactiveCount = new Color(0xFF, 0x00, 0x00);     // Red
+        private static readonly Color ColorChestBonus = new Color(0x00, 0xBF, 0xFF);        // Cyan
         public override void SetDefaults(Item item)
         {
             // Goal: Redistribute set bonus defense into pieces, keeping same total
@@ -114,84 +120,158 @@ namespace DuravoMod.ArmorRebalance
         }
 
         /// <summary>
-        /// Add custom tooltip lines describing chestplate and set bonuses.
+        /// Add custom tooltip lines describing chestplate bonuses and multi-piece buffs.
         /// Also removes vanilla set bonus tooltip since we replace it with our own system.
+        /// Tooltips show static format for inventory, dynamic format for equipped items.
         /// </summary>
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
             // Remove vanilla "Set bonus: X defense" tooltip line
             tooltips.RemoveAll(line => line.Name == "SetBonus");
 
-            string chestplateBonusKey = GetChestplateBonusKey(item.type);
-            bool isOreArmorPiece = IsOreArmorPiece(item.type);
+            var armorTag = ArmorSetBonusPlayer.GetArmorTagForItem(item.type);
+            bool isEquipped = IsItemTypeEquipped(item.type);
 
-            // Add chestplate-specific bonus first (if applicable)
-            if (chestplateBonusKey != null) {
-                string chestplateText = Language.GetTextValue($"Mods.DuravoMod.ArmorRebalance.Tooltips.{chestplateBonusKey}");
-                tooltips.Add(new TooltipLine(Mod, "ChestplateBonus", chestplateText));
+            // Add chestplate-specific bonus (if applicable)
+            AddChestplateBonusTooltip(item.type, tooltips);
+
+            // Add multi-piece buff tooltip (Shiny/Super Shiny system)
+            if (armorTag != ArmorSetBonusPlayer.ArmorTag.None) {
+                AddMultiPieceBuffTooltip(armorTag, isEquipped, tooltips);
             }
 
-            // Add set bonus for any armor piece
-            if (isOreArmorPiece) {
-                string setTooltip = Language.GetTextValue("Mods.DuravoMod.ArmorRebalance.Tooltips.SetBonusShiny");
-                tooltips.Add(new TooltipLine(Mod, "FullSetBonus", setTooltip));
-            }
+            // Add Heavy chestplate tooltip (chestplate-only effect)
+            AddHeavyChestplateTooltip(item.type, isEquipped, tooltips);
         }
 
         /// <summary>
-        /// Get the localization key for chestplate-specific bonus (null if not a chestplate).
+        /// Check if the item's type is currently equipped by the local player.
+        /// Uses type comparison since Terraria may pass cloned items to ModifyTooltips.
         /// </summary>
-        private static string GetChestplateBonusKey(int itemType)
+        private static bool IsItemTypeEquipped(int itemType)
         {
-            return itemType switch {
-                // Tin/Copper tier - Emergency Shield
-                ItemID.TinChainmail or ItemID.CopperChainmail => "ShieldTinCopper",
+            Player player = Main.LocalPlayer;
+            for (int armorSlot = 0; armorSlot < 3; armorSlot++) {
+                if (player.armor[armorSlot].type == itemType) {
+                    return true;
+                }
+            }
+            return false;
+        }
 
-                // Iron/Lead tier - Crit bonus
-                ItemID.IronChainmail or ItemID.LeadChainmail => "CritIronLead",
+        /// <summary>
+        /// Add tooltip for chestplate-specific bonuses (shields, speed).
+        /// </summary>
+        private void AddChestplateBonusTooltip(int itemType, List<TooltipLine> tooltips)
+        {
+            string bonusKey = itemType switch {
+                // Shield (30HP) - Copper/Tin chestplates
+                ItemID.CopperChainmail => "Shield30HP",
+                ItemID.TinChainmail => "Shield30HP",
 
-                // Silver/Tungsten tier - Speed bonus
-                ItemID.SilverChainmail or ItemID.TungstenChainmail => "SpeedSilverTungsten",
+                // Speed - Silver chestplate only
+                ItemID.SilverChainmail => "Speed15Pct",
 
-                // Gold/Platinum tier - Enhanced Emergency Shield
-                ItemID.GoldChainmail or ItemID.PlatinumChainmail => "ShieldGoldPlatinum",
+                // Shield (15% HP) - Gold/Platinum chestplates
+                ItemID.GoldChainmail => "Shield15Pct",
+                ItemID.PlatinumChainmail => "Shield15Pct",
 
                 _ => null
             };
+
+            if (bonusKey != null) {
+                string bonusText = Language.GetTextValue($"Mods.DuravoMod.ArmorRebalance.ChestBonuses.{bonusKey}");
+                var tooltipLine = new TooltipLine(Mod, "ChestplateBonus", $"[c/{ColorToHex(ColorChestBonus)}:{bonusText}]");
+                tooltips.Add(tooltipLine);
+            }
         }
 
         /// <summary>
-        /// Check if this item is part of an ore armor set.
+        /// Add tooltip for multi-piece buff (Shiny/Super Shiny).
+        /// Shows static format for inventory, dynamic format with colors for equipped.
         /// </summary>
-        private static bool IsOreArmorPiece(int itemType)
+        private void AddMultiPieceBuffTooltip(ArmorSetBonusPlayer.ArmorTag armorTag, bool isEquipped, List<TooltipLine> tooltips)
         {
-            return itemType switch {
-                // Tin set
-                ItemID.TinHelmet or ItemID.TinChainmail or ItemID.TinGreaves => true,
+            string buffNameKey = armorTag == ArmorSetBonusPlayer.ArmorTag.SuperShiny ? "SuperShiny" : "Shiny";
+            string buffName = Language.GetTextValue($"Mods.DuravoMod.ArmorRebalance.BuffNames.{buffNameKey}");
+            string buffDescription = Language.GetTextValue($"Mods.DuravoMod.ArmorRebalance.BuffDescriptions.{buffNameKey}");
 
-                // Copper set
-                ItemID.CopperHelmet or ItemID.CopperChainmail or ItemID.CopperGreaves => true,
+            string tooltipText;
+            if (!isEquipped) {
+                // Inventory: static format without current count
+                tooltipText = $"{buffName} (2pc) {buffDescription}";
+            }
+            else {
+                // Equipped: show current count with colors
+                var player = Main.LocalPlayer.GetModPlayer<ArmorSetBonusPlayer>();
+                var (shinyCount, superShinyCount, _) = player.GetCurrentBuffStatus();
 
-                // Iron set
-                ItemID.IronHelmet or ItemID.IronChainmail or ItemID.IronGreaves => true,
+                int currentCount;
+                bool isActive;
 
-                // Lead set
-                ItemID.LeadHelmet or ItemID.LeadChainmail or ItemID.LeadGreaves => true,
+                if (armorTag == ArmorSetBonusPlayer.ArmorTag.SuperShiny) {
+                    currentCount = superShinyCount;
+                    isActive = superShinyCount >= 2;
+                }
+                else {
+                    // For Shiny, count includes SuperShiny pieces
+                    currentCount = shinyCount + superShinyCount;
+                    isActive = currentCount >= 2;
+                }
 
-                // Silver set
-                ItemID.SilverHelmet or ItemID.SilverChainmail or ItemID.SilverGreaves => true,
+                if (isActive) {
+                    // Active: teal/cyan buff name
+                    tooltipText = $"[c/{ColorToHex(ColorChestBonus)}:{buffName}] ({currentCount}/2pc) {buffDescription}";
+                }
+                else {
+                    // Inactive: dimmed buff name, red current count
+                    tooltipText = $"[c/{ColorToHex(ColorInactiveText)}:{buffName}] ([c/{ColorToHex(ColorInactiveCount)}:{currentCount}]/2pc) {buffDescription}";
+                }
+            }
 
-                // Tungsten set
-                ItemID.TungstenHelmet or ItemID.TungstenChainmail or ItemID.TungstenGreaves => true,
+            var tooltipLine = new TooltipLine(Mod, "MultiPieceBuff", tooltipText);
+            tooltips.Add(tooltipLine);
+        }
 
-                // Gold set
-                ItemID.GoldHelmet or ItemID.GoldChainmail or ItemID.GoldGreaves => true,
-
-                // Platinum set
-                ItemID.PlatinumHelmet or ItemID.PlatinumChainmail or ItemID.PlatinumGreaves => true,
-
+        /// <summary>
+        /// Add tooltip for Heavy chestplate effect (Iron/Lead/Tungsten only).
+        /// Shows static format for inventory, dynamic format with colors for equipped.
+        /// </summary>
+        private void AddHeavyChestplateTooltip(int itemType, bool isEquipped, List<TooltipLine> tooltips)
+        {
+            bool isHeavyChestplate = itemType switch {
+                ItemID.IronChainmail => true,
+                ItemID.LeadChainmail => true,
+                ItemID.TungstenChainmail => true,
                 _ => false
             };
+
+            if (!isHeavyChestplate) return;
+
+            string buffName = Language.GetTextValue("Mods.DuravoMod.ArmorRebalance.BuffNames.Heavy");
+            string buffDescription = Language.GetTextValue("Mods.DuravoMod.ArmorRebalance.BuffDescriptions.Heavy");
+
+            string tooltipText;
+            if (!isEquipped) {
+                // Inventory: static format
+                tooltipText = $"{buffName} {buffDescription}";
+            }
+            else {
+                // Equipped: show with active color (Heavy is always active when worn)
+                tooltipText = $"[c/{ColorToHex(ColorChestBonus)}:{buffName}] {buffDescription}";
+            }
+
+            var tooltipLine = new TooltipLine(Mod, "HeavyEffect", tooltipText);
+            tooltips.Add(tooltipLine);
+        }
+
+
+        /// <summary>
+        /// Convert a Color to hex string for Terraria's [c/RRGGBB:text] format.
+        /// </summary>
+        private static string ColorToHex(Color color)
+        {
+            return $"{color.R:X2}{color.G:X2}{color.B:X2}";
         }
     }
 }

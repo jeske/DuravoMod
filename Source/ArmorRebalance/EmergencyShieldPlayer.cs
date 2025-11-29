@@ -54,8 +54,8 @@ namespace DuravoMod.ArmorRebalance
         /// <summary>Remaining duration in ticks (60 ticks = 1 second)</summary>
         private int shieldDurationRemainingTicks;
 
-        /// <summary>Cooldown remaining before shield can trigger again</summary>
-        private int shieldCooldownRemainingTicks;
+        // NOTE: Cooldown is tracked via FragileBuff on the player, NOT an internal timer.
+        // This prevents exploits like armor-swapping to reset cooldown.
 
         /// <summary>Whether the current shield is Gold/Platinum tier (affects color)</summary>
         private bool isGoldTierShield;
@@ -129,13 +129,17 @@ namespace DuravoMod.ArmorRebalance
                 }
             }
 
-            // Tick down cooldown
-            if (shieldCooldownRemainingTicks > 0) {
-                shieldCooldownRemainingTicks--;
-                if (shieldCooldownRemainingTicks == 0 && DebugShieldActivation) {
-                    Main.NewText("[SHIELD] Cooldown finished - ready for next activation", Color.Green);
-                }
-            }
+            // Cooldown is tracked via FragileBuff, not internal timer
+            // This prevents armor-swap exploits
+        }
+
+        /// <summary>
+        /// Check if shield is on cooldown by checking for FragileBuff.
+        /// Using the buff system prevents armor-swap exploits.
+        /// </summary>
+        private bool IsShieldOnCooldown()
+        {
+            return Player.HasBuff(ModContent.BuffType<FragileBuff>());
         }
 
         // ╔════════════════════════════════════════════════════════════════════╗
@@ -165,15 +169,18 @@ namespace DuravoMod.ArmorRebalance
             ShieldArmorTier armorTier = DetectShieldArmorTier();
 
             if (DebugShieldActivation) {
-                Main.NewText($"[SHIELD] Armor tier: {armorTier}, HasActiveShield: {HasActiveShield}, Cooldown: {shieldCooldownRemainingTicks}", Color.Yellow);
+                bool onCooldown = IsShieldOnCooldown();
+                Main.NewText($"[SHIELD] Armor tier: {armorTier}, HasActiveShield: {HasActiveShield}, OnCooldown: {onCooldown}", Color.Yellow);
             }
 
             // Step 2: If no active shield, try to create one
             if (!HasActiveShield) {
-                // Check cooldown
-                if (shieldCooldownRemainingTicks > 0) {
-                    if (DebugShieldActivation)
-                        Main.NewText($"[SHIELD] ABORT: On cooldown ({shieldCooldownRemainingTicks} ticks remaining)", Color.Orange);
+                // Check cooldown via FragileBuff (prevents armor-swap exploit)
+                if (IsShieldOnCooldown()) {
+                    if (DebugShieldActivation) {
+                        int cooldownRemaining = Player.buffTime[Player.FindBuffIndex(ModContent.BuffType<FragileBuff>())];
+                        Main.NewText($"[SHIELD] ABORT: On cooldown (Fragile buff: {cooldownRemaining / 60}s remaining)", Color.Orange);
+                    }
                     return;
                 }
 
@@ -200,6 +207,7 @@ namespace DuravoMod.ArmorRebalance
 
         /// <summary>
         /// Create a new shield based on armor tier.
+        /// Cooldown is tracked via FragileBuff to prevent armor-swap exploits.
         /// </summary>
         private void CreateShield(ShieldArmorTier armorTier)
         {
@@ -209,23 +217,21 @@ namespace DuravoMod.ArmorRebalance
             if (armorTier == ShieldArmorTier.CopperTin) {
                 shieldMaxHP = CopperTinShieldHP;
                 shieldDurationRemainingTicks = CopperTinShieldDurationSeconds * 60;
-                shieldCooldownRemainingTicks = CopperTinShieldCooldownSeconds * 60;
                 isGoldTierShield = false;
 
-                // Add Fragile debuff to show cooldown
+                // Add Fragile debuff for cooldown tracking (prevents armor-swap exploit)
                 Player.AddBuff(ModContent.BuffType<FragileBuff>(), CopperTinShieldCooldownSeconds * 60);
             }
             else // GoldPlatinum
             {
                 shieldMaxHP = (int)(Player.statLifeMax2 * GoldPlatinumShieldHPPercent);
                 shieldDurationRemainingTicks = GoldPlatinumShieldDurationSeconds * 60;
-                shieldCooldownRemainingTicks = GoldPlatinumShieldCooldownSeconds * 60;
                 isGoldTierShield = true;
 
-                // Add Fragile debuff to show cooldown
+                // Add Fragile debuff for cooldown tracking (prevents armor-swap exploit)
                 Player.AddBuff(ModContent.BuffType<FragileBuff>(), GoldPlatinumShieldCooldownSeconds * 60);
 
-                // Gold tier purges debuffs
+                // Gold tier purges debuffs (but NOT Fragile)
                 PurgeCommonDebuffs();
             }
 

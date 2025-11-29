@@ -60,9 +60,23 @@ Instead of requiring a full matching set, armor pieces contribute **tags** towar
 |------|-----------------|--------|---------------------|
 | **Shiny** | 2+ | Nearby ores/gems sparkle (base range) | Copper, Tin, Silver |
 | **Super Shiny** | 2+ | Nearby ores/gems sparkle (farther range) | Gold, Platinum |
-| **Heavy** | 2+ | +15% knockback dealt, -15% knockback received (reflected to attacker) | Iron, Lead, Tungsten |
 
 **Note:** Super Shiny counts as Shiny (but not vice versa). A player with 1 Gold + 1 Copper piece has 2 Shiny-contributors, activating Shiny 2pc.
+
+---
+
+## Chestplate-Only Effects
+
+Some effects are granted directly by the chestplate, not as multi-piece buffs:
+
+| Effect | Chestplates | Description |
+|--------|-------------|-------------|
+| **Shield (Basic)** | Copper, Tin | 30HP shield on damage, 5s duration, 60s cooldown |
+| **Heavy** | Iron, Lead, Tungsten | +15% knockback dealt |
+| **Speed Boost** | Silver | +15% move speed |
+| **Shield (Advanced)** | Gold, Platinum | 15% max HP shield, 10s duration, 120s cooldown, purges debuffs |
+
+**Note:** Iron/Lead/Tungsten do NOT contribute to the Shiny system - they only provide the Heavy knockback effect.
 
 ---
 
@@ -114,14 +128,14 @@ string GetMultiPieceTooltip(Item item, bool isEquipped) {
 
 ### Armor Tag Assignments
 
-| Armor | Tag | Chest Bonus |
-|-------|-----|-------------|
+| Armor | Shiny Tag | Chest Bonus |
+|-------|-----------|-------------|
 | **Copper** | Shiny | Shield (30HP, 5s, 60s cd) |
 | **Tin** | Shiny | Shield (30HP, 5s, 60s cd) |
-| **Iron** | Heavy | +10% crit chance |
-| **Lead** | Heavy | +10% crit chance |
+| **Iron** | *(none)* | Heavy (+15% knockback) |
+| **Lead** | *(none)* | Heavy (+15% knockback) |
 | **Silver** | Shiny | +15% move speed |
-| **Tungsten** | Heavy | +15% move speed |
+| **Tungsten** | *(none)* | Heavy (+15% knockback) |
 | **Gold** | Super Shiny | Shield (15%HP, 10s, 120s, purge) |
 | **Platinum** | Super Shiny | Shield (15%HP, 10s, 120s, purge) |
 
@@ -135,10 +149,10 @@ string GetMultiPieceTooltip(Item item, bool isEquipped) {
 |------|---------------|-------|-------|----------------|---------------|-------|-------|
 | **Copper** | 1/2/1 | +2 def | **6** | 1/3/2 | Shield (30HP, 5s, 60s cd) | Shiny | **6** |
 | **Tin** | 2/2/1 | +2 def | **7** | 2/3/2 | Shield (30HP, 5s, 60s cd) | Shiny | **7** |
-| **Iron** | 2/3/2 | +2 def | **9** | 2/4/3 | +10% crit chance | Heavy | **9** |
-| **Lead** | 3/3/3 | +1 def | **10** | 3/4/3 | +10% crit chance | Heavy | **10** |
+| **Iron** | 2/3/2 | +2 def | **9** | 2/4/3 | Heavy (+15% knockback) | *(none)* | **9** |
+| **Lead** | 3/3/3 | +1 def | **10** | 3/4/3 | Heavy (+15% knockback) | *(none)* | **10** |
 | **Silver** | 3/4/3 | +2 def | **12** | 3/5/4 | +15% move speed | Shiny | **12** |
-| **Tungsten** | 4/4/3 | +2 def | **13** | 4/5/4 | +15% move speed | Heavy | **13** |
+| **Tungsten** | 4/4/3 | +2 def | **13** | 4/5/4 | Heavy (+15% knockback) | *(none)* | **13** |
 | **Gold** | 4/5/4 | +3 def | **16** | 4/6/6 | Shield (15%HP, 10s, 120s, purge) | Super Shiny | **16** |
 | **Platinum** | 5/5/4 | +4 def | **18** | 5/7/6 | Shield (15%HP, 10s, 120s, purge) | Super Shiny | **18** |
 
@@ -153,15 +167,17 @@ string GetMultiPieceTooltip(Item item, bool isEquipped) {
 | Build Example | Pieces | Active Buffs | Trade-off |
 |---------------|--------|--------------|-----------|
 | Tin Helm + Copper Chest + Silver Boots | 3 Shiny | Shiny 2pc | Pure mining/exploration focus |
-| Iron Helm + Lead Chest + Tungsten Boots | 3 Heavy | Heavy 2pc | Combat focus, no sparkle |
-| Gold Helm + Tin Chest + Lead Boots | 1 Super Shiny, 1 Shiny, 1 Heavy | Shiny 2pc (Gold counts) | Mixed - shield chest + ore detection |
+| Iron Helm + Lead Chest + Tungsten Boots | 0 Shiny | Heavy (chestplate) | Combat focus, no sparkle |
+| Gold Helm + Tin Chest + Lead Boots | 2 Shiny (Gold counts) | Shiny 2pc | Mixed - ore detection + Heavy chestplate |
 | Gold Helm + Platinum Chest | 2 Super Shiny | Super Shiny 2pc | Best mining, double shield chest bonus |
 
 **Key tensions:**
 
-- Shiny vs Heavy: "Do I want ore detection or combat power?"
+- Shiny vs Heavy: "Do I want ore detection or knockback power?"
 - Mixing tiers: "Gold helm + Tin chest = I get Shiny AND keep my early shield"
 - Super Shiny investment: "Is the extended range worth 2 high-tier pieces?"
+
+**Note on Heavy:** Unlike Shiny, Heavy is a chestplate-only effect. There's no 2pc bonus; you get the knockback bonus just by wearing an Iron, Lead, or Tungsten chestplate. This means you can mix Heavy chestplate + Shiny helmet/boots for both ore detection AND knockback power.
 
 Players can now upgrade individual pieces without losing their build identity. A player who values Shiny can upgrade Copper → Tin → Silver while maintaining their ore detection.
 

@@ -1,18 +1,17 @@
 // MIT Licensed - Copyright (c) 2025 David W. Jeske
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace DuravoMod.ArmorRebalance
 {
     /// <summary>
-    /// Buff that grants nearby ore highlighting while wearing full ore armor set.
+    /// Buff that grants nearby ore highlighting while wearing 2+ Shiny-tagged armor pieces.
     /// The actual ore glow effect is handled by ArmorSetBonusPlayer.
     /// </summary>
     public class ShinyBuff : ModBuff
     {
-        // Use vanilla Buff_72 icon (shiny sparkle effect)
-        public override string Texture => "Terraria/Images/Buff_72";
+        // Use custom icon from Assets/ShinyBuff.png
+        public override string Texture => "DuravoMod/Assets/ShinyBuff";
 
         public override void SetStaticDefaults()
         {

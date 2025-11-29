@@ -48,7 +48,7 @@ Mods: {
 
 		// ═══════════════════════════════════════════════════════════════════
 		// ARMOR REBALANCE FEATURE
-		// Defense redistribution, set bonuses, emergency shield, shiny effect
+		// Defense redistribution, multi-piece buffs, emergency shield
 		// ═══════════════════════════════════════════════════════════════════
 		ArmorRebalance: {
 			Buffs: {
@@ -65,14 +65,25 @@ Mods: {
 
 			CombatText.ShieldBlocked: "{0} (blocked)"
 
-			Tooltips: {
-				# Chestplate-only bonuses
-				ShieldTinCopper: "[c/00BFFF:+30 HP Shield for 5s when hit (60s cooldown)]"
-				CritIronLead: "[c/00BFFF:+10% critical strike chance]"
-				SpeedSilverTungsten: "[c/00BFFF:+15% movement speed]"
-				ShieldGoldPlatinum: "[c/00BFFF:15% HP Shield for 10s when hit (120s cooldown, purges debuffs)]"
-				# Set bonus (all 3 pieces from same tier)
-				SetBonusShiny: "[c/ADFF2F:Set Bonus:] Shiny - nearby ores and gems sparkle"
+			// Multi-piece buff names (plain text, code adds colors/formatting)
+			BuffNames: {
+				Shiny: Shiny
+				SuperShiny: Super Shiny
+				Heavy: Heavy
+			}
+
+			// Multi-piece buff descriptions (plain text, code adds colors/formatting)
+			BuffDescriptions: {
+				Shiny: Nearby ores and gems sparkle
+				SuperShiny: Nearby ores and gems sparkle (extended range)
+				Heavy: +15% knockback and knockback reflection
+			}
+
+			// Chestplate-only bonuses (plain text, code adds colors/formatting)
+			ChestBonuses: {
+				Shield30HP: +30 HP Shield for 5s when hit (60s cooldown)
+				Shield15Pct: 15% HP Shield for 10s when hit (120s cooldown, purges debuffs)
+				Speed15Pct: +15% movement speed
 			}
 		}
 
@@ -83,15 +94,16 @@ Mods: {
 		PersistentPosition: {
 		}
 
+		// Root-level Buffs section - tModLoader auto-discovers these for ModBuff classes
 		Buffs: {
 			FragileBuff: {
-				DisplayName: Fragile Buff
-				Description: Mods.DuravoMod.Buffs.FragileBuff.Description
+				DisplayName: Fragile
+				Description: Unable to acquire emergency shield for a while
 			}
 
 			ShinyBuff: {
-				DisplayName: Shiny Buff
-				Description: Mods.DuravoMod.Buffs.ShinyBuff.Description
+				DisplayName: Shiny
+				Description: Nearby ores and gems sparkle
 			}
 		}
 	}

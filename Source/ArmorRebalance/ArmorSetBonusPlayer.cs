@@ -64,21 +64,22 @@ namespace DuravoMod.ArmorRebalance
         // ║                          INSTANCE STATE                            ║
         // ╚════════════════════════════════════════════════════════════════════╝
 
-        // === SET BONUS TRACKING ===
-        /// <summary>Current chestplate tier for single-piece bonuses</summary>
-        private ChestplateTier currentChestplateTier = ChestplateTier.None;
+        // === MULTI-PIECE BUFF TRACKING ===
+        /// <summary>Number of equipped armor pieces contributing to Shiny tag (includes Super Shiny)</summary>
+        private int shinyPieceCount = 0;
 
-        /// <summary>Whether player is wearing a full ore armor set (any tier)</summary>
-        private bool hasFullOreArmorSet = false;
+        /// <summary>Number of equipped armor pieces contributing to Super Shiny tag</summary>
+        private int superShinyPieceCount = 0;
 
-        /// <summary>Chestplate tiers for single-piece bonuses</summary>
-        public enum ChestplateTier
+        /// <summary>Whether the current chestplate grants the Heavy effect</summary>
+        private bool hasHeavyChestplate = false;
+
+        /// <summary>Multi-piece buff tags that armor can contribute (for Shiny ore detection only)</summary>
+        public enum ArmorTag
         {
             None,
-            TinCopper,      // Emergency Shield (handled by EmergencyShieldPlayer)
-            IronLead,       // +10% crit chance
-            SilverTungsten, // +15% move speed
-            GoldPlatinum    // Emergency Shield (handled by EmergencyShieldPlayer)
+            Shiny,      // Copper, Tin, Silver - 2pc = ore sparkle (base range)
+            SuperShiny  // Gold, Platinum - 2pc = ore sparkle (far range), counts as Shiny
         }
 
         // === SPARKLE TRACKING ===
@@ -121,34 +122,53 @@ namespace DuravoMod.ArmorRebalance
 
         public override void ResetEffects()
         {
-            currentChestplateTier = ChestplateTier.None;
-            hasFullOreArmorSet = false;
+            shinyPieceCount = 0;
+            superShinyPieceCount = 0;
+            hasHeavyChestplate = false;
             HasShinyBuff = false;
         }
 
         public override void UpdateEquips()
         {
-            currentChestplateTier = DetectChestplateTier();
-            hasFullOreArmorSet = DetectFullOreArmorSet();
+            CountArmorTags();
+            ApplyChestplateEffects();
 
-            // Apply CHESTPLATE bonuses (tier-specific utility)
-            switch (currentChestplateTier) {
-                case ChestplateTier.IronLead:
-                    // +10% crit chance from Iron/Lead chestplate
-                    Player.GetCritChance(DamageClass.Generic) += 10f;
-                    break;
+            // Calculate effective Shiny count (Super Shiny counts as Shiny)
+            int effectiveShinyCount = shinyPieceCount + superShinyPieceCount;
 
-                case ChestplateTier.SilverTungsten:
-                    // +15% movement speed from Silver/Tungsten chestplate
+            // Apply Shiny buff when 2+ Shiny-tagged pieces equipped
+            if (DebugForceShinyActive || effectiveShinyCount >= 2) {
+                Player.AddBuff(ModContent.BuffType<ShinyBuff>(), 2);
+            }
+        }
+
+        /// <summary>
+        /// Apply chestplate-specific effects based on equipped armor.
+        /// Each chestplate gets exactly ONE bonus.
+        /// </summary>
+        private void ApplyChestplateEffects()
+        {
+            int chestplateType = Player.armor[1].type;
+
+            switch (chestplateType) {
+                // Silver: +15% movement speed
+                case ItemID.SilverChainmail:
                     Player.moveSpeed += 0.15f;
                     break;
 
-                    // Shield bonuses (TinCopper, GoldPlatinum) handled by EmergencyShieldPlayer
-            }
+                // Heavy: +15% knockback dealt
+                case ItemID.IronChainmail:
+                case ItemID.LeadChainmail:
+                case ItemID.TungstenChainmail:
+                    Player.GetKnockback(DamageClass.Generic) += 0.15f;
+                    hasHeavyChestplate = true;
+                    break;
 
-            // Apply Shiny buff when wearing full ore armor set
-            if (DebugForceShinyActive || hasFullOreArmorSet) {
-                Player.AddBuff(ModContent.BuffType<ShinyBuff>(), 2);
+                // Shields: Handled by EmergencyShieldPlayer
+                // case ItemID.CopperChainmail:
+                // case ItemID.TinChainmail:
+                // case ItemID.GoldChainmail:
+                // case ItemID.PlatinumChainmail:
             }
         }
 
@@ -449,87 +469,74 @@ namespace DuravoMod.ArmorRebalance
         }
 
         /// <summary>
-        /// Detect which tier of ore chestplate the player is wearing.
-        /// Only checks the chestplate slot - helmet and legs can be mixed.
+        /// Count how many armor pieces contribute to each Shiny tag.
+        /// Checks helmet (slot 0), chestplate (slot 1), and greaves (slot 2).
+        /// Note: Iron/Lead/Tungsten are NOT part of the Shiny system - they use Heavy chestplate effect only.
         /// </summary>
-        private ChestplateTier DetectChestplateTier()
+        private void CountArmorTags()
         {
-            int chestplateType = Player.armor[1].type;
+            shinyPieceCount = 0;
+            superShinyPieceCount = 0;
 
-            if (chestplateType == ItemID.TinChainmail || chestplateType == ItemID.CopperChainmail)
-                return ChestplateTier.TinCopper;
-
-            if (chestplateType == ItemID.IronChainmail || chestplateType == ItemID.LeadChainmail)
-                return ChestplateTier.IronLead;
-
-            if (chestplateType == ItemID.SilverChainmail || chestplateType == ItemID.TungstenChainmail)
-                return ChestplateTier.SilverTungsten;
-
-            if (chestplateType == ItemID.GoldChainmail || chestplateType == ItemID.PlatinumChainmail)
-                return ChestplateTier.GoldPlatinum;
-
-            return ChestplateTier.None;
+            // Check all 3 armor slots
+            for (int armorSlot = 0; armorSlot < 3; armorSlot++) {
+                ArmorTag tag = GetArmorTagForItem(Player.armor[armorSlot].type);
+                switch (tag) {
+                    case ArmorTag.Shiny:
+                        shinyPieceCount++;
+                        break;
+                    case ArmorTag.SuperShiny:
+                        superShinyPieceCount++;
+                        break;
+                }
+            }
         }
 
         /// <summary>
-        /// Detect if player is wearing a FULL ore armor set (all 3 pieces from same tier).
-        /// This grants the mini-spelunker bonus.
+        /// Get the Shiny armor tag for a given item type.
+        /// Only Shiny-system armors return a tag; Iron/Lead/Tungsten return None (Heavy is chestplate-only).
         /// </summary>
-        private bool DetectFullOreArmorSet()
+        public static ArmorTag GetArmorTagForItem(int itemType)
         {
-            int helmetType = Player.armor[0].type;
-            int chestplateType = Player.armor[1].type;
-            int greavesType = Player.armor[2].type;
+            // Shiny: Copper, Tin, Silver
+            switch (itemType) {
+                // Copper armor
+                case ItemID.CopperHelmet:
+                case ItemID.CopperChainmail:
+                case ItemID.CopperGreaves:
+                // Tin armor
+                case ItemID.TinHelmet:
+                case ItemID.TinChainmail:
+                case ItemID.TinGreaves:
+                // Silver armor
+                case ItemID.SilverHelmet:
+                case ItemID.SilverChainmail:
+                case ItemID.SilverGreaves:
+                    return ArmorTag.Shiny;
 
-            // Tin set
-            if (helmetType == ItemID.TinHelmet &&
-                chestplateType == ItemID.TinChainmail &&
-                greavesType == ItemID.TinGreaves)
-                return true;
+                // Super Shiny: Gold, Platinum
+                case ItemID.GoldHelmet:
+                case ItemID.GoldChainmail:
+                case ItemID.GoldGreaves:
+                case ItemID.PlatinumHelmet:
+                case ItemID.PlatinumChainmail:
+                case ItemID.PlatinumGreaves:
+                    return ArmorTag.SuperShiny;
 
-            // Copper set
-            if (helmetType == ItemID.CopperHelmet &&
-                chestplateType == ItemID.CopperChainmail &&
-                greavesType == ItemID.CopperGreaves)
-                return true;
+                // Iron/Lead/Tungsten don't participate in Shiny system
+                // Heavy effect is chestplate-only, not a 2pc buff
+                default:
+                    return ArmorTag.None;
+            }
+        }
 
-            // Iron set
-            if (helmetType == ItemID.IronHelmet &&
-                chestplateType == ItemID.IronChainmail &&
-                greavesType == ItemID.IronGreaves)
-                return true;
-
-            // Lead set
-            if (helmetType == ItemID.LeadHelmet &&
-                chestplateType == ItemID.LeadChainmail &&
-                greavesType == ItemID.LeadGreaves)
-                return true;
-
-            // Silver set
-            if (helmetType == ItemID.SilverHelmet &&
-                chestplateType == ItemID.SilverChainmail &&
-                greavesType == ItemID.SilverGreaves)
-                return true;
-
-            // Tungsten set
-            if (helmetType == ItemID.TungstenHelmet &&
-                chestplateType == ItemID.TungstenChainmail &&
-                greavesType == ItemID.TungstenGreaves)
-                return true;
-
-            // Gold set
-            if (helmetType == ItemID.GoldHelmet &&
-                chestplateType == ItemID.GoldChainmail &&
-                greavesType == ItemID.GoldGreaves)
-                return true;
-
-            // Platinum set
-            if (helmetType == ItemID.PlatinumHelmet &&
-                chestplateType == ItemID.PlatinumChainmail &&
-                greavesType == ItemID.PlatinumGreaves)
-                return true;
-
-            return false;
+        /// <summary>
+        /// Get the current piece counts and Heavy status for tooltip display.
+        /// Heavy is a chestplate-only effect, not a multi-piece buff.
+        /// </summary>
+        public (int shiny, int superShiny, bool hasHeavy) GetCurrentBuffStatus()
+        {
+            return (shinyPieceCount, superShinyPieceCount, hasHeavyChestplate);
         }
     }
 }
