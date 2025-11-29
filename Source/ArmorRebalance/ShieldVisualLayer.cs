@@ -7,7 +7,7 @@ using Terraria.GameContent;
 using Terraria.ModLoader;
 using System;
 
-namespace DuravoMod.ArmorRebalance
+namespace DuravoQOLMod.ArmorRebalance
 {
     /// <summary>
     /// Custom draw layer that renders the emergency shield visual effect around the player.

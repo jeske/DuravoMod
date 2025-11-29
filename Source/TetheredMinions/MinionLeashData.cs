@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Terraria.ID;
 
-namespace DuravoMod.TetheredMinions
+namespace DuravoQOLMod.TetheredMinions
 {
     /// <summary>
     /// Minion projectile types that we track for tethering.

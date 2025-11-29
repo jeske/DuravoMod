@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
 
-namespace DuravoMod.TetheredMinions
+namespace DuravoQOLMod.TetheredMinions
 {
     /// <summary>
     /// Represents the current behavioral state of a minion.

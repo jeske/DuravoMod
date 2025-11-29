@@ -1,10 +1,10 @@
 Mods: {
-	DuravoMod: {
+	DuravoQOLMod: {
 		// ═══════════════════════════════════════════════════════════════════
 		// GLOBAL MOD CONFIGURATION
 		// ═══════════════════════════════════════════════════════════════════
 		Configs: {
-			DuravoModConfig: {
+			DuravoQOLModConfig: {
 				DisplayName: Kuro's Duravo Mod Config
 				Headers.MinionBehavior: Minion Behavior
 
@@ -104,6 +104,11 @@ Mods: {
 			ShinyBuff: {
 				DisplayName: Shiny
 				Description: Nearby ores and gems sparkle
+			}
+
+			HeavyBuff: {
+				DisplayName: Heavy Buff
+				Description: Mods.DuravoQOLMod.Buffs.HeavyBuff.Description
 			}
 		}
 	}

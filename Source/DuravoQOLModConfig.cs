@@ -2,13 +2,13 @@
 using System.ComponentModel;
 using Terraria.ModLoader.Config;
 
-namespace DuravoMod
+namespace DuravoQOLMod
 {
     /// <summary>
     /// Client-side configuration for the DuravoMod.
     /// Access via ModContent.GetInstance<DuravoModConfig>().
     /// </summary>
-    public class DuravoModConfig : ModConfig
+    public class DuravoQOLModConfig : ModConfig
     {
         public override ConfigScope Mode => ConfigScope.ClientSide;
 

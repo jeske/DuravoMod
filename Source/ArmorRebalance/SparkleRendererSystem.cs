@@ -3,9 +3,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
-using DuravoMod.ArmorRebalance;
+using DuravoQOLMod.ArmorRebalance;
 
-namespace DuravoMod.ArmorRebalance
+namespace DuravoQOLMod.ArmorRebalance
 {
     /// <summary>
     /// Handles rendering of ore sparkles after tiles are drawn.

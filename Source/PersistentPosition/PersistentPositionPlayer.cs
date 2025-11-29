@@ -5,9 +5,9 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using DuravoMod;
+using DuravoQOLMod;
 
-namespace DuravoMod.PersistentPosition
+namespace DuravoQOLMod.PersistentPosition
 {
     /// <summary>
     /// Saves and restores player position on world exit/enter.
@@ -23,7 +23,7 @@ namespace DuravoMod.PersistentPosition
         private const double SpawnImmunityDurationSeconds = 3.0;
 
         /// <summary>Get debug player persistence setting from mod config</summary>
-        private static bool DebugMessagesEnabled => ModContent.GetInstance<DuravoModConfig>()?.Debug?.DebugPlayerPersistence ?? false;
+        private static bool DebugMessagesEnabled => ModContent.GetInstance<DuravoQOLModConfig>()?.Debug?.DebugPlayerPersistence ?? false;
 
         /// <summary>DEBUG: Block Environmental/Unknown damage during immunity (suffocation, etc)</summary>
         private const bool BlockEnvironmentalDamageDuringImmunity = true;

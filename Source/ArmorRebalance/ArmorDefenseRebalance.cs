@@ -6,7 +6,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace DuravoMod.ArmorRebalance
+namespace DuravoQOLMod.ArmorRebalance
 {
     /// <summary>
     /// Rebalances vanilla armor defense values.
@@ -20,11 +20,23 @@ namespace DuravoMod.ArmorRebalance
     /// </summary>
     public class ArmorDefenseRebalance : GlobalItem
     {
-        // Tooltip colors
-        private static readonly Color ColorActiveBuffName = new Color(0x00, 0xFF, 0x00);    // Green
-        private static readonly Color ColorInactiveText = new Color(0x66, 0x66, 0x66);      // Dark grey
-        private static readonly Color ColorInactiveCount = new Color(0xFF, 0x00, 0x00);     // Red
-        private static readonly Color ColorChestBonus = new Color(0x00, 0xBF, 0xFF);        // Cyan
+        // Tooltip color hex codes (pre-computed to avoid allocations)
+        private const string HexColorActiveBuffName = "00FF00";   // Green
+        private const string HexColorInactiveText = "666666";     // Dark grey
+        private const string HexColorInactiveCount = "FF0000";    // Red
+        private const string HexColorChestBonus = "00BFFF";       // Cyan
+
+        // Pre-computed localization keys (avoid runtime string interpolation)
+        private const string LocKeyChestShield30HP = "Mods.DuravoQOLMod.ArmorRebalance.ChestBonuses.Shield30HP";
+        private const string LocKeyChestShield15Pct = "Mods.DuravoQOLMod.ArmorRebalance.ChestBonuses.Shield15Pct";
+        private const string LocKeyChestSpeed15Pct = "Mods.DuravoQOLMod.ArmorRebalance.ChestBonuses.Speed15Pct";
+        private const string LocKeyBuffNameShiny = "Mods.DuravoQOLMod.ArmorRebalance.BuffNames.Shiny";
+        private const string LocKeyBuffNameSuperShiny = "Mods.DuravoQOLMod.ArmorRebalance.BuffNames.SuperShiny";
+        private const string LocKeyBuffNameHeavy = "Mods.DuravoQOLMod.ArmorRebalance.BuffNames.Heavy";
+        private const string LocKeyBuffDescShiny = "Mods.DuravoQOLMod.ArmorRebalance.BuffDescriptions.Shiny";
+        private const string LocKeyBuffDescSuperShiny = "Mods.DuravoQOLMod.ArmorRebalance.BuffDescriptions.SuperShiny";
+        private const string LocKeyBuffDescHeavy = "Mods.DuravoQOLMod.ArmorRebalance.BuffDescriptions.Heavy";
+
         public override void SetDefaults(Item item)
         {
             // Goal: Redistribute set bonus defense into pieces, keeping same total
@@ -164,24 +176,24 @@ namespace DuravoMod.ArmorRebalance
         /// </summary>
         private void AddChestplateBonusTooltip(int itemType, List<TooltipLine> tooltips)
         {
-            string bonusKey = itemType switch {
-                // Shield (30HP) - Copper/Tin chestplates
-                ItemID.CopperChainmail => "Shield30HP",
-                ItemID.TinChainmail => "Shield30HP",
+            string locKey = itemType switch {
+                // Shield (30HP) - Copper/Silver chestplates
+                ItemID.CopperChainmail => LocKeyChestShield30HP,
+                ItemID.SilverChainmail => LocKeyChestShield30HP,
 
-                // Speed - Silver chestplate only
-                ItemID.SilverChainmail => "Speed15Pct",
+                // Speed - Tin chestplate only
+                ItemID.TinChainmail => LocKeyChestSpeed15Pct,
 
                 // Shield (15% HP) - Gold/Platinum chestplates
-                ItemID.GoldChainmail => "Shield15Pct",
-                ItemID.PlatinumChainmail => "Shield15Pct",
+                ItemID.GoldChainmail => LocKeyChestShield15Pct,
+                ItemID.PlatinumChainmail => LocKeyChestShield15Pct,
 
                 _ => null
             };
 
-            if (bonusKey != null) {
-                string bonusText = Language.GetTextValue($"Mods.DuravoMod.ArmorRebalance.ChestBonuses.{bonusKey}");
-                var tooltipLine = new TooltipLine(Mod, "ChestplateBonus", $"[c/{ColorToHex(ColorChestBonus)}:{bonusText}]");
+            if (locKey != null) {
+                string bonusText = Language.GetTextValue(locKey);
+                var tooltipLine = new TooltipLine(Mod, "ChestplateBonus", $"[c/{HexColorChestBonus}:{bonusText}]");
                 tooltips.Add(tooltipLine);
             }
         }
@@ -192,9 +204,9 @@ namespace DuravoMod.ArmorRebalance
         /// </summary>
         private void AddMultiPieceBuffTooltip(ArmorSetBonusPlayer.ArmorTag armorTag, bool isEquipped, List<TooltipLine> tooltips)
         {
-            string buffNameKey = armorTag == ArmorSetBonusPlayer.ArmorTag.SuperShiny ? "SuperShiny" : "Shiny";
-            string buffName = Language.GetTextValue($"Mods.DuravoMod.ArmorRebalance.BuffNames.{buffNameKey}");
-            string buffDescription = Language.GetTextValue($"Mods.DuravoMod.ArmorRebalance.BuffDescriptions.{buffNameKey}");
+            bool isSuperShiny = armorTag == ArmorSetBonusPlayer.ArmorTag.SuperShiny;
+            string buffName = Language.GetTextValue(isSuperShiny ? LocKeyBuffNameSuperShiny : LocKeyBuffNameShiny);
+            string buffDescription = Language.GetTextValue(isSuperShiny ? LocKeyBuffDescSuperShiny : LocKeyBuffDescShiny);
 
             string tooltipText;
             if (!isEquipped) {
@@ -221,11 +233,11 @@ namespace DuravoMod.ArmorRebalance
 
                 if (isActive) {
                     // Active: teal/cyan buff name
-                    tooltipText = $"[c/{ColorToHex(ColorChestBonus)}:{buffName}] ({currentCount}/2pc) {buffDescription}";
+                    tooltipText = $"[c/{HexColorChestBonus}:{buffName}] ({currentCount}/2pc) {buffDescription}";
                 }
                 else {
                     // Inactive: dimmed buff name, red current count
-                    tooltipText = $"[c/{ColorToHex(ColorInactiveText)}:{buffName}] ([c/{ColorToHex(ColorInactiveCount)}:{currentCount}]/2pc) {buffDescription}";
+                    tooltipText = $"[c/{HexColorInactiveText}:{buffName}] ([c/{HexColorInactiveCount}:{currentCount}]/2pc) {buffDescription}";
                 }
             }
 
@@ -248,8 +260,8 @@ namespace DuravoMod.ArmorRebalance
 
             if (!isHeavyChestplate) return;
 
-            string buffName = Language.GetTextValue("Mods.DuravoMod.ArmorRebalance.BuffNames.Heavy");
-            string buffDescription = Language.GetTextValue("Mods.DuravoMod.ArmorRebalance.BuffDescriptions.Heavy");
+            string buffName = Language.GetTextValue(LocKeyBuffNameHeavy);
+            string buffDescription = Language.GetTextValue(LocKeyBuffDescHeavy);
 
             string tooltipText;
             if (!isEquipped) {
@@ -258,7 +270,7 @@ namespace DuravoMod.ArmorRebalance
             }
             else {
                 // Equipped: show with active color (Heavy is always active when worn)
-                tooltipText = $"[c/{ColorToHex(ColorChestBonus)}:{buffName}] {buffDescription}";
+                tooltipText = $"[c/{HexColorChestBonus}:{buffName}] {buffDescription}";
             }
 
             var tooltipLine = new TooltipLine(Mod, "HeavyEffect", tooltipText);
@@ -266,12 +278,5 @@ namespace DuravoMod.ArmorRebalance
         }
 
 
-        /// <summary>
-        /// Convert a Color to hex string for Terraria's [c/RRGGBB:text] format.
-        /// </summary>
-        private static string ColorToHex(Color color)
-        {
-            return $"{color.R:X2}{color.G:X2}{color.B:X2}";
-        }
     }
 }

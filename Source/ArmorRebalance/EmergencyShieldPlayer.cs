@@ -7,7 +7,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using System;
 
-namespace DuravoMod.ArmorRebalance
+namespace DuravoQOLMod.ArmorRebalance
 {
     /// <summary>
     /// Handles the Emergency Shield mechanic for Copper/Tin and Gold/Platinum armor.
@@ -21,7 +21,7 @@ namespace DuravoMod.ArmorRebalance
         // ╚════════════════════════════════════════════════════════════════════╝
 
         /// <summary>DEBUG: Reads from mod config - enables verbose shield activation logging</summary>
-        private static bool DebugShieldActivation => ModContent.GetInstance<DuravoModConfig>()?.Debug?.DebugArmorShields ?? false;
+        private static bool DebugShieldActivation => ModContent.GetInstance<DuravoQOLModConfig>()?.Debug?.DebugArmorShields ?? false;
 
         /// <summary>Cooldown in seconds for Copper/Tin tier shield</summary>
         private const int CopperTinShieldCooldownSeconds = 60;
@@ -90,7 +90,8 @@ namespace DuravoMod.ArmorRebalance
 
         /// <summary>
         /// Detect which shield-tier chestplate the player is wearing.
-        /// Only Copper/Tin and Gold/Platinum provide shields.
+        /// Copper/Silver provide 30HP flat shield, Gold/Platinum provide 15% HP shield.
+        /// Tin provides speed bonus instead (handled in ArmorSetBonusPlayer).
         /// </summary>
         private ShieldArmorTier DetectShieldArmorTier()
         {
@@ -101,11 +102,12 @@ namespace DuravoMod.ArmorRebalance
 
             int chestplateType = chestplate.type;
 
-            // Copper/Tin tier
-            if (chestplateType == ItemID.CopperChainmail || chestplateType == ItemID.TinChainmail)
+            // Copper/Silver tier (30HP flat shield)
+            if (chestplateType == ItemID.CopperChainmail ||
+                chestplateType == ItemID.SilverChainmail)
                 return ShieldArmorTier.CopperTin;
 
-            // Gold/Platinum tier  
+            // Gold/Platinum tier (15% HP shield)
             if (chestplateType == ItemID.GoldChainmail || chestplateType == ItemID.PlatinumChainmail)
                 return ShieldArmorTier.GoldPlatinum;
 
@@ -274,7 +276,7 @@ namespace DuravoMod.ArmorRebalance
             }
 
             // Show combat text - use localized string
-            string blockedText = Language.GetTextValue("Mods.DuravoMod.ArmorRebalance.CombatText.ShieldBlocked", absorbedDamage);
+            string blockedText = Language.GetTextValue("Mods.DuravoQOLMod.ArmorRebalance.CombatText.ShieldBlocked", absorbedDamage);
             CombatText.NewText(Player.Hitbox, Color.Cyan, blockedText);
 
             // Check if shield broke

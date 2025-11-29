@@ -2,7 +2,7 @@
 using Terraria;
 using Terraria.ModLoader;
 
-namespace DuravoMod.ArmorRebalance
+namespace DuravoQOLMod.ArmorRebalance
 {
     /// <summary>
     /// Buff that grants nearby ore highlighting while wearing 2+ Shiny-tagged armor pieces.
@@ -11,7 +11,7 @@ namespace DuravoMod.ArmorRebalance
     public class ShinyBuff : ModBuff
     {
         // Use custom icon from Assets/ShinyBuff.png
-        public override string Texture => "DuravoMod/Assets/ShinyBuff";
+        public override string Texture => "DuravoQOLMod/Assets/ShinyBuff";
 
         public override void SetStaticDefaults()
         {

@@ -28,9 +28,15 @@ using Terraria.ModLoader;
 //          "blocked" detection if there's an L-path obstacle during arc motion.
 //          Verify: minionState.AlwaysPhases should be TRUE for all aiStyle 156 minions.
 //
+// TODO(3): There is a better way to do our check for a minion getting stuck while returning. 
+//          (a) if minion is returning and our fast L-path fails..
+//          (b) track best-progress towards player on BOTH X/Y (we currently on track dominant axis)
+//          (c) if we don't see progress on EITHER X/Y for 0.5s, then we know we're stuck.
+//          (d) trigger the A* pathfinding for a better route... if we find no route, phase
+//
 // ═════════════════════════════════════════════════════════════════════════════════════════════
 
-namespace DuravoMod.TetheredMinions
+namespace DuravoQOLMod.TetheredMinions
 {
     /// <summary>
     /// GlobalProjectile that handles minion anti-cheese and QoL pathing.
@@ -48,13 +54,13 @@ namespace DuravoMod.TetheredMinions
         // ╚════════════════════════════════════════════════════════════════════╝
 
         /// <summary>Get debug pathfinding setting from mod config</summary>
-        private static bool DebugTethering => ModContent.GetInstance<DuravoModConfig>()?.Debug?.DebugMinionPathfinding ?? false;
+        private static bool DebugTethering => ModContent.GetInstance<DuravoQOLModConfig>()?.Debug?.DebugMinionPathfinding ?? false;
 
         /// <summary>Get smart pathfinding enabled setting from mod config</summary>
-        private static bool EnableQoLFollowPathing => ModContent.GetInstance<DuravoModConfig>()?.MinionSmartPathfinding ?? true;
+        private static bool EnableQoLFollowPathing => ModContent.GetInstance<DuravoQOLModConfig>()?.MinionSmartPathfinding ?? true;
 
         /// <summary>Get isolated return (anti-cheese) enabled setting from mod config</summary>
-        private static bool EnableIsolatedReturn => ModContent.GetInstance<DuravoModConfig>()?.MinionIsolatedReturn ?? true;
+        private static bool EnableIsolatedReturn => ModContent.GetInstance<DuravoQOLModConfig>()?.MinionIsolatedReturn ?? true;
 
         // ╔════════════════════════════════════════════════════════════════════╗
         // ║                        TUNABLE CONSTANTS                           ║

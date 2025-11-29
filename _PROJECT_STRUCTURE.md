@@ -22,7 +22,7 @@ This means:
 ## Project Structure
 
 ```
-DuravoMod/
+DuravoQOLMod/
 ├── _PROJECT_STRUCTURE.md        # This file - project overview
 ├── _TASKS/                      # Current work items
 │   └── _TOP_LEVEL_TODO.md
@@ -35,8 +35,8 @@ DuravoMod/
 │   └── FUN/                             # Experiments, simulators
 │
 ├── Source/                      # All mod source code (feature-organized)
-│   ├── DuravoMod.cs                     # Main mod class
-│   ├── DuravoModConfig.cs               # Mod configuration
+│   ├── DuravoQOLMod.cs                     # Main mod class
+│   ├── DuravoQOLModConfig.cs               # Mod configuration
 │   ├── ArmorRebalance/                  # Early armor overhaul feature
 │   ├── EnemySmartHopping/               # Zombie jump calculation feature
 │   ├── PersistentPosition/              # Logout position saving feature
@@ -57,7 +57,7 @@ DuravoMod/
 ├── build.txt                    # tModLoader mod metadata
 ├── description.txt              # Mod description for browser
 ├── icon.png                     # Mod icon
-└── DuravoMod.sln                # Visual Studio solution
+└── DuravoQOLMod.sln                # Visual Studio solution
 ```
 
 ---

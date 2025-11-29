@@ -8,7 +8,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using System;
 
-namespace DuravoMod.ArmorRebalance
+namespace DuravoQOLMod.ArmorRebalance
 {
     /// <summary>
     /// Handles armor set bonuses for crit chance, movement speed, and the Shiny sparkle effect.
@@ -114,6 +114,9 @@ namespace DuravoMod.ArmorRebalance
         /// <summary>Set by ShinyBuff.Update() when the buff is active</summary>
         public bool HasShinyBuff { get; set; }
 
+        /// <summary>Set by HeavyBuff.Update() when the buff is active</summary>
+        public bool HasHeavyBuff { get; set; }
+
         /// <summary>Static flag for DrawSparkles to check if ANY player has the buff active</summary>
         private static bool anyPlayerHasShinyBuff = false;
 
@@ -126,6 +129,7 @@ namespace DuravoMod.ArmorRebalance
             superShinyPieceCount = 0;
             hasHeavyChestplate = false;
             HasShinyBuff = false;
+            HasHeavyBuff = false;
         }
 
         public override void UpdateEquips()
@@ -140,6 +144,11 @@ namespace DuravoMod.ArmorRebalance
             if (DebugForceShinyActive || effectiveShinyCount >= 2) {
                 Player.AddBuff(ModContent.BuffType<ShinyBuff>(), 2);
             }
+
+            // Apply Heavy buff when Heavy chestplate is equipped
+            if (hasHeavyChestplate) {
+                Player.AddBuff(ModContent.BuffType<HeavyBuff>(), 2);
+            }
         }
 
         /// <summary>
@@ -151,8 +160,8 @@ namespace DuravoMod.ArmorRebalance
             int chestplateType = Player.armor[1].type;
 
             switch (chestplateType) {
-                // Silver: +15% movement speed
-                case ItemID.SilverChainmail:
+                // Tin: +15% movement speed
+                case ItemID.TinChainmail:
                     Player.moveSpeed += 0.15f;
                     break;
 
@@ -164,11 +173,11 @@ namespace DuravoMod.ArmorRebalance
                     hasHeavyChestplate = true;
                     break;
 
-                // Shields: Handled by EmergencyShieldPlayer
-                // case ItemID.CopperChainmail:
-                // case ItemID.TinChainmail:
-                // case ItemID.GoldChainmail:
-                // case ItemID.PlatinumChainmail:
+                    // Shields: Handled by EmergencyShieldPlayer
+                    // case ItemID.CopperChainmail:
+                    // case ItemID.SilverChainmail:
+                    // case ItemID.GoldChainmail:
+                    // case ItemID.PlatinumChainmail:
             }
         }
 
