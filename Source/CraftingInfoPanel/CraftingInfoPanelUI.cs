@@ -52,6 +52,15 @@ public partial class CraftingInfoPanelUI : UIState
     /// <summary>Currently selected tab index (index into visible tabs list)</summary>
     private int selectedTabIndex = 0;
 
+    /// <summary>Pre-built tab lists - one for pre-hardmode, one for hardmode</summary>
+    private static readonly List<int> preHardmodeVisibleTabIds = new List<int> {
+        TAB_ID_ARMOR, TAB_ID_WEAPONS, TAB_ID_MATERIALS, TAB_ID_FURNITURE1, TAB_ID_FURNITURE2
+    };
+    private static readonly List<int> hardmodeVisibleTabIds = new List<int> {
+        TAB_ID_HARDMODE_ARMOR, TAB_ID_HARDMODE_WEAPONS,
+        TAB_ID_ARMOR, TAB_ID_WEAPONS, TAB_ID_MATERIALS, TAB_ID_FURNITURE1, TAB_ID_FURNITURE2
+    };
+
     /// <summary>Internal tab IDs (fixed, never change)</summary>
     private const int TAB_ID_HARDMODE_ARMOR = 0;
     private const int TAB_ID_HARDMODE_WEAPONS = 1;
@@ -80,17 +89,8 @@ public partial class CraftingInfoPanelUI : UIState
     /// <summary>Get the list of currently visible tab IDs based on hardmode discovery</summary>
     private List<int> GetVisibleTabIds()
     {
-        List<int> tabs = new List<int>();
-        if (SeenItemsTracker.HasSeenAnyHardmodeItem || !DuravoQOLModConfig.EnableCraftingPanelOnlyShowSeenItems) {
-            tabs.Add(TAB_ID_HARDMODE_ARMOR);
-            tabs.Add(TAB_ID_HARDMODE_WEAPONS);
-        }
-        tabs.Add(TAB_ID_ARMOR);
-        tabs.Add(TAB_ID_WEAPONS);
-        tabs.Add(TAB_ID_MATERIALS);
-        tabs.Add(TAB_ID_FURNITURE1);
-        tabs.Add(TAB_ID_FURNITURE2);
-        return tabs;
+        bool showHardmodeTabs = SeenItemsTracker.HasSeenAnyHardmodeItem || !DuravoQOLModConfig.EnableCraftingPanelOnlyShowSeenItems;
+        return showHardmodeTabs ? hardmodeVisibleTabIds : preHardmodeVisibleTabIds;
     }
 
     /// <summary>Get the internal tab ID for the currently selected tab</summary>
@@ -364,7 +364,7 @@ public partial class CraftingInfoPanelUI : UIState
             Rectangle screenBounds = layout.GetElementScreenBounds(element.RelativeBounds);
             CraftingSlotInfo slotInfo = element.Payload;
 
-            bool canCraft = slotInfo.IsHeader || CanCraftItem(slotInfo.ItemId);
+            bool canCraft = CanCraftItem(slotInfo.ItemId);
             DrawItemSlot(spriteBatch, screenBounds, slotInfo.ItemId, slotInfo.IsHeader, canCraft);
 
             // Check if item is hidden (setting handled in tracker)
@@ -443,8 +443,8 @@ public partial class CraftingInfoPanelUI : UIState
 
         spriteBatch.Draw(slotTexture, screenBounds, slotTint * opacity);
 
-        // Yellow border for craftable items (only if not hidden)
-        if (!isHeader && !shouldHideItem && canCraft) {
+        // Yellow border for craftable items (including headers, but not hidden items)
+        if (!shouldHideItem && canCraft) {
             Color highlightColor = Color.Yellow;
             int borderWidth = 2;
             spriteBatch.Draw(pixelTexture, new Rectangle(screenBounds.X, screenBounds.Y, screenBounds.Width, borderWidth), highlightColor);
@@ -489,6 +489,10 @@ public partial class CraftingInfoPanelUI : UIState
     {
         Texture2D pixelTexture = TextureAssets.MagicPixel.Value;
 
+        // Get item name for header
+        Item displayItem = new Item();
+        displayItem.SetDefaults(itemId);
+
         // Find recipe for this item
         Recipe? foundRecipe = null;
         for (int recipeIndex = 0; recipeIndex < Recipe.numRecipes; recipeIndex++) {
@@ -498,52 +502,47 @@ public partial class CraftingInfoPanelUI : UIState
             }
         }
 
-        if (foundRecipe == null) {
-            return; // No recipe to display
-        }
-
         // Build tooltip lines
         List<string> tooltipLines = new List<string>();
-
-        // Get item name for header
-        Item displayItem = new Item();
-        displayItem.SetDefaults(itemId);
         tooltipLines.Add(displayItem.Name);
 
-        // Build ingredients line: "Iron Bar (3), Wood (10)"
-        List<string> ingredientParts = new List<string>();
-        foreach (Item ingredient in foundRecipe.requiredItem) {
-            if (ingredient.type <= ItemID.None) {
-                break;
-            }
-            ingredientParts.Add($"{ingredient.Name} ({ingredient.stack})");
-        }
-        if (ingredientParts.Count > 0) {
-            tooltipLines.Add(string.Join(", ", ingredientParts));
-        }
-
-        // Build stations line: "Requires: Anvil, Loom"
-        if (foundRecipe.requiredTile.Count > 0 && foundRecipe.requiredTile[0] >= 0) {
-            List<string> stationNames = new List<string>();
-            foreach (int tileId in foundRecipe.requiredTile) {
-                if (tileId < 0) {
+        if (foundRecipe != null) {
+            // Build ingredients line: "Iron Bar (3), Wood (10)"
+            List<string> ingredientParts = new List<string>();
+            foreach (Item ingredient in foundRecipe.requiredItem) {
+                if (ingredient.type <= ItemID.None) {
                     break;
                 }
-                stationNames.Add(GetCraftingStationName(tileId));
+                ingredientParts.Add($"{ingredient.Name} ({ingredient.stack})");
             }
-            if (stationNames.Count > 0) {
-                string requiresFormat = Language.GetTextValue("Mods.DuravoQOLMod.CraftingPanel.Requires");
-                tooltipLines.Add(string.Format(requiresFormat, string.Join(", ", stationNames)));
+            if (ingredientParts.Count > 0) {
+                tooltipLines.Add(string.Join(", ", ingredientParts));
             }
+
+            // Build stations line: "Requires: Anvil, Loom"
+            if (foundRecipe.requiredTile.Count > 0 && foundRecipe.requiredTile[0] >= 0) {
+                List<string> stationNames = new List<string>();
+                foreach (int tileId in foundRecipe.requiredTile) {
+                    if (tileId < 0) {
+                        break;
+                    }
+                    stationNames.Add(GetCraftingStationName(tileId));
+                }
+                if (stationNames.Count > 0) {
+                    string requiresFormat = Language.GetTextValue("Mods.DuravoQOLMod.CraftingPanel.Requires");
+                    tooltipLines.Add(string.Format(requiresFormat, string.Join(", ", stationNames)));
+                }
+            }
+        }
+        else {
+            // No recipe - item cannot be crafted (boss drop, chest loot, etc.)
+            string cannotCraftText = Language.GetTextValue("Mods.DuravoQOLMod.CraftingPanel.CannotBeCrafted");
+            tooltipLines.Add(cannotCraftText);
         }
 
         // Add hint for alt-key item tooltip
         string altHintText = Language.GetTextValue("Mods.DuravoQOLMod.CraftingPanel.AltItemTooltipHint");
         tooltipLines.Add(altHintText);
-
-        if (tooltipLines.Count == 0) {
-            return;
-        }
 
         // Calculate panel dimensions
         float maxLineWidth = 0f;

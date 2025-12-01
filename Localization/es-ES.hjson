@@ -171,6 +171,7 @@ Mods: {
 			HardmodeTooltipOff: Clic para mostrar objetos de Modo Difícil
 			// Recipe tooltip
 			Requires: Requiere: {0}
+			CannotBeCrafted: No se puede fabricar
 			AltItemTooltipHint: "[Alt] Info del objeto"
 			// Toggle button tooltips
 			HideCraftingPanel: Ocultar Panel de Fabricación

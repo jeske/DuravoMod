@@ -171,6 +171,7 @@ Mods: {
 			HardmodeTooltipOff: Clique para mostrar itens do Modo Difícil
 			// Recipe tooltip
 			Requires: Requer: {0}
+			CannotBeCrafted: Não pode ser criado
 			AltItemTooltipHint: "[Alt] Dica do item"
 			// Toggle button tooltips
 			HideCraftingPanel: Ocultar Painel de Criação

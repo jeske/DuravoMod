@@ -171,6 +171,7 @@ Mods: {
 			HardmodeTooltipOff: Klicke um Hardmode Items zu zeigen
 			// Recipe tooltip
 			Requires: Benötigt: {0}
+			CannotBeCrafted: Kann nicht hergestellt werden
 			AltItemTooltipHint: "[Alt] Gegenstand-Tooltip"
 			// Toggle button tooltips
 			HideCraftingPanel: Handwerks-Panel ausblenden

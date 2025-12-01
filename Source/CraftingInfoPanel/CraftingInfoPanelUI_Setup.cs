@@ -151,10 +151,15 @@ public partial class CraftingInfoPanelUI
 
     #region Materials Tab Data
 
-    // Metal bars row (pre-hardmode)
+    // Metal bars row (pre-hardmode basic ores)
     private static readonly int[] BarItemIds = {
         ItemID.CopperBar, ItemID.TinBar, ItemID.IronBar, ItemID.LeadBar,
         ItemID.SilverBar, ItemID.TungstenBar, ItemID.GoldBar, ItemID.PlatinumBar
+    };
+
+    // Pre-hardmode special bars (evil biome + hell)
+    private static readonly int[] SpecialBarItemIds = {
+        ItemID.DemoniteBar, ItemID.CrimtaneBar, ItemID.MeteoriteBar, ItemID.HellstoneBar
     };
 
     // Hardmode bars row
@@ -163,10 +168,15 @@ public partial class CraftingInfoPanelUI
         ItemID.AdamantiteBar, ItemID.TitaniumBar, ItemID.HallowedBar
     };
 
-    // Bricks row (pre-hardmode)
+    // Bricks row (pre-hardmode basic ores)
     private static readonly int[] BrickItemIds = {
         ItemID.CopperBrick, ItemID.TinBrick, ItemID.IronBrick, ItemID.LeadBrick,
         ItemID.SilverBrick, ItemID.TungstenBrick, ItemID.GoldBrick, ItemID.PlatinumBrick
+    };
+
+    // Pre-hardmode special bricks (evil biome + hell)
+    private static readonly int[] SpecialBrickItemIds = {
+        ItemID.DemoniteBrick, ItemID.CrimtaneBrick, ItemID.MeteoriteBrick, ItemID.HellstoneBrick
     };
 
     // Hardmode bricks row (Cobalt, Mythril, Pearlstone for Hallowed)
@@ -354,15 +364,22 @@ public partial class CraftingInfoPanelUI
         int currentY = 0;
         int hardmodeGap = 16;  // Horizontal gap between pre-hardmode and hardmode sections
 
-        // === Row 1: Bars (pre-hardmode + gap + hardmode) ===
-        // Pre-hardmode bars
+        // === Row 1: Bars (pre-hardmode basic + special + gap + hardmode) ===
+        // Pre-hardmode basic bars
         for (int col = 0; col < BarItemIds.Length; col++) {
             int slotX = col * (SLOT_SIZE + SLOT_SPACING);
             materialsTabLayout.AddElement(slotX, currentY, SLOT_SIZE, SLOT_SIZE,
                 new CraftingSlotInfo(BarItemIds[col], isHeader: false));
         }
+        // Pre-hardmode special bars (Demonite, Crimtane, Meteorite, Hellstone)
+        int specialBarsStartX = BarItemIds.Length * (SLOT_SIZE + SLOT_SPACING);
+        for (int col = 0; col < SpecialBarItemIds.Length; col++) {
+            int slotX = specialBarsStartX + col * (SLOT_SIZE + SLOT_SPACING);
+            materialsTabLayout.AddElement(slotX, currentY, SLOT_SIZE, SLOT_SIZE,
+                new CraftingSlotInfo(SpecialBarItemIds[col], isHeader: false));
+        }
         // Hardmode bars (after gap)
-        int hardmodeStartX = BarItemIds.Length * (SLOT_SIZE + SLOT_SPACING) + hardmodeGap;
+        int hardmodeStartX = (BarItemIds.Length + SpecialBarItemIds.Length) * (SLOT_SIZE + SLOT_SPACING) + hardmodeGap;
         for (int col = 0; col < HardmodeBarItemIds.Length; col++) {
             int slotX = hardmodeStartX + col * (SLOT_SIZE + SLOT_SPACING);
             materialsTabLayout.AddElement(slotX, currentY, SLOT_SIZE, SLOT_SIZE,
@@ -370,12 +387,18 @@ public partial class CraftingInfoPanelUI
         }
         currentY += SLOT_SIZE + SLOT_SPACING;
 
-        // === Row 2: Bricks (pre-hardmode + gap + hardmode) ===
-        // Pre-hardmode bricks
+        // === Row 2: Bricks (pre-hardmode basic + special + gap + hardmode) ===
+        // Pre-hardmode basic bricks
         for (int col = 0; col < BrickItemIds.Length; col++) {
             int slotX = col * (SLOT_SIZE + SLOT_SPACING);
             materialsTabLayout.AddElement(slotX, currentY, SLOT_SIZE, SLOT_SIZE,
                 new CraftingSlotInfo(BrickItemIds[col], isHeader: false));
+        }
+        // Pre-hardmode special bricks (Demonite, Crimtane, Meteorite, Hellstone)
+        for (int col = 0; col < SpecialBrickItemIds.Length; col++) {
+            int slotX = specialBarsStartX + col * (SLOT_SIZE + SLOT_SPACING);
+            materialsTabLayout.AddElement(slotX, currentY, SLOT_SIZE, SLOT_SIZE,
+                new CraftingSlotInfo(SpecialBrickItemIds[col], isHeader: false));
         }
         // Hardmode bricks (after gap, aligned with hardmode bars)
         for (int col = 0; col < HardmodeBrickItemIds.Length; col++) {

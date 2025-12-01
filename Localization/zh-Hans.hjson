@@ -171,6 +171,7 @@ Mods: {
 			HardmodeTooltipOff: 点击显示困难模式物品
 			// Recipe tooltip
 			Requires: 需要：{0}
+			CannotBeCrafted: 无法制作
 			AltItemTooltipHint: "[Alt] 物品提示"
 			// Toggle button tooltips
 			HideCraftingPanel: 隐藏制作面板
