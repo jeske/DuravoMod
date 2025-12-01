@@ -5,7 +5,7 @@ From @ScalarVector
 * [X] strange gap present between window and tab, despite tab asset indicating it should be flush based on partial outline
 * [X] no indication of craftability for top row
 * [X] Highlight when hovering does not match the shape of the rounded square item icon
-* [ ] Recipes in the crafting window remain "unknown" despite having all requires materials and stations, and the item itself
+* [X] Recipes in the crafting window remain "unknown" despite having all requires materials and stations, and the item itself
 
 ## Minions
 
