@@ -1,0 +1,28 @@
+[h1]Duravo Gameplay Mod[/h1]
+
+Duravo GamePlayMod is a collection of (server) gameplay improvements, item reworks, and quality of life.
+
+[url=http://duravomod.org]🌐 Website[/url] | [url=https://github.com/jeske/DuravoQOLMod]📦 GitHub Source[/url]
+
+
+[h2]Current Features[/h2]
+
+[h3]🛡️ Crafted Armor Rework[/h3]
+Defense baked into pieces (no penalty for breaking sets), plus new 2-piece mix-and-match bonuses.
+
+[h3]⚡ Emergency Shield[/h3]
+Chestpieces grant reactive shields with visual feedback showing damage blocked.
+
+[h3]✨ Shiny Buff[/h3]
+2pc armor bonus making nearby ores sparkle (only slightly beyond torch range), making early mining a little more fun.
+
+[h3]🐾 Smart Minion Pathfinding[/h3]
+Minions navigate around obstacles using A* pathfinding instead of getting stuck.
+
+[h2]Future Plans[/h2]
+[list]
+[*] Native Biome Bootstrap (craft basic stations from [i]any[/i] local materials)
+[/list]
+
+[h2]Localization[/h2]
+Translated in: English, German, Spanish, French, Italian, Portuguese (BR), Russian, Polish, Simplified Chinese

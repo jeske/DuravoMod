@@ -1,6 +1,6 @@
 [h1]Duravo QOL Mod[/h1]
 
-Duravo QOL is a collection of quality-of-life improvements that make Terraria more intuitive and enjoyable without changing core gameplay.
+Duravo QOL Mod is a collection of quality-of-life improvements that make Terraria more intuitive and enjoyable without changing core gameplay.
 
 [url=http://duravomod.org]🌐 Website[/url] | [url=https://github.com/jeske/DuravoQOLMod]📦 GitHub Source[/url]
 
@@ -13,32 +13,11 @@ Duravo QOL is a collection of quality-of-life improvements that make Terraria mo
 
 [h2]Current Features[/h2]
 
-[h3]🗺️ Persistent Player Position[/h3]
-Log back in exactly where you left off. No more losing where you are because you need a break.
-
-[h3]🛡️ Crafted Armor Rework[/h3]
-Defense baked into pieces (no penalty for breaking sets), plus new 2-piece mix-and-match bonuses.
-
-[h3]⚡ Emergency Shield[/h3]
-Chestpieces grant reactive shields with visual feedback showing damage blocked.
-
-[h3]✨ Shiny Buff[/h3]
-2pc armor bonus making nearby ores sparkle (only slightly beyond torch range), making early mining a little more fun.
-
-[h3]🐾 Smart Minion Pathfinding[/h3]
-Minions navigate around obstacles using A* pathfinding instead of getting stuck.
-
 [h3]📋 Crafting Info Panel[/h3]
 Organized visual reference showing all craftable items by category. Hover for recipes, click to focus in crafting menu.
 
 [h3]🩸 Mini Player Healthbar[/h3]
 Configurable mini-healthbar under your player, responds to environment lighting (if desired).
-
-[h2]Future Plans[/h2]
-[list]
-[*] Splitting out Server-Side stuff into another mod
-[*] Native Biome Bootstrap (craft basic stations from [i]any[/i] local materials)
-[/list]
 
 [h2]Localization[/h2]
 Translated in: English, German, Spanish, French, Italian, Portuguese (BR), Russian, Polish, Simplified Chinese
