@@ -171,6 +171,7 @@ Mods: {
 			HardmodeTooltipOff: Clicca per mostrare oggetti Modalità Difficile
 			// Recipe tooltip
 			Requires: Richiede: {0}
+			AltItemTooltipHint: "[Alt] Descrizione oggetto"
 			// Toggle button tooltips
 			HideCraftingPanel: Nascondi Pannello di Creazione
 			ShowCraftingPanel: Mostra Pannello di Creazione

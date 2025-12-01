@@ -171,6 +171,7 @@ Mods: {
 			HardmodeTooltipOff: Нажмите, чтобы показать предметы Хардмода
 			// Recipe tooltip
 			Requires: Требуется: {0}
+			AltItemTooltipHint: "[Alt] Подсказка предмета"
 			// Toggle button tooltips
 			HideCraftingPanel: Скрыть Панель Крафта
 			ShowCraftingPanel: Показать Панель Крафта

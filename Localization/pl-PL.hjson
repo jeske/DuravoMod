@@ -171,6 +171,7 @@ Mods: {
 			HardmodeTooltipOff: Kliknij aby pokazać przedmioty Trybu Trudnego
 			// Recipe tooltip
 			Requires: Wymaga: {0}
+			AltItemTooltipHint: "[Alt] Opis przedmiotu"
 			// Toggle button tooltips
 			HideCraftingPanel: Ukryj Panel Wytwarzania
 			ShowCraftingPanel: Pokaż Panel Wytwarzania

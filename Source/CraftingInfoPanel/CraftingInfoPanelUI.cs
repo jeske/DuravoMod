@@ -37,8 +37,8 @@ public partial class CraftingInfoPanelUI : UIState
     /// <summary>The main panel container element</summary>
     private UIElement panelContainer = null!;
 
-    /// <summary>Tab area height (tabs are now horizontal at top)</summary>
-    private const int TAB_AREA_HEIGHT = 44;
+    /// <summary>Tab area height (tabs are now horizontal at top, flush with content)</summary>
+    private const int TAB_AREA_HEIGHT = 40;
 
     /// <summary>Slot size in pixels (Terraria standard is ~44)</summary>
     private const int SLOT_SIZE = 40;
@@ -247,14 +247,17 @@ public partial class CraftingInfoPanelUI : UIState
         }
 
         // Draw content area background (use current tab's dimensions for the visible border)
+        // Pass selectedTabIndex and tab position so we can skip drawing border where active tab connects
+        float selectedTabLeftX = panelTopLeft.X + selectedTabIndex * (TAB_WIDTH + TAB_SPACING);
         DrawContentBackground(spriteBatch, contentScreenX, contentScreenY,
-            currentLayout.CalculatedWidth, currentLayout.CalculatedHeight);
+            currentLayout.CalculatedWidth, currentLayout.CalculatedHeight,
+            selectedTabLeftX, TAB_WIDTH);
 
         // Draw horizontal tabs at top
         float tabX = panelTopLeft.X;
         for (int visibleIndex = 0; visibleIndex < visibleTabs.Count; visibleIndex++) {
             int tabId = visibleTabs[visibleIndex];
-            DrawTab(spriteBatch, tabX, panelTopLeft.Y, visibleIndex, tabId);
+            DrawTab(spriteBatch, tabX, panelTopLeft.Y, visibleIndex, tabId, contentScreenY);
             tabX += TAB_WIDTH + TAB_SPACING;
         }
 
@@ -262,7 +265,8 @@ public partial class CraftingInfoPanelUI : UIState
         DrawTabContent(spriteBatch, currentLayout);
     }
 
-    private void DrawContentBackground(SpriteBatch spriteBatch, int x, int y, int width, int height)
+    private void DrawContentBackground(SpriteBatch spriteBatch, int x, int y, int width, int height,
+        float selectedTabLeftX, int selectedTabWidth)
     {
         Texture2D pixelTexture = TextureAssets.MagicPixel.Value;
 
@@ -273,22 +277,35 @@ public partial class CraftingInfoPanelUI : UIState
         Color borderColor = new Color(60, 60, 100, 200);
         int borderWidth = 2;
 
-        spriteBatch.Draw(pixelTexture, new Rectangle(x, y, width, borderWidth), borderColor);
+        // Top border - draw in two segments, skipping where the active tab connects
+        int tabConnectLeft = (int)selectedTabLeftX;
+        int tabConnectRight = tabConnectLeft + selectedTabWidth;
+
+        // Left segment of top border (before active tab)
+        if (tabConnectLeft > x) {
+            spriteBatch.Draw(pixelTexture, new Rectangle(x, y, tabConnectLeft - x, borderWidth), borderColor);
+        }
+        // Right segment of top border (after active tab)
+        if (tabConnectRight < x + width) {
+            spriteBatch.Draw(pixelTexture, new Rectangle(tabConnectRight, y, (x + width) - tabConnectRight, borderWidth), borderColor);
+        }
+
+        // Bottom, left, right borders
         spriteBatch.Draw(pixelTexture, new Rectangle(x, y + height - borderWidth, width, borderWidth), borderColor);
         spriteBatch.Draw(pixelTexture, new Rectangle(x, y, borderWidth, height), borderColor);
         spriteBatch.Draw(pixelTexture, new Rectangle(x + width - borderWidth, y, borderWidth, height), borderColor);
     }
 
-    private void DrawTab(SpriteBatch spriteBatch, float x, float y, int visibleIndex, int tabId)
+    private void DrawTab(SpriteBatch spriteBatch, float x, float y, int visibleIndex, int tabId, int contentTopY)
     {
         bool isSelected = visibleIndex == selectedTabIndex;
 
-        // Active tab: noticeably brighter, Inactive: much darker
+        // Active tab: same as panel background, Inactive: darker
         Color tabBgColor = isSelected
-            ? new Color(65, 65, 100, 255)    // Active: significantly lighter blue-purple
+            ? new Color(20, 20, 40, 180)     // Active: same as panel background for seamless connection
             : new Color(25, 25, 40, 255);    // Inactive: dark
         Color tabBorderColor = isSelected
-            ? new Color(130, 130, 170)       // Active: bright visible border
+            ? new Color(60, 60, 100, 200)    // Active: same as panel border
             : new Color(40, 40, 60);         // Inactive: subdued border
 
         Texture2D pixel = TextureAssets.MagicPixel.Value;
@@ -297,12 +314,12 @@ public partial class CraftingInfoPanelUI : UIState
         spriteBatch.Draw(pixel, tabRect, tabBgColor);
 
         // Draw border (horizontal tabs: no bottom border for selected tab to merge with content)
-        spriteBatch.Draw(pixel, new Rectangle((int)x, (int)y, TAB_WIDTH, 2), tabBorderColor);
+        spriteBatch.Draw(pixel, new Rectangle((int)x, (int)y, TAB_WIDTH, 2), tabBorderColor);  // Top
         if (!isSelected) {
-            spriteBatch.Draw(pixel, new Rectangle((int)x, (int)y + TAB_HEIGHT - 2, TAB_WIDTH, 2), tabBorderColor);
+            spriteBatch.Draw(pixel, new Rectangle((int)x, (int)y + TAB_HEIGHT - 2, TAB_WIDTH, 2), tabBorderColor);  // Bottom (inactive only)
         }
-        spriteBatch.Draw(pixel, new Rectangle((int)x, (int)y, 2, TAB_HEIGHT), tabBorderColor);
-        spriteBatch.Draw(pixel, new Rectangle((int)x + TAB_WIDTH - 2, (int)y, 2, TAB_HEIGHT), tabBorderColor);
+        spriteBatch.Draw(pixel, new Rectangle((int)x, (int)y, 2, TAB_HEIGHT), tabBorderColor);  // Left
+        spriteBatch.Draw(pixel, new Rectangle((int)x + TAB_WIDTH - 2, (int)y, 2, TAB_HEIGHT), tabBorderColor);  // Right
 
         // Draw item icon instead of letter
         int iconItemId = allTabIconItemIds[tabId];
@@ -366,11 +383,11 @@ public partial class CraftingInfoPanelUI : UIState
 
             spriteBatch.Draw(pixelTexture, hoveredScreenBounds, Color.White * 0.2f);
 
-            // Check if shift is held for native tooltip mode
-            bool shiftHeld = Main.keyState.IsKeyDown(Keys.LeftShift) || Main.keyState.IsKeyDown(Keys.RightShift);
+            // Check if alt is held for native tooltip mode
+            bool altHeld = Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt);
 
-            if (shiftHeld) {
-                // Shift held: Show native item tooltip only (full stats, set bonuses, etc.)
+            if (altHeld) {
+                // Alt held: Show native item tooltip only (full stats, set bonuses, etc.)
                 Main.HoverItem = new Item();
                 Main.HoverItem.SetDefaults(slot.ItemId);
                 Main.hoverItemName = Main.HoverItem.Name;
@@ -519,6 +536,10 @@ public partial class CraftingInfoPanelUI : UIState
                 tooltipLines.Add(string.Format(requiresFormat, string.Join(", ", stationNames)));
             }
         }
+
+        // Add hint for alt-key item tooltip
+        string altHintText = Language.GetTextValue("Mods.DuravoQOLMod.CraftingPanel.AltItemTooltipHint");
+        tooltipLines.Add(altHintText);
 
         if (tooltipLines.Count == 0) {
             return;

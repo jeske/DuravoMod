@@ -171,6 +171,7 @@ Mods: {
 			HardmodeTooltipOff: Click to show Hardmode items
 			// Recipe tooltip
 			Requires: Requires: {0}
+			AltItemTooltipHint: "[Alt] Item Tooltip"
 			// Toggle button tooltips
 			HideCraftingPanel: Hide Crafting Panel
 			ShowCraftingPanel: Show Crafting Panel
