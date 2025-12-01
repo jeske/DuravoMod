@@ -138,7 +138,7 @@ Mods: {
 			BuffDescriptions: {
 				Shiny: Nearby ores and gems sparkle
 				SuperShiny: Nearby ores and gems sparkle (extended range)
-				Heavy: +15% knockback and knockback reflection
+				Heavy: +15% knockback dealt and reflected
 			}
 
 			// Chestplate-only bonuses (plain text, code adds colors/formatting)
@@ -203,8 +203,8 @@ Mods: {
 			}
 
 			HeavyBuff: {
-				DisplayName: Heavy Buff
-				Description: Mods.DuravoQOLMod.Buffs.HeavyBuff.Description
+				DisplayName: Heavy
+				Description: +15% knockback dealt, -15% knockback taken, 15% reflected
 			}
 		}
 	}

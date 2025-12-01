@@ -9,8 +9,8 @@ From @ScalarVector
 
 ## Minions
 
-* [ ] Pathfound minion routes seem to have no or a very high upwards cap on speed?
-* [ ] Didnt notice anything notibly wrong with any of the pathfinding despite the odd speed at times
+* [X] Pathfound minion routes seem to have no or a very high upwards cap on speed?
+* [X] Didnt notice anything notibly wrong with any of the pathfinding despite the odd speed at times
 
 ## Armor
 

@@ -20,8 +20,8 @@ namespace DuravoQOLMod.ArmorRebalance
     /// </summary>
     public class ArmorDefenseRebalance : GlobalItem
     {
-        // FEATURE FLAG: Set to true when knockback bonus is implemented
-        private const bool EnableHeavyKnockbackBonus = false;
+        // FEATURE FLAG: Heavy armor knockback bonus (resistance + reflection)
+        private const bool EnableHeavyKnockbackBonus = true;
         
         // Tooltip color hex codes (pre-computed to avoid allocations)
         private const string HexColorActiveBuffName = "00FF00";   // Green
