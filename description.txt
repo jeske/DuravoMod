@@ -16,7 +16,8 @@ Emergency Shield: Chestpieces grant reactive shields with visual feedback showin
 Shiny Buff: 2pc bonus making nearby ores sparkle (only slightly beyond torch range), making early mining a little more fun.
 Smart Minion Pathfinding: Minions navigate around obstacles using A* pathfinding instead of getting stuck.
 Crafting Info Panel: Organized visual reference showing all craftable items by category. Hover for recipes, click to focus in crafting menu.
+Mini Player Healthbar: Configurable mini-healthbar under your player, responds to environment lighting (if desired).
 
 Coming Soon:
-- Mini-Player Healthbar
-- Native Biome Bootstrap (craft basic stations from *any* local materials)
+- Splitting out Server-Side stuff into another mod
+- Native Biome Bootstrap (craft basic stations from [i]any[/i] local materials)

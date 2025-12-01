@@ -1,3 +1,15 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// en-US.hjson - English localization (REFERENCE FILE)
+// ═══════════════════════════════════════════════════════════════════════════
+//
+// After adding new localization strings to this file, run the validator to
+// check that all other language files have been updated:
+//
+//     dotnet run --project Scripts/LocalizationsCompleteCheck
+//
+// The validator will report any missing or extra keys in the translation files.
+// ═══════════════════════════════════════════════════════════════════════════
+
 Mods: {
 	DuravoQOLMod: {
 		// ═══════════════════════════════════════════════════════════════════
@@ -79,7 +91,7 @@ Mods: {
 						Zeigt Gesundheit, kürzlichen Schaden und Schildstatus auf einen Blick.
 						'''
 				}
-	
+
 				MiniHealthbarAlwaysOn: {
 					Label: Mini-Gesundheitsleiste Immer An
 					Tooltip:
@@ -88,7 +100,7 @@ Mods: {
 						Standardmäßig erscheint sie nur bei niedriger Gesundheit oder bei Schaden.
 						'''
 				}
-	
+
 				MiniHealthbarHealthThreshold: {
 					Label: "[i:29] Gesundheitsschwelle (%)"
 					Tooltip:
@@ -97,7 +109,7 @@ Mods: {
 						0% = nie basierend auf Gesundheit anzeigen, 100% = immer zeigen wenn nicht voll.
 						'''
 				}
-	
+
 				MiniHealthbarDamageThreshold: {
 					Label: "[i:29] Schadensschwelle (%)"
 					Tooltip:
@@ -106,7 +118,7 @@ Mods: {
 						0% = jeder Schaden löst sie aus, 100% = nur massive Treffer.
 						'''
 				}
-	
+
 				MiniHealthbarLingerTime: {
 					Label: "[i:75] Verweilzeit (Sekunden)"
 					Tooltip:
@@ -115,7 +127,7 @@ Mods: {
 						Längere Werte halten sie zwischen Schadensereignissen sichtbar.
 						'''
 				}
-	
+
 				MiniHealthbarMinBrightnessPercent: {
 					Label: Mini-Gesundheitsleiste Min. Helligkeit (%)
 					Tooltip:
@@ -124,7 +136,7 @@ Mods: {
 						0% = völlig unsichtbar in Höhlen, 100% = immer hell.
 						'''
 				}
-	
+
 				MiniHealthbarMaxBrightnessPercent: {
 					Label: Mini-Gesundheitsleiste Max. Helligkeit (%)
 					Tooltip:
@@ -133,7 +145,7 @@ Mods: {
 						100% = voll hell an der Oberfläche, niedrigere Werte dimmen die Leiste.
 						'''
 				}
-	
+
 				MiniHealthbarLightingBoostPercent: {
 					Label: Mini-Gesundheitsleiste Beleuchtungsverstärkung (%)
 					Tooltip:

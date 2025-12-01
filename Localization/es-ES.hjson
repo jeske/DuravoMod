@@ -1,3 +1,15 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// en-US.hjson - English localization (REFERENCE FILE)
+// ═══════════════════════════════════════════════════════════════════════════
+//
+// After adding new localization strings to this file, run the validator to
+// check that all other language files have been updated:
+//
+//     dotnet run --project Scripts/LocalizationsCompleteCheck
+//
+// The validator will report any missing or extra keys in the translation files.
+// ═══════════════════════════════════════════════════════════════════════════
+
 Mods: {
 	DuravoQOLMod: {
 		// ═══════════════════════════════════════════════════════════════════
@@ -79,7 +91,7 @@ Mods: {
 						Muestra salud, daño reciente y estado del escudo de un vistazo.
 						'''
 				}
-	
+
 				MiniHealthbarAlwaysOn: {
 					Label: Mini Barra de Salud Siempre Visible
 					Tooltip:
@@ -88,7 +100,7 @@ Mods: {
 						Por defecto, solo aparece cuando la salud es baja o al recibir daño.
 						'''
 				}
-	
+
 				MiniHealthbarHealthThreshold: {
 					Label: "[i:29] Umbral de Salud (%)"
 					Tooltip:
@@ -97,7 +109,7 @@ Mods: {
 						0% = nunca mostrar por salud, 100% = siempre mostrar si no está llena.
 						'''
 				}
-	
+
 				MiniHealthbarDamageThreshold: {
 					Label: "[i:29] Umbral de Daño (%)"
 					Tooltip:
@@ -106,7 +118,7 @@ Mods: {
 						0% = cualquier daño la activa, 100% = solo golpes masivos.
 						'''
 				}
-	
+
 				MiniHealthbarLingerTime: {
 					Label: "[i:75] Tiempo de Persistencia (segundos)"
 					Tooltip:
@@ -115,7 +127,7 @@ Mods: {
 						Valores más altos la mantienen visible entre eventos de daño.
 						'''
 				}
-	
+
 				MiniHealthbarMinBrightnessPercent: {
 					Label: Brillo Mínimo de Mini Barra de Salud (%)
 					Tooltip:
@@ -124,7 +136,7 @@ Mods: {
 						0% = totalmente invisible en cuevas, 100% = siempre brillante.
 						'''
 				}
-	
+
 				MiniHealthbarMaxBrightnessPercent: {
 					Label: Brillo Máximo de Mini Barra de Salud (%)
 					Tooltip:
@@ -133,7 +145,7 @@ Mods: {
 						100% = totalmente brillante en superficie, valores menores atenúan la barra.
 						'''
 				}
-	
+
 				MiniHealthbarLightingBoostPercent: {
 					Label: Aumento de Iluminación de Mini Barra de Salud (%)
 					Tooltip:

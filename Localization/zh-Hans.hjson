@@ -1,3 +1,15 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// en-US.hjson - English localization (REFERENCE FILE)
+// ═══════════════════════════════════════════════════════════════════════════
+//
+// After adding new localization strings to this file, run the validator to
+// check that all other language files have been updated:
+//
+//     dotnet run --project Scripts/LocalizationsCompleteCheck
+//
+// The validator will report any missing or extra keys in the translation files.
+// ═══════════════════════════════════════════════════════════════════════════
+
 Mods: {
 	DuravoQOLMod: {
 		// ═══════════════════════════════════════════════════════════════════
@@ -79,7 +91,7 @@ Mods: {
 						一目了然地显示生命值、近期伤害和护盾状态。
 						'''
 				}
-	
+
 				MiniHealthbarAlwaysOn: {
 					Label: 迷你血条始终显示
 					Tooltip:
@@ -88,7 +100,7 @@ Mods: {
 						默认情况下，只有在生命值较低或受到伤害时才会出现。
 						'''
 				}
-	
+
 				MiniHealthbarHealthThreshold: {
 					Label: "[i:29] 生命值阈值 (%)"
 					Tooltip:
@@ -97,7 +109,7 @@ Mods: {
 						0% = 从不根据生命值显示，100% = 只要不满就显示。
 						'''
 				}
-	
+
 				MiniHealthbarDamageThreshold: {
 					Label: "[i:29] 伤害阈值 (%)"
 					Tooltip:
@@ -106,7 +118,7 @@ Mods: {
 						0% = 任何伤害都会触发，100% = 只有巨大伤害才会触发。
 						'''
 				}
-	
+
 				MiniHealthbarLingerTime: {
 					Label: "[i:75] 持续时间（秒）"
 					Tooltip:
@@ -115,7 +127,7 @@ Mods: {
 						较长的值使其在伤害事件之间保持可见。
 						'''
 				}
-	
+
 				MiniHealthbarMinBrightnessPercent: {
 					Label: 迷你血条最小亮度 (%)
 					Tooltip:
@@ -124,7 +136,7 @@ Mods: {
 						0% = 在洞穴中完全不可见，100% = 始终明亮。
 						'''
 				}
-	
+
 				MiniHealthbarMaxBrightnessPercent: {
 					Label: 迷你血条最大亮度 (%)
 					Tooltip:
@@ -133,7 +145,7 @@ Mods: {
 						100% = 在地表完全明亮，较低值会使血条变暗。
 						'''
 				}
-	
+
 				MiniHealthbarLightingBoostPercent: {
 					Label: 迷你血条照明增强 (%)
 					Tooltip:

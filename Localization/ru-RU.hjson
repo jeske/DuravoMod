@@ -1,3 +1,15 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// en-US.hjson - English localization (REFERENCE FILE)
+// ═══════════════════════════════════════════════════════════════════════════
+//
+// After adding new localization strings to this file, run the validator to
+// check that all other language files have been updated:
+//
+//     dotnet run --project Scripts/LocalizationsCompleteCheck
+//
+// The validator will report any missing or extra keys in the translation files.
+// ═══════════════════════════════════════════════════════════════════════════
+
 Mods: {
 	DuravoQOLMod: {
 		// ═══════════════════════════════════════════════════════════════════
@@ -79,7 +91,7 @@ Mods: {
 						Показывает здоровье, недавний урон и статус щита с первого взгляда.
 						'''
 				}
-	
+
 				MiniHealthbarAlwaysOn: {
 					Label: Мини Полоса Здоровья Всегда Видна
 					Tooltip:
@@ -88,7 +100,7 @@ Mods: {
 						По умолчанию она появляется только при низком здоровье или при получении урона.
 						'''
 				}
-	
+
 				MiniHealthbarHealthThreshold: {
 					Label: "[i:29] Порог Здоровья (%)"
 					Tooltip:
@@ -97,7 +109,7 @@ Mods: {
 						0% = никогда не показывать по здоровью, 100% = всегда показывать если не полное.
 						'''
 				}
-	
+
 				MiniHealthbarDamageThreshold: {
 					Label: "[i:29] Порог Урона (%)"
 					Tooltip:
@@ -106,7 +118,7 @@ Mods: {
 						0% = любой урон активирует её, 100% = только массивные удары.
 						'''
 				}
-	
+
 				MiniHealthbarLingerTime: {
 					Label: "[i:75] Время Задержки (секунды)"
 					Tooltip:
@@ -115,7 +127,7 @@ Mods: {
 						Большие значения сохраняют её видимой между событиями урона.
 						'''
 				}
-	
+
 				MiniHealthbarMinBrightnessPercent: {
 					Label: Мин. Яркость Мини Полосы Здоровья (%)
 					Tooltip:
@@ -124,7 +136,7 @@ Mods: {
 						0% = полностью невидима в пещерах, 100% = всегда яркая.
 						'''
 				}
-	
+
 				MiniHealthbarMaxBrightnessPercent: {
 					Label: Макс. Яркость Мини Полосы Здоровья (%)
 					Tooltip:
@@ -133,7 +145,7 @@ Mods: {
 						100% = полностью яркая на поверхности, меньшие значения затемняют полосу.
 						'''
 				}
-	
+
 				MiniHealthbarLightingBoostPercent: {
 					Label: Усиление Освещения Мини Полосы Здоровья (%)
 					Tooltip:

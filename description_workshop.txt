@@ -31,11 +31,14 @@ Minions navigate around obstacles using A* pathfinding instead of getting stuck.
 [h3]📋 Crafting Info Panel[/h3]
 Organized visual reference showing all craftable items by category. Hover for recipes, click to focus in crafting menu.
 
-[h2]Coming Soon[/h2]
+[h3]🩸 Mini Player Healthbar[/h3]
+Configurable mini-healthbar under your player, responds to environment lighting (if desired).
+
+[h2]Future Plans[/h2]
 [list]
-[*] Mini-Player Healthbar
+[*] Splitting out Server-Side stuff into another mod
 [*] Native Biome Bootstrap (craft basic stations from [i]any[/i] local materials)
 [/list]
 
 [h2]Localization[/h2]
-Available in: English, German, Spanish, French, Italian, Portuguese (BR), Russian, Polish, Simplified Chinese
+Translated in: English, German, Spanish, French, Italian, Portuguese (BR), Russian, Polish, Simplified Chinese

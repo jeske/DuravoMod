@@ -1,3 +1,15 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// en-US.hjson - English localization (REFERENCE FILE)
+// ═══════════════════════════════════════════════════════════════════════════
+//
+// After adding new localization strings to this file, run the validator to
+// check that all other language files have been updated:
+//
+//     dotnet run --project Scripts/LocalizationsCompleteCheck
+//
+// The validator will report any missing or extra keys in the translation files.
+// ═══════════════════════════════════════════════════════════════════════════
+
 Mods: {
 	DuravoQOLMod: {
 		// ═══════════════════════════════════════════════════════════════════
@@ -79,7 +91,7 @@ Mods: {
 						Affiche la vie, les dégâts récents et l'état du bouclier en un coup d'œil.
 						'''
 				}
-	
+
 				MiniHealthbarAlwaysOn: {
 					Label: Mini Barre de Vie Toujours Visible
 					Tooltip:
@@ -88,7 +100,7 @@ Mods: {
 						Par défaut, elle n'apparaît que lorsque la vie est basse ou en cas de dégâts.
 						'''
 				}
-	
+
 				MiniHealthbarHealthThreshold: {
 					Label: "[i:29] Seuil de Vie (%)"
 					Tooltip:
@@ -97,7 +109,7 @@ Mods: {
 						0% = ne jamais afficher selon la vie, 100% = toujours afficher si pas pleine.
 						'''
 				}
-	
+
 				MiniHealthbarDamageThreshold: {
 					Label: "[i:29] Seuil de Dégâts (%)"
 					Tooltip:
@@ -106,7 +118,7 @@ Mods: {
 						0% = tout dégât la déclenche, 100% = seulement les coups massifs.
 						'''
 				}
-	
+
 				MiniHealthbarLingerTime: {
 					Label: "[i:75] Durée d'Affichage (secondes)"
 					Tooltip:
@@ -115,7 +127,7 @@ Mods: {
 						Des valeurs plus élevées la gardent visible entre les événements de dégâts.
 						'''
 				}
-	
+
 				MiniHealthbarMinBrightnessPercent: {
 					Label: Luminosité Min de la Mini Barre de Vie (%)
 					Tooltip:
@@ -124,7 +136,7 @@ Mods: {
 						0% = totalement invisible dans les grottes, 100% = toujours lumineuse.
 						'''
 				}
-	
+
 				MiniHealthbarMaxBrightnessPercent: {
 					Label: Luminosité Max de la Mini Barre de Vie (%)
 					Tooltip:
@@ -133,7 +145,7 @@ Mods: {
 						100% = totalement lumineuse en surface, des valeurs basses atténuent la barre.
 						'''
 				}
-	
+
 				MiniHealthbarLightingBoostPercent: {
 					Label: Boost d'Éclairage de la Mini Barre de Vie (%)
 					Tooltip:

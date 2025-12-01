@@ -1,3 +1,15 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// en-US.hjson - English localization (REFERENCE FILE)
+// ═══════════════════════════════════════════════════════════════════════════
+//
+// After adding new localization strings to this file, run the validator to
+// check that all other language files have been updated:
+//
+//     dotnet run --project Scripts/LocalizationsCompleteCheck
+//
+// The validator will report any missing or extra keys in the translation files.
+// ═══════════════════════════════════════════════════════════════════════════
+
 Mods: {
 	DuravoQOLMod: {
 		// ═══════════════════════════════════════════════════════════════════
@@ -79,7 +91,7 @@ Mods: {
 						Pokazuje zdrowie, ostatnie obrażenia i status tarczy na pierwszy rzut oka.
 						'''
 				}
-	
+
 				MiniHealthbarAlwaysOn: {
 					Label: Mini Pasek Zdrowia Zawsze Widoczny
 					Tooltip:
@@ -88,7 +100,7 @@ Mods: {
 						Domyślnie pojawia się tylko gdy zdrowie jest niskie lub przy otrzymywaniu obrażeń.
 						'''
 				}
-	
+
 				MiniHealthbarHealthThreshold: {
 					Label: "[i:29] Próg Zdrowia (%)"
 					Tooltip:
@@ -97,7 +109,7 @@ Mods: {
 						0% = nigdy nie pokazuj na podstawie zdrowia, 100% = zawsze pokazuj gdy nie pełne.
 						'''
 				}
-	
+
 				MiniHealthbarDamageThreshold: {
 					Label: "[i:29] Próg Obrażeń (%)"
 					Tooltip:
@@ -106,7 +118,7 @@ Mods: {
 						0% = każde obrażenie go aktywuje, 100% = tylko masywne ciosy.
 						'''
 				}
-	
+
 				MiniHealthbarLingerTime: {
 					Label: "[i:75] Czas Trwania (sekundy)"
 					Tooltip:
@@ -115,7 +127,7 @@ Mods: {
 						Wyższe wartości utrzymują go widocznym między zdarzeniami obrażeń.
 						'''
 				}
-	
+
 				MiniHealthbarMinBrightnessPercent: {
 					Label: Min. Jasność Mini Paska Zdrowia (%)
 					Tooltip:
@@ -124,7 +136,7 @@ Mods: {
 						0% = całkowicie niewidoczny w jaskiniach, 100% = zawsze jasny.
 						'''
 				}
-	
+
 				MiniHealthbarMaxBrightnessPercent: {
 					Label: Maks. Jasność Mini Paska Zdrowia (%)
 					Tooltip:
@@ -133,7 +145,7 @@ Mods: {
 						100% = całkowicie jasny na powierzchni, niższe wartości przyciemniają pasek.
 						'''
 				}
-	
+
 				MiniHealthbarLightingBoostPercent: {
 					Label: Wzmocnienie Oświetlenia Mini Paska Zdrowia (%)
 					Tooltip:
