@@ -96,8 +96,8 @@ namespace DuravoQOLMod.TetheredMinions
         /// <summary>Minimum distance from player (pixels) before QoL pathing kicks in</summary>
         private const float MinDistanceForQoLPathing = 80f;
 
-        /// <summary>How long "phasing" state lasts before we force teleport (seconds)</summary>
-        private const double PhasingTimeoutSeconds = 3.0;
+        /// <summary>How long "phasing" state lasts before we force teleport (ticks, 60 = 1 second)</summary>
+        private const int PhasingTimeoutTicks = 180; // 3 seconds
 
         // ╔════════════════════════════════════════════════════════════════════╗
         // ║                          STATIC STATE                              ║
@@ -127,8 +127,8 @@ namespace DuravoQOLMod.TetheredMinions
         /// <summary>Whether minion is currently in "phasing" state (flying through walls to owner)</summary>
         private bool isPhasingToOwner;
 
-        /// <summary>Epoch time when phasing started (for timeout)</summary>
-        private double phasingStartedEpoch;
+        /// <summary>Game tick when phasing started (for timeout)</summary>
+        private uint phasingStartedTick;
 
         /// <summary>Original tileCollide value before phasing</summary>
         private bool originalTileCollide;
@@ -145,17 +145,17 @@ namespace DuravoQOLMod.TetheredMinions
         /// <summary>Current waypoint index we're heading toward</summary>
         private int currentWaypointIndex;
 
-        /// <summary>Epoch time (ms) when path-following ended (for cooldown)</summary>
-        private long pathFollowingEndedEpochMs;
+        /// <summary>Game tick when path-following ended (for cooldown)</summary>
+        private uint pathFollowingEndedTick;
 
         /// <summary>Last distance to player when we started tracking "stuck" state</summary>
         private float stuckCheckStartDistance;
 
-        /// <summary>Epoch time (ms) when we started the stuck check</summary>
-        private long stuckCheckStartTimeMs;
+        /// <summary>Game tick when we started the stuck check</summary>
+        private uint stuckCheckStartTick;
 
-        /// <summary>How long minion must fail to make progress before triggering pathfinding (ms)</summary>
-        private const long StuckDetectionTimeMs = 1000; // 1 second
+        /// <summary>How long minion must fail to make progress before triggering pathfinding (ticks, 60 = 1 second)</summary>
+        private const int StuckDetectionTimeTicks = 60; // 1 second
 
         /// <summary>Minimum progress toward player (pixels) to reset stuck timer</summary>
         private const float StuckProgressThresholdPixels = 20f;
@@ -169,20 +169,8 @@ namespace DuravoQOLMod.TetheredMinions
         /// <summary>Direction toward player on dominant axis when pathfinding started (+1 or -1)</summary>
         private int pathStartDirectionToPlayer;
 
-        /// <summary>Cooldown after exiting path-following before re-entry allowed (milliseconds)</summary>
-        private const long PathFollowingCooldownMs = 1500; // 1.5 seconds
-
-        /// <summary>Get current time as epoch seconds</summary>
-        private static double GetEpochTimeSeconds()
-        {
-            return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000.0;
-        }
-
-        /// <summary>Get current time as epoch milliseconds</summary>
-        private static long GetEpochTimeMs()
-        {
-            return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        }
+        /// <summary>Cooldown after exiting path-following before re-entry allowed (ticks, 60 = 1 second)</summary>
+        private const int PathFollowingCooldownTicks = 90; // 1.5 seconds
 
         // ╔════════════════════════════════════════════════════════════════════╗
         // ║                          MAIN LOGIC                                ║
@@ -240,8 +228,8 @@ namespace DuravoQOLMod.TetheredMinions
             // the next tile toward player is solid. If blocked, compute A* path.
             // COOLDOWN: Don't re-enter pathfinding for 1.5 seconds after exiting (prevent thrashing)
             // ═══════════════════════════════════════════════════════════
-            long currentEpochMs = GetEpochTimeMs();
-            bool pathCooldownExpired = (currentEpochMs - pathFollowingEndedEpochMs) > PathFollowingCooldownMs;
+            uint currentTickForCooldown = Main.GameUpdateCount;
+            bool pathCooldownExpired = (currentTickForCooldown - pathFollowingEndedTick) > PathFollowingCooldownTicks;
             if (EnableQoLFollowPathing && !isPhasingToOwner && !isFollowingPath && pathCooldownExpired) {
                 CheckBlockedAndPathfind(projectile, ownerPlayer);
             }
@@ -379,12 +367,12 @@ namespace DuravoQOLMod.TetheredMinions
             int checkTileY = blockingTile.Y;
 
             // Step 4b: Also check "stuck" detection - minion hasn't made progress toward player
-            long currentTimeMs = GetEpochTimeMs();
+            uint currentTick = Main.GameUpdateCount;
             bool isStuck = false;
 
-            if (stuckCheckStartTimeMs == 0) {
+            if (stuckCheckStartTick == 0) {
                 // Start tracking
-                stuckCheckStartTimeMs = currentTimeMs;
+                stuckCheckStartTick = currentTick;
                 stuckCheckStartDistance = distanceToOwnerPixels;
             }
             else {
@@ -392,21 +380,21 @@ namespace DuravoQOLMod.TetheredMinions
                 float distanceProgress = stuckCheckStartDistance - distanceToOwnerPixels;
                 if (distanceProgress >= StuckProgressThresholdPixels) {
                     // Made progress! Reset timer
-                    stuckCheckStartTimeMs = currentTimeMs;
+                    stuckCheckStartTick = currentTick;
                     stuckCheckStartDistance = distanceToOwnerPixels;
                 }
-                else if ((currentTimeMs - stuckCheckStartTimeMs) >= StuckDetectionTimeMs) {
+                else if ((currentTick - stuckCheckStartTick) >= StuckDetectionTimeTicks) {
                     // Been stuck for too long without making progress
                     isStuck = true;
                     // Reset for next check
-                    stuckCheckStartTimeMs = 0;
+                    stuckCheckStartTick = 0;
                     stuckCheckStartDistance = 0f;
                 }
 
                 // Debug: Print stuck check state every 1000 frames
                 if (DebugTethering && Main.GameUpdateCount % 1000 == 0) {
-                    long elapsedMs = currentTimeMs - stuckCheckStartTimeMs;
-                    Main.NewText($"[STUCK] {minion.Name}: elapsed={elapsedMs}ms/{StuckDetectionTimeMs}ms, startDist={stuckCheckStartDistance:F0}px, currDist={distanceToOwnerPixels:F0}px, progress={distanceProgress:F1}px (need {StuckProgressThresholdPixels}px), nextTileSolid={nextTileIsSolid}", Color.Magenta);
+                    int elapsedTicks = (int)(currentTick - stuckCheckStartTick);
+                    Main.NewText($"[STUCK] {minion.Name}: elapsed={elapsedTicks}/{StuckDetectionTimeTicks} ticks, startDist={stuckCheckStartDistance:F0}px, currDist={distanceToOwnerPixels:F0}px, progress={distanceProgress:F1}px (need {StuckProgressThresholdPixels}px), nextTileSolid={nextTileIsSolid}", Color.Magenta);
                 }
             }
 
@@ -736,7 +724,7 @@ namespace DuravoQOLMod.TetheredMinions
         /// </summary>
         private void ApplyPhasingMovement(Projectile minion, Player ownerPlayer)
         {
-            double currentTimeEpoch = GetEpochTimeSeconds();
+            uint currentTick = Main.GameUpdateCount;
             Vector2 directionToOwner = ownerPlayer.Center - minion.Center;
             float distanceToOwner = directionToOwner.Length();
 
@@ -753,8 +741,8 @@ namespace DuravoQOLMod.TetheredMinions
             }
 
             // Check for phasing timeout (stuck in geometry?)
-            double phasingDuration = currentTimeEpoch - phasingStartedEpoch;
-            if (phasingDuration >= PhasingTimeoutSeconds) {
+            int phasingDurationTicks = (int)(currentTick - phasingStartedTick);
+            if (phasingDurationTicks >= PhasingTimeoutTicks) {
                 // Force teleport
                 if (DebugTethering) {
                     Main.NewText($"[TETHER] {minion.Name} phasing timeout - force teleporting", Color.Red);
@@ -839,7 +827,7 @@ namespace DuravoQOLMod.TetheredMinions
             pathStartDirectionToPlayer = 0;
 
             // Set cooldown to prevent immediate re-entry into pathfinding (1.5 seconds)
-            pathFollowingEndedEpochMs = GetEpochTimeMs();
+            pathFollowingEndedTick = Main.GameUpdateCount;
         }
 
         private void StartPhasingState(Projectile minion, string reason)
@@ -853,7 +841,7 @@ namespace DuravoQOLMod.TetheredMinions
             }
 
             isPhasingToOwner = true;
-            phasingStartedEpoch = GetEpochTimeSeconds();
+            phasingStartedTick = Main.GameUpdateCount;
             originalTileCollide = minion.tileCollide;
             minion.tileCollide = false;
 

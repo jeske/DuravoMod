@@ -54,10 +54,11 @@ namespace DuravoQOLMod.PersistentPosition
             Player.velocity = Vector2.Zero;
 
             // Grant spawn immunity via shared system
-            double immunityDuration = TemporarySpawnImmunityPlayer.DefaultImmunityDurationSeconds;
-            TemporarySpawnImmunityPlayer.GrantImmunityToLocalPlayer(immunityDuration);
+            int immunityDurationTicks = TemporarySpawnImmunityPlayer.DefaultImmunityDurationTicks;
+            TemporarySpawnImmunityPlayer.GrantImmunityToLocalPlayer(immunityDurationTicks);
 
-            Main.NewText($"[DuravoQOL] Position restored. Immune for {immunityDuration}s.", 100, 255, 100);
+            float immunitySeconds = immunityDurationTicks / 60f;
+            Main.NewText($"[DuravoQOL] Position restored. Immune for {immunitySeconds}s.", 100, 255, 100);
         }
 
         /// <summary>
@@ -75,7 +76,7 @@ namespace DuravoQOLMod.PersistentPosition
             // newPlayer=true means first time in this world, newPlayer=false means returning.
             // We want to restore for RETURNING players (newPlayer=false), but the
             // TryGetSavedPosition check naturally handles new players too.
-            
+
             // Send saved position from world data to the client
             // fromWho is the player index who just joined
             PersistentPositionWorld.Instance?.SendSavedPositionToClient(fromWho, Player.name);

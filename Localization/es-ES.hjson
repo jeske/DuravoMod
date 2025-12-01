@@ -90,7 +90,7 @@ Mods: {
 				}
 
 				MiniHealthbarHealthThreshold: {
-					// Label: Mini Healthbar Health Threshold
+					// Label: "[i:29] Health Threshold (%)"
 					/* Tooltip:
 						'''
 						Show healthbar when health drops below this percentage.
@@ -99,16 +99,16 @@ Mods: {
 				}
 
 				MiniHealthbarDamageThreshold: {
-					// Label: Mini Healthbar Damage Threshold
+					// Label: "[i:29] Damage Threshold (%)"
 					/* Tooltip:
 						'''
-						Show healthbar temporarily when taking damage exceeding this percentage of max health.
+						Show healthbar temporarily when taking damage exceeding this percentage of max health (within 1 second).
 						0% = any damage triggers it, 100% = only massive hits.
 						''' */
 				}
 
 				MiniHealthbarLingerTime: {
-					// Label: Mini Healthbar Linger Time
+					// Label: "[i:75] Linger Time (seconds)"
 					/* Tooltip:
 						'''
 						How many seconds the healthbar stays visible after being triggered.

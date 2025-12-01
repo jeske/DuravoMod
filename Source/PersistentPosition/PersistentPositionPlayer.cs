@@ -92,12 +92,13 @@ namespace DuravoQOLMod.PersistentPosition
                 return;
             }
 
-            double immunityDuration = TemporarySpawnImmunityPlayer.DefaultImmunityDurationSeconds;
+            int immunityDurationTicks = TemporarySpawnImmunityPlayer.DefaultImmunityDurationTicks;
+            float immunitySeconds = immunityDurationTicks / 60f;
 
             if (hasValidSavedPosition) {
                 // Check for world bounds - only hard fail case (indicates bug/glitch)
                 if (!IsPositionInWorldBounds(savedExitPosition)) {
-                    Main.NewText($"[DuravoQOL] Saved position out of bounds (bug?), using spawn. Immune for {immunityDuration}s.", 255, 100, 100);
+                    Main.NewText($"[DuravoQOL] Saved position out of bounds (bug?), using spawn. Immune for {immunitySeconds}s.", 255, 100, 100);
                 }
                 else {
                     // Find best spawn position (may be bumped if inside solid tiles)
@@ -109,15 +110,15 @@ namespace DuravoQOLMod.PersistentPosition
                     Player.velocity = Vector2.Zero;
 
                     if (finalSpawnPosition == savedExitPosition) {
-                        Main.NewText($"[DuravoQOL] Position restored. Immune for {immunityDuration}s.", 100, 255, 100);
+                        Main.NewText($"[DuravoQOL] Position restored. Immune for {immunitySeconds}s.", 100, 255, 100);
                     }
                     else {
-                        Main.NewText($"[DuravoQOL] Position restored (nudged from terrain). Immune for {immunityDuration}s.", 255, 200, 100);
+                        Main.NewText($"[DuravoQOL] Position restored (nudged from terrain). Immune for {immunitySeconds}s.", 255, 200, 100);
                     }
                 }
             }
             else {
-                Main.NewText($"[DuravoQOL] World entered. Immune for {immunityDuration}s.", 100, 200, 255);
+                Main.NewText($"[DuravoQOL] World entered. Immune for {immunitySeconds}s.", 100, 200, 255);
             }
 
             // Clear saved position flag

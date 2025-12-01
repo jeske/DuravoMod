@@ -28,7 +28,7 @@ namespace DuravoQOLMod.MiniPlayerHealthbar
         // - DuravoQOLModConfig.MiniHealthbarAutoHideSeconds (int seconds)
 
         /// <summary>Get the linger time in ticks from config (seconds * 60)</summary>
-        private static int HealthbarLingerTicks => DuravoQOLModConfig.MiniHealthbarAutoHideSeconds * 60;
+        private static int HealthbarLingerTicks => (int)(DuravoQOLModConfig.MiniHealthbarAutoHideSeconds * 60f);
 
         // ╔════════════════════════════════════════════════════════════════════╗
         // ║                          INSTANCE STATE                            ║

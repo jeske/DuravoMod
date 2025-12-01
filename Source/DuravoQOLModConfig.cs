@@ -63,8 +63,8 @@ namespace DuravoQOLMod
         /// <summary>Cached: Damage % threshold to trigger healthbar (0.0 to 1.0)</summary>
         public static float MiniHealthbarShowOnDamagePercent = 0.10f;
 
-        /// <summary>Cached: Auto-hide time in seconds</summary>
-        public static int MiniHealthbarAutoHideSeconds = 3;
+        /// <summary>Cached: Auto-hide time in seconds (float for 0.25s precision)</summary>
+        public static float MiniHealthbarAutoHideSeconds = 3f;
 
         /// <summary>Cached: Debug - Player Persistence.</summary>
         public static bool DebugEnablePlayerPersistence = false;
@@ -179,11 +179,12 @@ namespace DuravoQOLMod
         [Tooltip("Show healthbar temporarily when taking damage exceeding this percentage of max health.\n0% = any damage triggers it, 100% = only massive hits.")]
         public int MiniHealthbarDamageThreshold { get; set; } = 25;
 
-        [Range(1, 20)]
-        [DefaultValue(3)]
+        [Range(1f, 20f)]
+        [DefaultValue(3f)]
         [Slider]
+        [Increment(0.25f)]
         [Tooltip("How many seconds the healthbar stays visible after being triggered.\nLonger values keep it visible between damage events.")]
-        public int MiniHealthbarLingerTime { get; set; } = 3;
+        public float MiniHealthbarLingerTime { get; set; } = 3f;
 
         // ╔════════════════════════════════════════════════════════════════════╗
         // ║                      DEBUG (SEPARATE PAGE)                          ║

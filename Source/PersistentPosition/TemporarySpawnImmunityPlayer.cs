@@ -26,8 +26,8 @@ namespace DuravoQOLMod.PersistentPosition
         // ║                        TUNABLE CONSTANTS                           ║
         // ╚════════════════════════════════════════════════════════════════════╝
 
-        /// <summary>Default duration of spawn immunity in seconds</summary>
-        public const double DefaultImmunityDurationSeconds = 3.0;
+        /// <summary>Default duration of spawn immunity in ticks (60 ticks = 1 second)</summary>
+        public const int DefaultImmunityDurationTicks = 180; // 3 seconds
 
         /// <summary>Get debug setting from mod config</summary>
         private static bool DebugMessagesEnabled => ModContent.GetInstance<DuravoQOLModConfig>()?.Debug?.DebugPlayerPersistence ?? false;
@@ -48,8 +48,8 @@ namespace DuravoQOLMod.PersistentPosition
         // ║                          INSTANCE STATE                            ║
         // ╚════════════════════════════════════════════════════════════════════╝
 
-        /// <summary>Epoch time (seconds since 1970) when immunity expires (0 = not immune)</summary>
-        private double immunityExpiresAtEpochSeconds;
+        /// <summary>Game tick when immunity expires (0 = not immune)</summary>
+        private uint immunityExpiresAtTick;
 
         /// <summary>Track last logged second to avoid debug spam</summary>
         private int lastLoggedImmunitySecond = -1;
@@ -58,19 +58,13 @@ namespace DuravoQOLMod.PersistentPosition
         // ║                         TIME HELPERS                               ║
         // ╚════════════════════════════════════════════════════════════════════╝
 
-        /// <summary>Get current time as epoch seconds (wall clock time, never wraps)</summary>
-        private static double GetEpochTimeSeconds()
-        {
-            return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000.0;
-        }
-
         /// <summary>Check if immunity is currently active</summary>
-        private bool IsImmunityActive => GetEpochTimeSeconds() < immunityExpiresAtEpochSeconds;
+        private bool IsImmunityActive => Main.GameUpdateCount < immunityExpiresAtTick;
 
-        /// <summary>Get remaining immunity time in seconds (0 if expired)</summary>
-        private double GetImmunityRemainingSeconds()
+        /// <summary>Get remaining immunity time in ticks (0 if expired)</summary>
+        private int GetImmunityRemainingTicks()
         {
-            double remaining = immunityExpiresAtEpochSeconds - GetEpochTimeSeconds();
+            int remaining = (int)(immunityExpiresAtTick - Main.GameUpdateCount);
             return remaining > 0 ? remaining : 0;
         }
 
@@ -79,12 +73,12 @@ namespace DuravoQOLMod.PersistentPosition
         // ╚════════════════════════════════════════════════════════════════════╝
 
         /// <summary>
-        /// Grant spawn immunity to this player for specified duration.
+        /// Grant spawn immunity to this player for specified duration in ticks.
         /// </summary>
-        /// <param name="durationSeconds">Duration of immunity in seconds</param>
-        public void GrantImmunity(double durationSeconds)
+        /// <param name="durationTicks">Duration of immunity in ticks (60 = 1 second)</param>
+        public void GrantImmunity(int durationTicks)
         {
-            immunityExpiresAtEpochSeconds = GetEpochTimeSeconds() + durationSeconds;
+            immunityExpiresAtTick = Main.GameUpdateCount + (uint)durationTicks;
         }
 
         /// <summary>
@@ -92,14 +86,14 @@ namespace DuravoQOLMod.PersistentPosition
         /// </summary>
         public void GrantImmunity()
         {
-            GrantImmunity(DefaultImmunityDurationSeconds);
+            GrantImmunity(DefaultImmunityDurationTicks);
         }
 
         /// <summary>
         /// Grant spawn immunity to the local player. Can be called from anywhere on the client.
         /// </summary>
-        /// <param name="durationSeconds">Duration of immunity in seconds</param>
-        public static void GrantImmunityToLocalPlayer(double durationSeconds)
+        /// <param name="durationTicks">Duration of immunity in ticks (60 = 1 second)</param>
+        public static void GrantImmunityToLocalPlayer(int durationTicks)
         {
             if (Main.netMode == NetmodeID.Server)
                 return; // Only works on client
@@ -109,7 +103,7 @@ namespace DuravoQOLMod.PersistentPosition
                 return;
 
             var immunityPlayer = localPlayer.GetModPlayer<TemporarySpawnImmunityPlayer>();
-            immunityPlayer?.GrantImmunity(durationSeconds);
+            immunityPlayer?.GrantImmunity(durationTicks);
         }
 
         /// <summary>
@@ -117,7 +111,7 @@ namespace DuravoQOLMod.PersistentPosition
         /// </summary>
         public static void GrantImmunityToLocalPlayer()
         {
-            GrantImmunityToLocalPlayer(DefaultImmunityDurationSeconds);
+            GrantImmunityToLocalPlayer(DefaultImmunityDurationTicks);
         }
 
         // ╔════════════════════════════════════════════════════════════════════╗
@@ -140,17 +134,18 @@ namespace DuravoQOLMod.PersistentPosition
                 return;
             }
 
-            double remainingSeconds = GetImmunityRemainingSeconds();
+            int remainingTicks = GetImmunityRemainingTicks();
+            float remainingSeconds = remainingTicks / 60f;
 
             // Calculate fade based on remaining time vs total duration (brighter at start, fades out)
-            float lightIntensity = (float)(remainingSeconds / DefaultImmunityDurationSeconds);
+            float lightIntensity = (float)remainingTicks / DefaultImmunityDurationTicks;
             lightIntensity = Math.Min(lightIntensity, 1.0f); // Clamp in case granted longer duration
 
             // Add bright protective light around player (cyan/white glow)
             Lighting.AddLight(Player.Center, 0.8f * lightIntensity, 1.0f * lightIntensity, 1.2f * lightIntensity);
 
-            // Spawn occasional sparkle particles (stop when nearly expired)
-            if (Main.rand.NextBool(3) && remainingSeconds > 1.0) {
+            // Spawn occasional sparkle particles (stop when nearly expired - 60 ticks = 1 second)
+            if (Main.rand.NextBool(3) && remainingTicks > 60) {
                 float angle = Main.rand.NextFloat() * MathHelper.TwoPi;
                 float radius = Main.rand.NextFloat(10f, 30f);
                 Vector2 dustPos = Player.Center + new Vector2(
@@ -170,7 +165,7 @@ namespace DuravoQOLMod.PersistentPosition
             }
 
             // Log approximately every 2 seconds so we can see it's working (only if debug enabled)
-            int currentSecond = (int)remainingSeconds;
+            int currentSecond = (int)(remainingTicks / 60f);
             if (DebugMessagesEnabled && currentSecond != lastLoggedImmunitySecond && currentSecond % 2 == 0 && currentSecond > 0) {
                 lastLoggedImmunitySecond = currentSecond;
                 Main.NewText($"[DuravoQOL] Immunity: {currentSecond}s remaining", 100, 255, 100);
@@ -214,7 +209,7 @@ namespace DuravoQOLMod.PersistentPosition
 
                 if (DebugMessagesEnabled) {
                     string sourceDetails = GetDamageSourceDetails(modifiers, damageCategory);
-                    int secondsRemaining = (int)GetImmunityRemainingSeconds();
+                    int secondsRemaining = GetImmunityRemainingTicks() / 60;
                     Main.NewText($"[DuravoQOL] BLOCKING {damageCategory}: src={sourceDamageBase} final={finalDamageBase} | {sourceDetails} ({secondsRemaining}s left)", 100, 255, 100);
                 }
                 return;

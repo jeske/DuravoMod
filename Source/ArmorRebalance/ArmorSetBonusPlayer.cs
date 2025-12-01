@@ -20,18 +20,18 @@ namespace DuravoQOLMod.ArmorRebalance
         // ║                        TUNABLE CONSTANTS                           ║
         // ╚════════════════════════════════════════════════════════════════════╝
 
-        // --- Sparkle Timing ---
-        /// <summary>Duration in seconds for sparkle fade-out (normal)</summary>
-        private const double SparkleFadeDurationSeconds = 1.0;
+        // --- Sparkle Timing (tick-based: 60 ticks = 1 second) ---
+        /// <summary>Duration in ticks for sparkle fade-out (normal)</summary>
+        private const int SparkleFadeDurationTicks = 60; // 1 second
 
-        /// <summary>Duration in seconds for FAST sparkle fade-out (when buff ends)</summary>
-        private const double SparkleFastDecayDurationSeconds = 0.2;
+        /// <summary>Duration in ticks for FAST sparkle fade-out (when buff ends)</summary>
+        private const int SparkleFastDecayDurationTicks = 12; // 0.2 seconds
 
-        /// <summary>Fixed cooldown in seconds after sparkle finishes before it can trigger again</summary>
-        private const double SparkleSpawnCooldownSeconds = 5.0;
+        /// <summary>Fixed cooldown in ticks after sparkle finishes before it can trigger again</summary>
+        private const int SparkleSpawnCooldownTicks = 300; // 5 seconds
 
-        /// <summary>Maximum random pre-activation delay (staggers when sparkles appear)</summary>
-        private const double SparklePreActivateMaxDelaySeconds = SparkleSpawnCooldownSeconds;
+        /// <summary>Maximum random pre-activation delay in ticks (staggers when sparkles appear)</summary>
+        private const int SparklePreActivateMaxDelayTicks = SparkleSpawnCooldownTicks;
 
         // --- Ore Detection ---
         /// <summary>Range in tiles for mini-spelunker ore glow effect</summary>
@@ -86,25 +86,17 @@ namespace DuravoQOLMod.ArmorRebalance
         /// <summary>Active sparkles being rendered with manual fade control</summary>
         private static readonly System.Collections.Generic.List<ActiveSparkle> activeSparkles = new System.Collections.Generic.List<ActiveSparkle>();
 
-        /// <summary>Tracks last spawn time per sparkle point for cooldown</summary>
-        private static readonly System.Collections.Generic.Dictionary<int, double> sparkleLastSpawnTimes = new System.Collections.Generic.Dictionary<int, double>();
 
         /// <summary>Tracks an active sparkle with spawn time for fade calculation</summary>
         private struct ActiveSparkle
         {
             public Vector2 WorldPosition;
-            public double QueuedTimeEpoch;
-            public double PreActivateDelaySeconds;
+            public uint QueuedTick;
+            public int PreActivateDelayTicks;
             public Color SparkleColor;
             public float InitialScale;
 
-            public double BecomeVisibleTimeEpoch => QueuedTimeEpoch + PreActivateDelaySeconds;
-        }
-
-        /// <summary>Get current time as epoch seconds (since 1970, never wraps)</summary>
-        private static double GetEpochTimeSeconds()
-        {
-            return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000.0;
+            public uint BecomeVisibleTick => QueuedTick + (uint)PreActivateDelayTicks;
         }
 
         /// <summary>Tracks all known sparkle point positions for debug rendering</summary>
@@ -120,8 +112,8 @@ namespace DuravoQOLMod.ArmorRebalance
         /// <summary>Static flag for DrawSparkles to check if ANY player has the buff active</summary>
         private static bool anyPlayerHasShinyBuff = false;
 
-        /// <summary>Epoch time when the buff was last active (for fast decay calculation)</summary>
-        private static double lastBuffActiveTimeEpoch = 0.0;
+        /// <summary>Game tick when the buff was last active (for fast decay calculation)</summary>
+        private static uint lastBuffActiveTick = 0;
 
         public override void ResetEffects()
         {
@@ -192,7 +184,7 @@ namespace DuravoQOLMod.ArmorRebalance
             // Update static buff tracking (for fast decay in DrawSparkles)
             if (buffActive) {
                 anyPlayerHasShinyBuff = true;
-                lastBuffActiveTimeEpoch = GetEpochTimeSeconds();
+                lastBuffActiveTick = Main.GameUpdateCount;
 
                 SpawnNewSparkles();
                 ApplyShinyDarknessGlow();
@@ -253,39 +245,42 @@ namespace DuravoQOLMod.ArmorRebalance
 
         private static void UpdateAndCleanupSparkles()
         {
-            double currentTimeEpoch = GetEpochTimeSeconds();
+            uint currentTick = Main.GameUpdateCount;
 
             // Use fast decay duration if buff is not active
-            double effectiveFadeDuration = anyPlayerHasShinyBuff
-                ? SparkleFadeDurationSeconds
-                : SparkleFastDecayDurationSeconds;
+            int effectiveFadeDurationTicks = anyPlayerHasShinyBuff
+                ? SparkleFadeDurationTicks
+                : SparkleFastDecayDurationTicks;
 
             for (int i = activeSparkles.Count - 1; i >= 0; i--) {
                 ActiveSparkle sparkle = activeSparkles[i];
-                double visibleTimeEpoch = sparkle.BecomeVisibleTimeEpoch;
-                double ageAfterVisible = currentTimeEpoch - visibleTimeEpoch;
+                uint visibleTick = sparkle.BecomeVisibleTick;
+                int ageAfterVisibleTicks = (int)(currentTick - visibleTick);
 
                 // When buff ends, calculate age relative to when buff ended for fast decay
-                if (!anyPlayerHasShinyBuff && lastBuffActiveTimeEpoch > visibleTimeEpoch) {
+                if (!anyPlayerHasShinyBuff && lastBuffActiveTick > visibleTick) {
                     // Sparkle was created while buff was active, now buff ended
                     // Treat age as time since buff ended + fast decay offset
-                    double timeSinceBuffEnded = currentTimeEpoch - lastBuffActiveTimeEpoch;
-                    if (timeSinceBuffEnded > SparkleFastDecayDurationSeconds) {
+                    int ticksSinceBuffEnded = (int)(currentTick - lastBuffActiveTick);
+                    if (ticksSinceBuffEnded > SparkleFastDecayDurationTicks) {
                         activeSparkles.RemoveAt(i);
                         continue;
                     }
                 }
-                else if (ageAfterVisible > effectiveFadeDuration) {
+                else if (ageAfterVisibleTicks > effectiveFadeDurationTicks) {
                     activeSparkles.RemoveAt(i);
                 }
             }
         }
 
+        /// <summary>Tracks last spawn tick per sparkle point for cooldown</summary>
+        private static readonly System.Collections.Generic.Dictionary<int, uint> sparkleLastSpawnTicks = new System.Collections.Generic.Dictionary<int, uint>();
+
         private void TrySpawnSparkleForTile(int tileX, int tileY, int tileType)
         {
             int tileCoordinateHash = HashTileCoordinates(tileX, tileY);
             int dustType = GetDustTypeForTile(tileType);
-            double currentTimeEpoch = GetEpochTimeSeconds();
+            uint currentTick = Main.GameUpdateCount;
 
             for (int sparkleIndex = 0; sparkleIndex < 2; sparkleIndex++) {
                 int sparklePointKey = tileCoordinateHash + sparkleIndex * 31337;
@@ -297,26 +292,26 @@ namespace DuravoQOLMod.ArmorRebalance
                     debugSparklePositions.Add(sparkleWorldPosition);
                 }
 
-                double lastSpawnTime = 0.0;
-                sparkleLastSpawnTimes.TryGetValue(sparklePointKey, out lastSpawnTime);
+                uint lastSpawnTick = 0;
+                sparkleLastSpawnTicks.TryGetValue(sparklePointKey, out lastSpawnTick);
 
                 Random preActivateRandom = new Random(sparklePointKey);
-                double preActivateDelaySeconds = preActivateRandom.NextDouble() * SparklePreActivateMaxDelaySeconds;
+                int preActivateDelayTicks = (int)(preActivateRandom.NextDouble() * SparklePreActivateMaxDelayTicks);
 
-                double timeSinceLastVisible = currentTimeEpoch - lastSpawnTime;
-                bool cooldownExpired = timeSinceLastVisible >= (SparkleFadeDurationSeconds + SparkleSpawnCooldownSeconds);
+                int ticksSinceLastVisible = (int)(currentTick - lastSpawnTick);
+                bool cooldownExpired = ticksSinceLastVisible >= (SparkleFadeDurationTicks + SparkleSpawnCooldownTicks);
 
                 if (cooldownExpired) {
-                    double becomeVisibleTimeEpoch = currentTimeEpoch + preActivateDelaySeconds;
-                    sparkleLastSpawnTimes[sparklePointKey] = becomeVisibleTimeEpoch;
+                    uint becomeVisibleTick = currentTick + (uint)preActivateDelayTicks;
+                    sparkleLastSpawnTicks[sparklePointKey] = becomeVisibleTick;
 
                     Color sparkleColor = GetColorForOre(dustType);
                     const float FixedSparkleScale = 1.0f;
 
                     activeSparkles.Add(new ActiveSparkle {
                         WorldPosition = sparkleWorldPosition,
-                        QueuedTimeEpoch = currentTimeEpoch,
-                        PreActivateDelaySeconds = preActivateDelaySeconds,
+                        QueuedTick = currentTick,
+                        PreActivateDelayTicks = preActivateDelayTicks,
                         SparkleColor = sparkleColor,
                         InitialScale = FixedSparkleScale
                     });
@@ -326,7 +321,7 @@ namespace DuravoQOLMod.ArmorRebalance
 
         public static void DrawSparkles(SpriteBatch spriteBatch)
         {
-            double currentTimeEpoch = GetEpochTimeSeconds();
+            uint currentTick = Main.GameUpdateCount;
 
             Texture2D sparkleTexture = TextureAssets.Star[0].Value;
             Vector2 textureOrigin = new Vector2(sparkleTexture.Width / 2f, sparkleTexture.Height / 2f);
@@ -357,24 +352,24 @@ namespace DuravoQOLMod.ArmorRebalance
             Vector2 localPlayerCenter = Main.LocalPlayer.Center;
 
             foreach (ActiveSparkle sparkle in activeSparkles) {
-                double visibleTimeEpoch = sparkle.BecomeVisibleTimeEpoch;
-                double ageAfterVisible = currentTimeEpoch - visibleTimeEpoch;
+                uint visibleTick = sparkle.BecomeVisibleTick;
+                int ageAfterVisibleTicks = (int)(currentTick - visibleTick);
 
-                if (ageAfterVisible < 0) continue;
+                if (ageAfterVisibleTicks < 0) continue;
 
                 // Calculate fade based on whether buff is active
-                double effectiveFadeDuration = anyPlayerHasShinyBuff
-                    ? SparkleFadeDurationSeconds
-                    : SparkleFastDecayDurationSeconds;
+                int effectiveFadeDurationTicks = anyPlayerHasShinyBuff
+                    ? SparkleFadeDurationTicks
+                    : SparkleFastDecayDurationTicks;
 
                 // When buff ends, use time since buff ended for fade calculation
                 float fadeProgress;
-                if (!anyPlayerHasShinyBuff && lastBuffActiveTimeEpoch > visibleTimeEpoch) {
-                    double timeSinceBuffEnded = currentTimeEpoch - lastBuffActiveTimeEpoch;
-                    fadeProgress = (float)(timeSinceBuffEnded / SparkleFastDecayDurationSeconds);
+                if (!anyPlayerHasShinyBuff && lastBuffActiveTick > visibleTick) {
+                    int ticksSinceBuffEnded = (int)(currentTick - lastBuffActiveTick);
+                    fadeProgress = (float)ticksSinceBuffEnded / SparkleFastDecayDurationTicks;
                 }
                 else {
-                    fadeProgress = (float)(ageAfterVisible / effectiveFadeDuration);
+                    fadeProgress = (float)ageAfterVisibleTicks / effectiveFadeDurationTicks;
                 }
 
                 if (fadeProgress > 1f) continue;

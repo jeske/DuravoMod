@@ -43,10 +43,11 @@ namespace DuravoQOLMod.PersistentPosition
             localPlayer.velocity = Vector2.Zero;
 
             // Grant spawn immunity via shared system
-            double immunityDuration = TemporarySpawnImmunityPlayer.DefaultImmunityDurationSeconds;
-            TemporarySpawnImmunityPlayer.GrantImmunityToLocalPlayer(immunityDuration);
+            int immunityDurationTicks = TemporarySpawnImmunityPlayer.DefaultImmunityDurationTicks;
+            TemporarySpawnImmunityPlayer.GrantImmunityToLocalPlayer(immunityDurationTicks);
 
-            Main.NewText($"[DuravoQOL] Position restored from world data. Immune for {immunityDuration}s.", 100, 255, 100);
+            float immunitySeconds = immunityDurationTicks / 60f;
+            Main.NewText($"[DuravoQOL] Position restored from world data. Immune for {immunitySeconds}s.", 100, 255, 100);
         }
     }
 }
